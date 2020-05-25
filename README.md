@@ -30,6 +30,11 @@ When the script downloading process is complete, proceed to the [Starting DL Wor
 
 ## <a id="running">Starting DL Workbench</a>
 
+To make the downloaded script executable, run the following command:
+```bash
+chmod +x start_workbench.sh
+```
+
 You can start the latest version of DL Workbench with the following command:
 ```bash
 ./start_workbench.sh -IMAGE_NAME openvino/workbench
@@ -40,4 +45,4 @@ You can start the latest version of DL Workbench with the following command:
 > ./start_workbench.sh --help
 > ```
 
-Refer to [documentation](./docs/Install_from_Docker_Hub.md) for additional information.
+Refer to [documentation](./docs/Install_DL_Workbench.md) for additional information.

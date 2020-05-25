@@ -1,4 +1,4 @@
-# Install DL Workbench from Docker Hub*
+# Install DL Workbench
 
 You can run the DL Workbench by building a Docker\* image locally. Refer to the section with the
 instruction for your operating system:
