@@ -1,7 +1,9 @@
 # Install DL Workbench
 
+> **IMPORTANT**: See the [prerequisites to run the DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Install_Workbench.html).
+
 You can run the DL Workbench by building a Docker\* image locally. Refer to the section with the
-instruction for your operating system:
+instructions for your operating system:
 
 * <a href="#linux">Install DL Workbench from Docker Hub* on Linux* OS</a>
 * <a href="#windows">Install DL Workbench from Docker Hub* on Windows* OS</a>
@@ -22,7 +24,7 @@ Ubuntu](https://docs.docker.com/install/).
 > script. If you prefer to use `docker run` instead, see <a href="#docker-run">Run Docker Container
 > with `docker run` Command</a>.
 
-Download the `starting script`. You can either do it manually from the [repository](https://github.com/openvinotoolkit/workbench_aux) or by running the following command:
+Download the `starting script` manually from the [repository](https://github.com/openvinotoolkit/workbench_aux) or by running the following command:
 ```bash
 wget https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh
 ```
@@ -64,14 +66,15 @@ command:
 | `-SSL_VERIFY`  | Indicates whether the `SSL_CERT` TLS certificate is trusted (`on`), or either self-signed or untrusted (`off`).|`on`|
 
 > **NOTE**: `ASSETS_DIR` should have read, write, and execute permissions set for **all** users. 
-> See [Troubleshooting](./docs/Workbench_DG/Troubleshooting.md) for details. 
+> See [Troubleshooting](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Troubleshooting.html) 
+> for details. 
 
 > **NOTE**: `-ENABLE_MYRIAD` and `-ENABLE_HDDL` cannot be set simultaneously because Intel® Neural
 > Compute Stick 2 and Intel® Vision Accelerator Design with Intel® Movidius™ VPUs are incompatible
 > and cannot be used in the DL Workbench together.
 
 > **NOTE**: For more information about `SSL_CERT, SSL_KEY, and SSL_VERIFY`, see 
-> [configuring TLS in Docker container](./docs/Workbench_DG/Configure_TLS.md).
+> [configuring TLS in Docker container](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Configure_TLS.html).
 
 The parameter set depends on the targets you have on your machine. Choose the combination that suits
 you and provide appropriate arguments in the starting script:
@@ -96,7 +99,7 @@ Choose the container mode that works best for you and run the corresponding comm
 ```bash
 ./start_workbench.sh -IMAGE_NAME openvino/workbench
 ```
-Once the http://127.0.0.1:5665 link followed by a generated token appears in the console log, open it in your browser. See [Enter DL Workbench](./docs/Workbench_DG/Authentication.md) for details. 
+Once the http://127.0.0.1:5665 link followed by a generated token appears in the console log, open it in your browser. See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
 
 > **TIP**: To stop a container in the interactive mode, press *Ctrl + C*.
 
@@ -105,7 +108,8 @@ Once the http://127.0.0.1:5665 link followed by a generated token appears in the
 ```bash
 ./start_workbench.sh -IMAGE_NAME openvino/workbench -DETACHED -ASSETS_DIR ~/.workbench
 ```    
-Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](./docs/Workbench_DG/Authentication.md) for details. 
+Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. 
+See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
 
 > **NOTE**: To change the directory where the token is saved, replace `~/.workbench` with another
 > directory.  
@@ -121,7 +125,7 @@ Choose the container mode that works best for you and run the corresponding comm
 ```bash
 ./start_workbench.sh -IMAGE_NAME openvino/workbench -ENABLE_GPU -DETACHED -ASSETS_DIR ~/.workbench
 ```   
-Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](./docs/Workbench_DG/Authentication.md) for details. 
+Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
 
 > **NOTE**: To change the directory where the token is saved, replace `~/.workbench` with another
 > directory. 
@@ -133,7 +137,7 @@ Wait for the DL Workbench to set up for about a minute. Once it is done, open th
 ```bash
 ./start_workbench.sh -IMAGE_NAME openvino/workbench -ENABLE_GPU
 ```
-Once the http://127.0.0.1:5665 link followed by a generated token appears in the console log, open it in your browser. See [Enter DL Workbench](./docs/Workbench_DG/Authentication.md) for details. 
+Once the http://127.0.0.1:5665 link followed by a generated token appears in the console log, open it in your browser. See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
 
 > **TIP**: To stop a container in the interactive mode, press *Ctrl + C*.
 
@@ -153,7 +157,7 @@ Once a link appears in the console log, point your browser to http://127.0.0.1:5
 ```bash
 ./start_workbench.sh -IMAGE_NAME openvino/workbench -ENABLE_MYRIAD -DETACHED -ASSETS_DIR ~/.workbench
 ```  
-Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](./docs/Workbench_DG/Authentication.md) for details. 
+Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
 
 > **NOTE**: To change the directory where the token is saved, replace `~/.workbench` with another
 > directory.  
@@ -169,14 +173,14 @@ Download the Intel® Distribution of OpenVINO™ toolkit for Linux* OS from the
 [download page](https://software.seek.intel.com/openvino-toolkit) (registration required).
 
 Follow the instructions to
-[Install the Intel® Distribution of OpenVINO™ toolkit for Linux*](./docs/install_guides/installing-openvino-linux.md).
+[Install the Intel® Distribution of OpenVINO™ toolkit for Linux*](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_linux.html).
 
 > **NOTE**: Do not remove the archive you used to install the OpenVINO™ toolkit
 > package, because the archive is required for running the DL Workbench.
 
 **Step 2: Set Up Dependencies for Intel® Vision Accelerator Design with Intel® Movidius™ VPUs**
 
-Set up the environment on the host machine. It is required to execute `hddldaemon`, which is responsible for communication between the HDDL plugin and the board. To set up the environment, follow the [Configuration Guide for Intel® Vision Accelerator Design with Intel® Movidius™ VPUs](./docs/install_guides/installing-openvino-linux-ivad-vpu.md).
+Set up the environment on the host machine. It is required to execute `hddldaemon`, which is responsible for communication between the HDDL plugin and the board. To set up the environment, follow the [Configuration Guide for Intel® Vision Accelerator Design with Intel® Movidius™ VPUs](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_linux_ivad_vpu.html).
 
 **Step 3: Run `hddldaemon`** 
 
@@ -201,7 +205,7 @@ Once a link appears in the console log, point your browser to http://127.0.0.1:5
 ```bash
 ./start_workbench.sh -IMAGE_NAME openvino/workbench -ENABLE_HDDL -DETACHED -ASSETS_DIR ~/.workbench
 ```    
-Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](./docs/Workbench_DG/Authentication.md) for details. 
+Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
 
 > **NOTE**: To change the directory where the token is saved, replace `~/.workbench` with another
 > directory.  
@@ -225,7 +229,7 @@ Once a link appears in the console log, point your browser to http://127.0.0.1:5
 ```bash
 ./start_workbench.sh -IMAGE_NAME openvino/workbench -ENABLE_GPU -ENABLE_MYRIAD -DETACHED -ASSETS_DIR ~/.workbench
 ```  
-Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](./docs/Workbench_DG/Authentication.md) for details. 
+Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
 
 > **NOTE**: To change the directory where the token is saved, replace `~/.workbench` with another
 > directory.  
@@ -241,14 +245,14 @@ Download the Intel® Distribution of OpenVINO™ toolkit for Linux* OS from the
 [download page](https://software.seek.intel.com/openvino-toolkit) (registration required).
 
 Follow the instructions to
-[Install the Intel® Distribution of OpenVINO™ toolkit for Linux*](./docs/install_guides/installing-openvino-linux.md).
+[Install the Intel® Distribution of OpenVINO™ toolkit for Linux*](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_linux.html).
 
 > **NOTE**: Do not remove the archive you used to install the OpenVINO™ toolkit
 > package, because the archive is required for running the DL Workbench.
 
 **Step 2: Set Up Dependencies for Intel® Vision Accelerator Design with Intel® Movidius™ VPUs**
 
-Set up the environment on the host machine. It is required to execute `hddldaemon`, which is responsible for communication between the HDDL plugin and the board. To set up the environment, follow the [Configuration Guide for Intel® Vision Accelerator Design with Intel® Movidius™ VPUs](./docs/install_guides/installing-openvino-linux-ivad-vpu.md).
+Set up the environment on the host machine. It is required to execute `hddldaemon`, which is responsible for communication between the HDDL plugin and the board. To set up the environment, follow the [Configuration Guide for Intel® Vision Accelerator Design with Intel® Movidius™ VPUs](https://docs.openvinotoolkit.org/latest/_docs_install_guides_installing_openvino_linux_ivad_vpu.html).
 
 **Step 3: Run `hddldaemon`** 
 
@@ -272,7 +276,7 @@ Once a link appears in the console log, point your browser to http://127.0.0.1:5
 ```bash
 ./start_workbench.sh -IMAGE_NAME openvino/workbench -ENABLE_GPU -ENABLE_HDDL -DETACHED -ASSETS_DIR ~/.workbench
 ```   
-Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](./docs/Workbench_DG/Authentication.md) for details. 
+Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
 
 > **NOTE**: To change the directory where the token is saved, replace `~/.workbench` with another
 > directory.  
@@ -281,7 +285,7 @@ Wait for the DL Workbench to set up for about a minute. Once it is done, open th
 > To monitor logs in the detached mode, run `docker logs workbench`.
 
 You have successfully installed the OpenVINO™ DL Workbench. Move on to
-[Work with Models and Sample Datasets](./docs/Workbench_DG/Work_with_Models_and_Sample_Datasets.md).
+[Work with Models and Sample Datasets](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Work_with_Models_and_Sample_Datasets.html).
 
 #### <a name="docker-run">Run Docker Container with `docker run` Command</a>
 
@@ -367,7 +371,7 @@ docker run -p 127.0.0.1:5665:5665 `
            --volume /C/workbench:/home/openvino/.workbench `
            -d openvino/workbench:latest
 </code></pre>
-Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `C:\workbench` folder. See [Enter DL Workbench](./docs/Workbench_DG/Authentication.md) for details. 
+Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `C:\workbench` folder. See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
 
 > **TIP**: To stop a container in this mode, run the `docker stop workbench` command.     
 > To monitor logs in the detached mode, run `docker logs workbench`.
@@ -378,7 +382,7 @@ When you open http://127.0.0.1:5665 in your browser, the
 ![](./docs/img/Get_Started_Page.png)
 
 You have successfully installed the OpenVINO™ DL Workbench. Move on to
-[Work with Models and Sample Datasets](./docs/Workbench_DG/Work_with_Models_and_Sample_Datasets.md).
+[Work with Models and Sample Datasets](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Work_with_Models_and_Sample_Datasets.html).
 
 
 ### <a name="proxy-windows">Set Proxy: Windows OS (Optional)</a>
@@ -425,8 +429,8 @@ For details on other parameters used in the command, see the previous section.
 ### Install Docker CE on macOS
 
 To install Docker Desktop for macOS, follow the steps described in the
-[Install Docker Desktop on Mac](https://docs.docker.com/docker-for-mac/install/) (registration required). When the
-installation is complete, start Docker Desktop.
+[Install Docker Desktop on Mac](https://docs.docker.com/docker-for-mac/install/) (registration required). 
+When the installation is complete, start Docker Desktop.
 
 ### Run Docker Container on macOS
 
@@ -454,7 +458,7 @@ docker run -p 127.0.0.1:5665:5665 \
                 --volume ~/.workbench:/home/openvino/.workbench
                 -d openvino/workbench:latest
 ```
-Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](./docs/Workbench_DG/Authentication.md) for details. 
+Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
 
 > **TIP**: To stop a container in this mode, run the `docker stop workbench` command.     
 > To monitor logs in the detached mode, run `docker logs workbench`.
@@ -465,7 +469,7 @@ When you open http://127.0.0.1:5665 in your browser, the
 ![](./docs/img/Get_Started_Page.png)
 
 You have successfully installed the OpenVINO™ DL Workbench. Move on to
-[Work with Models and Sample Datasets](./docs/Workbench_DG/Work_with_Models_and_Sample_Datasets.md).
+[Work with Models and Sample Datasets](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Work_with_Models_and_Sample_Datasets.html).
 
 ### <a name="proxy-macos">Set Proxy: macOS (Optional)</a>
 
