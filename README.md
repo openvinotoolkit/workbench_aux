@@ -67,7 +67,7 @@ curl -o start_workbench.sh https://raw.githubusercontent.com/openvinotoolkit/wor
 ```
 
 > **NOTE**: Execution of any of the above commands starts the DL Workbench in the interactive mode
-> with CPU support only. Go to the <a href="#args">List of All Arguments</a> for other options.
+> with CPU support only. Go to the [List of All Arguments](./docs/Install_DL_Workbench.md#args) for other options.
 
 #### <a id="manual-start">Step-by-Step Start</a>
 
