@@ -20,19 +20,53 @@ Ubuntu](https://docs.docker.com/install/).
 
 ### Run Docker Container on Linux OS
 
-> **NOTE**: The following sections contain instructions to run the DL Workbench with the dedicated
-> script. If you prefer to use `docker run` instead, see <a href="#docker-run">Run Docker Container
-> with `docker run` Command</a>.
-
-Download the `starting script` manually from the [repository](https://github.com/openvinotoolkit/workbench_aux) or by running the following command:
-```bash
-wget https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh
-```
+> **NOTE**: The following sections contain instructions to run the DL Workbench with the
+> dedicated script. If you prefer to use `docker run` instead, see 
+> <a href="#docker-run">Run Docker Container with `docker run` Command</a>.
 
 > **NOTE**: If you are behind corporate proxies, set them as described in <a href="#proxy-linux">Set Proxy</a>.
 
-Run the Docker container with the highest available version of the DL Workbench with the following
-command: 
+To start or update the DL Workbench, run the starting script with a single-line command or manually.
+Two sections below describe the both options.
+
+> **IMPORTANT**: To download the script using the command line, you must have GNU Wget or cURL installed.
+
+#### Single-Line Start
+
+Choose one of the options:
+* Single-line command with GNU Wget:
+```bash
+wget https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh && bash start_workbench.sh
+```
+
+* Single-line command with cURL:
+```bash
+curl -o start_workbench.sh https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh && bash start_workbench.sh
+```
+
+> **NOTE**: Execution of any of the above commands starts the DL Workbench in the interactive mode
+> with CPU support only. Go to the <a href="#args">List of All Arguments</a> for other options.
+
+#### Step-by-Step Start
+
+1. Choose one of the options to download the script:
+   * Download with GNU Wget:
+   ```bash
+   wget https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh
+   ```
+   * Download with cURL:
+   ```bash
+   curl -o start_workbench.sh https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh
+   ```
+
+2. Open a terminal in the directory with the downloaded script and run the following command to make
+   the file executable:
+```bash
+chmod +x start_workbench.sh
+```
+
+3. Run the Docker container with the highest available version of the DL Workbench with the
+   following command: 
 ```
 ./start_workbench.sh -IMAGE_NAME openvino/workbench
 ```
@@ -42,7 +76,7 @@ command:
 > ./start_workbench.sh --help
 > ```
 
-**List of All Arguments**:   
+#### <a name="args">List of All Arguments</a>   
 
 | Argument| Explanation | Default Value|
 |:----- | :----- | :----- |
