@@ -17,16 +17,18 @@ HTTP_PROXY=${http_proxy}
 HTTPS_PROXY=${https_proxy}
 NO_PROXY=${no_proxy}
 
-help_message="Usage -IMAGE_NAME \${image_name}
-                    [-HTTP_PROXY \${http_proxy}]
-                    [-HTTPS_PROXY \${https_proxy}]
-                    [-NO_PROXY \${no_proxy}]
-                    [-OTHER_ARGUMENTS]
+help_message="Usage:
+start_workbench.sh -IMAGE_NAME \${image_name}
+                                       [-HTTP_PROXY \${http_proxy}]
+                                       [-HTTPS_PROXY \${https_proxy}]
+                                       [-NO_PROXY \${no_proxy}]
+                                       [-OTHER_ARGUMENTS \${value}]
 
 Optional parameters:
 
     -IMAGE_NAME - Specifies the name of the image to build the Docker container upon. Default value: 'openvino/workbench'.
-    -ASSETS_DIR - Mounts a provided local folder to the '/home/openvino/.workbench' directory in the Docker container. The folder is not mounted by default.
+    -ASSETS_DIR - Mounts a provided local folder to the '/home/openvino/.workbench' directory in the Docker container. The folder is not mounted by default. Format: /path/to/dir
+    -DB_DUMP_ARCHIVE - Name of the archive with DL Workbench database dump that is stored in the directory you pass to '-ASSETS_DIR'.
     -DETACHED - Runs DL Workbench in detached mode. Default value: 'false'.
     -IP - Specifies the IP to bind. Default value: '0.0.0.0'.
     -PORT - Maps the Docker container port '5665' to the provided host port to get access to the DL Workbench from a web browser. Default value: '5665'.
@@ -38,7 +40,7 @@ Optional parameters:
     -NO_PROXY - Specifies URLs to be excluded from proxying in format: 'url1,url2,url31'.
     -SSL_CERT - Specifies path to DL Workbench web app TLS certificate in DL Workbench assets directory. Example: /'ASSETS_DIR'/certificate.pem
     -SSL_KEY - Specifies path to 'SSL_CERT' certificate private key in DL Workbench assets directory. Example: /'ASSETS_DIR'/key.pem
-    -SSL_VERIFY - Sets 'SSL_CERT' TLS certificate as trusted ('on', default), or either self-signed or untrusted ('off').
+    -SSL_VERIFY - Sets 'SSL_CERT' TLS certificate as trusted ('true', default), or either self-signed or untrusted ('false').
 
 Arguments that enable devices (by default, only CPU is enabled):
 
@@ -100,6 +102,12 @@ Then copy the required assets into it and use the directory as '-ASSETS_DIR' arg
 https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Troubleshooting.html#container
 "
 
+no_dump_help_message="
+To restore the database, you need an archive with the DL Workbench database dump in the directory you pass to '-ASSETS_DIR '.
+
+Please refer to the documentation for additional info:
+https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Persist_Database.html
+"
 
 export SSL_VERIFY=on
 
@@ -110,59 +118,52 @@ while test $# -gt 0; do
             exit -1
             ;;
         -HTTP_PROXY)
-            shift
-            HTTP_PROXY=$1
-            shift
+            HTTP_PROXY=$2
+            shift 2
             ;;
         -HTTPS_PROXY)
-            shift
-            HTTPS_PROXY=$1
-            shift
+            HTTPS_PROXY=$2
+            shift 2
             ;;
         -NO_PROXY)
-            shift
-            NO_PROXY=$1
-            shift
+            NO_PROXY=$2
+            shift 2
             ;;
         -ASSETS_DIR)
-            shift
-            ASSETS_DIR=$1
-            shift
+            ASSETS_DIR=$2
+            shift 2
             ;;
         -SSL_CERT)
-            shift
-            SSL_CERT=$1
-            shift
+            SSL_CERT=$2
+            shift 2
             ;;
         -SSL_KEY)
-            shift
-            SSL_KEY=$1
-            shift
+            SSL_KEY=$2
+            shift 2
             ;;
         -SSL_VERIFY)
-            shift
-            export SSL_VERIFY=$1
-            shift
+            export SSL_VERIFY=$2
+            shift 2
             ;;
         -IMAGE_NAME)
-            shift
-            IMAGE_NAME=$1
-            shift
+            IMAGE_NAME=$2
+            shift 2
             ;;
         -TAG)
-            shift
-            TAG=$1
-            shift
+            TAG=$2
+            shift 2
             ;;
         -IP)
-            shift
-            IP=$1
-            shift
+            IP=$2
+            shift 2
             ;;
         -PORT)
-            shift
-            PORT=$1
-            shift
+            PORT=$2
+            shift 2
+            ;;
+        -DB_DUMP_ARCHIVE)
+            DB_DUMP_ARCHIVE=$2
+            shift 2
             ;;
         -SAVE_TOKEN)
             SAVE_TOKEN=1
@@ -173,9 +174,8 @@ while test $# -gt 0; do
             shift
             ;;
         -CONTAINER_NAME)
-            shift
-            CONTAINER_NAME=$1
-            shift
+            CONTAINER_NAME=$2
+            shift 2
             ;;
         -ENABLE_GPU)
             ENABLE_GPU="--device /dev/dri"
@@ -227,16 +227,14 @@ fi
 
 # Verify assets directory
 if [[ -n ${ASSETS_DIR} ]]; then
-
     if [[ -d ${ASSETS_DIR} ]]; then
         PERMISSIONS=$(stat -c "%a" ${ASSETS_DIR})
-        OTHERS_PERMISSIONS="${PERMISSIONS:2:1}" # Taking the third number, which is permissions for 'others'
+        OTHER_PERMISSIONS="${PERMISSIONS:2:1}" # Taking the third number, which is permissions for 'others'
 
-        if [[ ${OTHERS_PERMISSIONS} -ne 7 ]] && [[ ${OTHERS_PERMISSIONS} -ne 6 ]]; then
+        if [[ ${OTHER_PERMISSIONS} -ne 7 ]]; then
             echo "Assets directory: ${ASSETS_DIR}"
             echo "Permissions: ${PERMISSIONS}"
             echo -e "${permissions_help_message}"
-            echo "Aborting."
             exit 1
         fi
     else
@@ -246,9 +244,22 @@ if [[ -n ${ASSETS_DIR} ]]; then
     fi
 fi
 
+# Verify database dump
+if [[ -n ${DB_DUMP_ARCHIVE} ]]; then
+    if [[ -z ${ASSETS_DIR} ]]; then
+        echo "Pass the directory that contains the archive with the DL Workbench database dump to the '-ASSETS_DIR' argument."
+        echo "Aborting."
+        exit 1
+    elif [[ ! -f $(realpath -s ${ASSETS_DIR})/${DB_DUMP_ARCHIVE} ]]; then
+        echo "${no_dump_help_message}"
+        echo "Aborting."
+        exit 1
+    fi
+fi
+
 # Check if token saving is enabled and ASSETS_DIR is provided
 if [[ ${SAVE_TOKEN} -eq 1 ]] && [[ -z ${ASSETS_DIR} ]]; then
-    echo "To save login token, provide the save directory as the 'ASSETS_DIR' argument."
+    echo "To save login token, provide the save directory to the '-ASSETS_DIR' argument."
     echo "Aborting."
     exit 1
 fi
@@ -292,6 +303,7 @@ if [[ ${ENABLE_MYRIAD} -gt 0 ]]; then
             --device-cgroup-rule='c 189:* rmw' \
             -v /dev/bus/usb:/dev/bus/usb \
             $([ -z ${ASSETS_DIR+x} ] || printf -- '-v %s\n' ${ASSETS_DIR}:${DOCKER_CONFIG_DIR} ) \
+            $([ -z ${DB_DUMP_ARCHIVE+x} ] || printf -- '-e %s\n' DATABASE_DUMP_FILE=${DB_DUMP_ARCHIVE} ) \
             -e http_proxy="${HTTP_PROXY}" \
             -e https_proxy="${HTTPS_PROXY}" \
             -e no_proxy="${NO_PROXY}" \
@@ -307,6 +319,7 @@ else
             ${ENABLE_GPU} \
             ${ENABLE_HDDL} \
             $([ -z ${ASSETS_DIR+x} ] || printf -- '-v %s\n' ${ASSETS_DIR}:${DOCKER_CONFIG_DIR} ) \
+            $([ -z ${DB_DUMP_ARCHIVE+x} ] || printf -- '-e %s\n' DATABASE_DUMP_FILE=${DB_DUMP_ARCHIVE} ) \
             -e http_proxy="${HTTP_PROXY}" \
             -e https_proxy="${HTTPS_PROXY}" \
             -e no_proxy="${NO_PROXY}" \

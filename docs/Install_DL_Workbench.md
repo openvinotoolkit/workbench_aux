@@ -91,13 +91,14 @@ chmod +x start_workbench.sh
 | `-ENABLE_MYRIAD` | **Boolean.** Mounts directory `/dev/bus/usb` to the Docker container and adds the rule with allowed devices list to the cgroup. Enables the container to use Intel® Neural Compute Stick 2 devices in the DL Workbench. *Cannot be used when running with Vision Accelerator Design with Intel® Movidius™ VPUs.*  | `false`|
 | `-ENABLE_HDDL` | **Boolean.** Adds a host device to the container and mounts directory `/var/tmp` to the Docker container. Enables the container to use Vision Accelerator Design with Intel® Movidius™ VPUs in the DL Workbench. *Cannot be used when running with Intel® Neural Compute Stick 2.*| `false`|
 | `-DO_NOT_SAVE_TOKEN` | **Boolean.** Disables token saving in the configuration directory. | `false`|
+| `-DB_DUMP_ARCHIVE` | Name of the archive with DL Workbench database dump that is stored in the directory you pass to '-ASSETS_DIR'. |N/A|
 | `-HTTP_PROXY`  | Specifies the HTTP proxy in the format `http://<user>:<password>@<proxy-host>:<proxy-port>`. |N/A|
 | `-HTTPS_PROXY`  | Specifies the HTTPS proxy in the format `https://<user>:<password>@<proxy-host>:<proxy-port>`. |N/A|
 | `-NO_PROXY`  |  Specifies the URLs that should be excluded from proxying in the format `url1,url2,url3`. |N/A|
 | `-ASSETS_DIR`  | Mounts a provided local folder to the `/home/openvino/.workbench` directory in the Docker container. |N/A|
 | `-SSL_CERT`  | Specifies the path to the DL Workbench web app TLS certificate in the DL Workbench configuration directory. | N/A|
 | `-SSL_KEY`  | Specifies the path to the `SSL_CERT` certificate private key in the DL Workbench configuration directory. |N/A|
-| `-SSL_VERIFY`  | Indicates whether the `SSL_CERT` TLS certificate is trusted (`on`), or either self-signed or untrusted (`off`).|`on`|
+| `-SSL_VERIFY`  | Indicates whether the `SSL_CERT` TLS certificate is trusted (`true`), or either self-signed or untrusted (`false`).|`true`|
 
 > **NOTE**: `ASSETS_DIR` should have read, write, and execute permissions set for **all** users. 
 > See [Troubleshooting](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Troubleshooting.html) 
