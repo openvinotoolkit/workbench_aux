@@ -11,7 +11,8 @@ instructions for your operating system:
 
 For details about parameters, see <a href="#parameters">Parameter Explanation</a>.
 
-## <a name="linux">Install DL Workbench on Linux* OS</a>
+These instructions help you install dependencies and run the DL Workbench through a Docker image on
+Linux\*, Windows\*, and macOS\*. 
 
 ### Install Docker* CE on Linux OS
 
@@ -26,10 +27,9 @@ Ubuntu](https://docs.docker.com/install/).
 
 > **NOTE**: If you are behind corporate proxies, set them as described in <a href="#proxy-linux">Set Proxy</a>.
 
-To start or update the DL Workbench, run the starting script with a single-line command or manually.
-Two sections below describe the both options.
+[![](https://img.youtube.com/vi/s8LeFjYepAU/0.jpg)](https://www.youtube.com/watch?v=s8LeFjYepAU)
 
-> **IMPORTANT**: To download the script using the command line, you must have GNU Wget or cURL installed.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/s8LeFjYepAU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 #### Single-Line Start
 
@@ -87,29 +87,40 @@ chmod +x start_workbench.sh
 | `-PORT`  |  Maps the Docker container port `5665` to the provided host port to get access to the DL Workbench from a web browser. |`5665` |
 | `-DETACHED`  | **Boolean.** Enables the detached mode of the Docker container. |`false`|
 | `-CONTAINER_NAME`  | Specifies the container name to use. |`workbench`|
+| `-RESTART`  | Restarts previously stopped DL Workbench container. |N/A|
+| `-STOP`  | Stops DL Workbench container. |N/A|
 | `-ENABLE_GPU`  | **Boolean.** Adds a host device to the container. Enables the container to use GPU devices in the DL Workbench. | `false` |
 | `-ENABLE_MYRIAD` | **Boolean.** Mounts directory `/dev/bus/usb` to the Docker container and adds the rule with allowed devices list to the cgroup. Enables the container to use Intel® Neural Compute Stick 2 devices in the DL Workbench. *Cannot be used when running with Vision Accelerator Design with Intel® Movidius™ VPUs.*  | `false`|
 | `-ENABLE_HDDL` | **Boolean.** Adds a host device to the container and mounts directory `/var/tmp` to the Docker container. Enables the container to use Vision Accelerator Design with Intel® Movidius™ VPUs in the DL Workbench. *Cannot be used when running with Intel® Neural Compute Stick 2.*| `false`|
-| `-DO_NOT_SAVE_TOKEN` | **Boolean.** Disables token saving in the configuration directory. | `false`|
-| `-DB_DUMP_ARCHIVE` | Name of the archive with DL Workbench database dump that is stored in the directory you pass to '-ASSETS_DIR'. |N/A|
 | `-HTTP_PROXY`  | Specifies the HTTP proxy in the format `http://<user>:<password>@<proxy-host>:<proxy-port>`. |N/A|
 | `-HTTPS_PROXY`  | Specifies the HTTPS proxy in the format `https://<user>:<password>@<proxy-host>:<proxy-port>`. |N/A|
 | `-NO_PROXY`  |  Specifies the URLs that should be excluded from proxying in the format `url1,url2,url3`. |N/A|
 | `-ASSETS_DIR`  | Mounts a provided local folder to the `/home/openvino/.workbench` directory in the Docker container. |N/A|
 | `-SSL_CERT`  | Specifies the path to the DL Workbench web app TLS certificate in the DL Workbench configuration directory. | N/A|
 | `-SSL_KEY`  | Specifies the path to the `SSL_CERT` certificate private key in the DL Workbench configuration directory. |N/A|
-| `-SSL_VERIFY`  | Indicates whether the `SSL_CERT` TLS certificate is trusted (`true`), or either self-signed or untrusted (`false`).|`true`|
+| `-SSL_VERIFY`  | Indicates whether the `SSL_CERT` TLS certificate is trusted (`on`), or either self-signed or untrusted (`off`).|`on`|
 
-> **NOTE**: `ASSETS_DIR` should have read, write, and execute permissions set for **all** users. 
-> See [Troubleshooting](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Troubleshooting.html) 
-> for details. 
+> **IMPORTANT**: Before using the `ASSETS_DIR` argument: <br>
+> 1. Make sure the directory you pass as a value of `ASSETS_DIR` has read, write, and execute 
+> permissions set for **all** users. See [Troubleshooting](https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Troubleshooting.html) for details.
+> 2. Create a group called `workbench` and add the current user `<USERNAME>` to it. Use the commands below:  <br>
+> ```
+> sudo groupadd -g 5665 workbench
+> ``` 
+> ```
+> sudo usermod -a -G 5665 <USERNAME>
+>```
 
-> **NOTE**: `-ENABLE_MYRIAD` and `-ENABLE_HDDL` cannot be set simultaneously because Intel® Neural
+> **NOTES**: 
+> * `-ENABLE_MYRIAD` and `-ENABLE_HDDL` cannot be set simultaneously because Intel® Neural
 > Compute Stick 2 and Intel® Vision Accelerator Design with Intel® Movidius™ VPUs are incompatible
 > and cannot be used in the DL Workbench together.
-
-> **NOTE**: For more information about `SSL_CERT, SSL_KEY, and SSL_VERIFY`, see 
+> 
+> * For more information about `SSL_CERT, SSL_KEY, and SSL_VERIFY`, see 
 > [configuring TLS in Docker container](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Configure_TLS.html).
+>
+> * For more information about `RESTART` and `STOP`, see 
+> [Docker Container](https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Docker_Container.html).
 
 The parameter set depends on the targets you have on your machine. Choose the combination that suits
 you and provide appropriate arguments in the starting script:
@@ -400,21 +411,6 @@ Once a link appears in the console log, point your browser to http://127.0.0.1:5
 ```bash
 mkdir C:\workbench
 ```
-<pre><code>
-docker run -p 127.0.0.1:5665:5665 `
-           --name workbench `
-           --volume /C/workbench:/home/openvino/.workbench `
-           -d openvino/workbench:latest
-</code></pre>
-Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `C:\workbench` folder. See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
-
-> **TIP**: To stop a container in this mode, run the `docker stop workbench` command.     
-> To monitor logs in the detached mode, run `docker logs workbench`.
-
-When you open http://127.0.0.1:5665 in your browser, the
- DL Workbench **Get Started** page appears:
-
-![](./docs/img/Get_Started_Page.png)
 
 You have successfully installed the OpenVINO™ DL Workbench. Move on to
 [Work with Models and Sample Datasets](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Work_with_Models_and_Sample_Datasets.html).
@@ -433,7 +429,7 @@ to both *Web Server* and *Secure Web Server* >> *Apply settings*
 
 *Settings* >> *Proxies* >> Add your no-proxy to *Bypass for these hosts ...* >> *Apply settings*
 
-![](./docs/img/docker_proxy-b.png)
+![](img/docker_proxy-b.png)
 
 Now set proxy in Windows PowerShell by passing the following arguments:
 
@@ -447,6 +443,7 @@ $https_proxy="<your_https_proxy>"
 > **NOTE**: Double quotes are required for these arguments.
 
 Then run the Docker container with additional proxy parameters:  
+
 > **NOTE**: Replace `<no-proxy>`, `<http-proxy>`, and `<https-proxy>` with your proxy values.   
 <pre><code>
 docker run -p 127.0.0.1:5665:5665 `
@@ -501,7 +498,7 @@ Wait for the DL Workbench to set up for about a minute. Once it is done, open th
 When you open http://127.0.0.1:5665 in your browser, the
  DL Workbench **Get Started** page appears:
 
-![](./docs/img/Get_Started_Page.png)
+![](./img/Get_Started_Page.png)
 
 You have successfully installed the OpenVINO™ DL Workbench. Move on to
 [Work with Models and Sample Datasets](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Work_with_Models_and_Sample_Datasets.html).
