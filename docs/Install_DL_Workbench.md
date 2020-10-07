@@ -14,6 +14,7 @@ For details about parameters, see <a href="#parameters">Parameter Explanation</a
 These instructions help you install dependencies and run the DL Workbench through a Docker image on
 Linux\*, Windows\*, and macOS\*. 
 
+## <a name="linux">Install DL Workbench from Docker Hub* on Linux*</a>
 ### Install Docker* CE on Linux OS
 
 To install Docker CE for Linux, follow the steps described in [Get Docker Engine - Community for
