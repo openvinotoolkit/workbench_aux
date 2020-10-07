@@ -54,7 +54,7 @@ help_message="Usage: start_workbench.sh -IMAGE_NAME \${image_name}
     -ENABLE_HDDL - Specifies whether to enable HDDL. Default value: 'false'.
 
 \e[1mRestart previously stopped DL Workbench container:\e[0m
-./start_workbench -RESTART <container-name>
+./start_workbench.sh -RESTART <container-name>
 \e[31mOther arguments (except -DETACHED) are not supported. DL Workbench will have the capabilities that were enabled on the first run.\e[0m
 
 \e[1mNotes:\e[0m
@@ -100,13 +100,13 @@ https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Troubleshooting.html#
 
 restarting_container_help_message="
 Could not recognize the arguments provided to restart the DL Workbench container. To restart the container, provide only the container name.
-./start_workbench -RESTART <container-name>
+./start_workbench.sh -RESTART <container-name>
 \e[31mOther arguments (except -DETACHED) are not supported. DL Workbench will have the capabilities that were enabled on the first run.\e[0m
 "
 
 stopping_container_help_message="
 Could not recognize the arguments provided to stop the DL Workbench container. To stop the container, provide only the container name.
-./start_workbench -STOP <container-name>
+./start_workbench.sh -STOP <container-name>
 \e[31mOther arguments are not supported. The DL Workbench will be stopped.\e[0m
 "
 
@@ -263,7 +263,7 @@ if [[ -n ${CONTAINER_TO_RESTART} ]]; then
         exit 1
     elif [[ -z "$(docker ps -a | grep ${CONTAINER_TO_RESTART})" ]]; then # Check if container does not exist
         echo "A container with the name '${CONTAINER_TO_RESTART}' does not exist."
-        echo "Use ./start_workbench --help for details."
+        echo "Use ./start_workbench.sh --help for details."
         echo -e "\e[1mAborting.\e[0m"
         exit 1
     fi
@@ -290,7 +290,7 @@ if [[ -z "$(docker images -a | grep ${IMAGE_NAME})" ]] || [[ -z "$(docker images
     echo "An image with the specified name '${IMAGE_NAME}' and tag '${TAG}' was not found. Try changing IMAGE_NAME and/or TAG arguments."
     echo ""
     echo "Alternatively, use 'docker pull openvino/workbench:latest' command to pull the highest available version of the DL Workbench."
-    echo "Then, start the DL Workbench using './start_workbench -IMAGE_NAME openvino/workbench -TAG latest'"
+    echo "Then, start the DL Workbench using './start_workbench.sh -IMAGE_NAME openvino/workbench -TAG latest'"
     echo -e "\e[31mNOTE: All of your current DL Workbench projects will be lost if you use the new version of the DL Workbench.\e[0m"
     echo -e "\e[1mAborting.\e[0m"
     exit 1
