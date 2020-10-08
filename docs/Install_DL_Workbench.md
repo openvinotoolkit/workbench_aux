@@ -417,6 +417,21 @@ Once a link appears in the console log, point your browser to http://127.0.0.1:5
 mkdir C:\workbench
 ```
 
+<pre><code>
+docker run -p 127.0.0.1:5665:5665 `
+           --name workbench `
+           --volume /C/workbench:/home/workbench/.workbench `
+           -d openvino/workbench:latest
+</code></pre>
+Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `C:\workbench` folder. See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
+
+> **TIP**: To stop a container in this mode, run the `docker stop workbench` command.     
+> To monitor logs in the detached mode, run `docker logs workbench`.
+When you open http://127.0.0.1:5665 in your browser, the
+ DL Workbench **Get Started** page appears:
+
+![](./img/Get_Started_Page.png)
+
 You have successfully installed the OpenVINO™ DL Workbench. Move on to
 [Work with Models and Sample Datasets](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Work_with_Models_and_Sample_Datasets.html).
 
