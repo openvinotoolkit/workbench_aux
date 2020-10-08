@@ -28,10 +28,6 @@ Ubuntu](https://docs.docker.com/install/).
 
 > **NOTE**: If you are behind corporate proxies, set them as described in <a href="#proxy-linux">Set Proxy</a>.
 
-[![](https://img.youtube.com/vi/s8LeFjYepAU/0.jpg)](https://www.youtube.com/watch?v=s8LeFjYepAU)
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/s8LeFjYepAU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
 #### Pull the highest available Docker image of the DL Workbench
 
 `docker pull openvino/workbench:latest`
