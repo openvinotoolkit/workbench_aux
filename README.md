@@ -5,6 +5,7 @@
 - [About](#about)
 - [License](#license)
 - [Install DL Workbench](#install)
+    - [Pull Docker Image](#pull)
     - [Single-Line Start](#single-line-start)
     - [Step-by-Step Start](#manual-start)
 - [Useful Links](#links)
@@ -53,17 +54,21 @@ Two sections below describe the both options.
 
 > **IMPORTANT**: To download the script using the command line, you must have GNU Wget or cURL installed.
 
+#### <a id="pull">Pull the highest available Docker image of the DL Workbench</a>
+
+`docker pull openvino/workbench:latest`
+
 #### <a id="single-line-start">Single-Line Start</a>
 
 Choose one of the options:
 * Single-line command with GNU Wget:
 ```bash
-wget https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh && bash start_workbench.sh
+wget https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh && bash start_workbench.sh -IMAGE_NAME openvino/workbench -TAG latest
 ```
 
 * Single-line command with cURL:
 ```bash
-curl -o start_workbench.sh https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh && bash start_workbench.sh
+curl -o start_workbench.sh https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh && bash start_workbench.sh -IMAGE_NAME openvino/workbench -TAG latest
 ```
 
 > **NOTE**: Execution of any of the above commands starts the DL Workbench in the interactive mode
@@ -90,7 +95,7 @@ chmod +x start_workbench.sh
 3. Run the Docker container with the highest available version of the DL Workbench with the
    following command: 
 ```
-./start_workbench.sh -IMAGE_NAME openvino/workbench
+./start_workbench.sh -IMAGE_NAME openvino/workbench -TAG latest
 ```
 
 > **NOTE**: To see the list of available arguments in a terminal, run the following command:
