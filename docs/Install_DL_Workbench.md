@@ -9,7 +9,7 @@ instructions for your operating system:
 * <a href="#windows">Install DL Workbench from Docker Hub* on Windows* OS</a>
 * <a href="#macos">Install DL Workbench from Docker Hub* on macOS*</a>
 
-For details about parameters, see <a href="#parameters">Parameter Explanation</a>.
+For details about parameters, see <a href="#args">Parameter Explanation</a>.
 
 These instructions help you install dependencies and run the DL Workbench through a Docker image on
 Linux\*, Windows\*, and macOS\*. 
