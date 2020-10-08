@@ -427,8 +427,9 @@ Wait for the DL Workbench to set up for about a minute. Once it is done, open th
 
 > **TIP**: To stop a container in this mode, run the `docker stop workbench` command.     
 > To monitor logs in the detached mode, run `docker logs workbench`.
+
 When you open http://127.0.0.1:5665 in your browser, the
- DL Workbench **Get Started** page appears:
+DL Workbench **Get Started** page appears:
 
 ![](./img/Get_Started_Page.png)
 
@@ -507,7 +508,7 @@ mkdir -p ~/.workbench
 ```bash
 docker run -p 127.0.0.1:5665:5665 \
                 --name workbench \
-                --volume ~/.workbench:/home/openvino/.workbench
+                --volume ~/.workbench:/home/workbench/.workbench
                 -d openvino/workbench:latest
 ```
 Wait for the DL Workbench to set up for about a minute. Once it is done, open the http://127.0.0.1:5665 link and enter a token generated in the `~/.workbench` folder. See [Enter DL Workbench](https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Authentication.html) for details. 
@@ -553,5 +554,5 @@ The command blocks above run Docker containers named `workbench` with the follow
 |`-v /var/tmp:/var/tmp`| Mounts directory `/var/tmp` to the Docker container. Enables the container to use Vision Accelerator Design with Intel® Movidius™ VPUs devices in the DL Workbench. *Cannot be used when running with Intel® Neural Compute Stick 2.*|
 | `-it`  | Enables the interactive mode of the Docker container. Set to the Docker image name `workbench`. |
 | `-d`  | Enables the detached mode of the Docker container. Set to the Docker image name `workbench`. |
-|`--volume ~/.workbench:/home/openvino/.workbench`| Mounts a local folder named `~/.workbench` to the `/home/openvino/.workbench` directory in the Docker\* container|
+|`--volume ~/.workbench:/home/workbench/.workbench`| Mounts a local folder named `~/.workbench` to the `/home/openvino/.workbench` directory in the Docker\* container|
 |` -e https_proxy=<https-proxy>`<br><br>`-e http_proxy=<http-proxy>`<br><br> `-e no_proxy=<no-proxy>`  |  Optional. If you are behind a corporate proxy, set environment variables.| 
