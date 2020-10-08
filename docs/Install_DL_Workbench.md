@@ -32,17 +32,21 @@ Ubuntu](https://docs.docker.com/install/).
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/s8LeFjYepAU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+#### Pull the highest available Docker image of the DL Workbench
+
+`docker pull openvino/workbench:latest`
+
 #### Single-Line Start
 
 Choose one of the options:
 * Single-line command with GNU Wget:
 ```bash
-wget https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh && bash start_workbench.sh
+wget https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh && bash start_workbench.sh -IMAGE_NAME openvino/workbench -TAG latest
 ```
 
 * Single-line command with cURL:
 ```bash
-curl -o start_workbench.sh https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh && bash start_workbench.sh
+curl -o start_workbench.sh https://raw.githubusercontent.com/openvinotoolkit/workbench_aux/master/start_workbench.sh && bash start_workbench.sh -IMAGE_NAME openvino/workbench -TAG latest
 ```
 
 > **NOTE**: Execution of any of the above commands starts the DL Workbench in the interactive mode
@@ -69,7 +73,7 @@ chmod +x start_workbench.sh
 3. Run the Docker container with the highest available version of the DL Workbench with the
    following command: 
 ```
-./start_workbench.sh -IMAGE_NAME openvino/workbench
+./start_workbench.sh -IMAGE_NAME openvino/workbench -TAG latest
 ```
 
 > **NOTE**: To see the list of available arguments in a terminal, run the following command:
