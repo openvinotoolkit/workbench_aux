@@ -322,6 +322,7 @@ if [[ $? -ne 0 ]]; then
         echo ""
         echo "Could not pull the image from Docker Hub."
         echo "Pull and start the highest available version of the DL Workbench with 'openvino/workbench' as IMAGE_NAME and 'latest' as TAG."
+        echo "./start_workbench.sh -IMAGE_NAME openvino/workbench -TAG latest"
         echo -e "\e[31mNOTE: All your current DL Workbench projects will be lost if you run the new version.\e[0m"
         exit 1
     fi
