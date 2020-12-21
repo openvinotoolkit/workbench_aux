@@ -27,7 +27,9 @@ help_message="Usage: start_workbench.sh -IMAGE_NAME \${image_name}
                                        [-HTTPS_PROXY \${https_proxy}]
                                        [-NO_PROXY \${no_proxy}]
                                        [-OTHER_ARGUMENTS]
+
 \e[1mOptional parameters:\e[0m
+
     -IMAGE_NAME - Specifies the name of the image to build the Docker container upon. Default value: 'workbench'.
     -ASSETS_DIR - Mounts a provided local folder to the '/home/workbench/.workbench' directory in the Docker container. The folder is not mounted by default. Format: /path/to/dir
     -DETACHED - Runs DL Workbench in detached mode. Default value: 'false'.
@@ -35,7 +37,7 @@ help_message="Usage: start_workbench.sh -IMAGE_NAME \${image_name}
     -STOP - Stops a DL Workbench container. Example: '-STOP <container-name>'.
     -IP - Specifies the IP to bind. Default value: '0.0.0.0'.
     -PORT - Maps the Docker container port '5665' to the provided host port to get access to the DL Workbench from a web browser. Default value: '5665'.
-    -TAG - Specifies the tag to use. Default is '2021.1'.
+    -TAG - Specifies the tag to use. Default is '2021.2'.
     -CONTAINER_NAME - Specifies the name of a container. Default value: 'workbench'.
     -HTTP_PROXY - Specifies the HTTP proxy. Format:  'http://<user>:<password>@<proxy-host>:<proxy-port>'.
     -HTTPS_PROXY - Specifies the HTTPS proxy. Format:  'https://<user>:<password>@<proxy-host>:<proxy-port>'.
@@ -49,64 +51,88 @@ help_message="Usage: start_workbench.sh -IMAGE_NAME \${image_name}
     -NETWORK_ALIAS - Specifies the alias of the DL Workbench container in the network. Default alias: 'workbench'.
 
 \e[1mArguments that enable devices (by default, only CPU is enabled):\e[0m
+
     -ENABLE_GPU - Specifies whether to enable GPU. Default value: 'false'.
     -ENABLE_MYRIAD - Specifies whether to enable MYRIAD. Default value: 'false'.
     -ENABLE_HDDL - Specifies whether to enable HDDL. Default value: 'false'.
 
 \e[1mRestart previously stopped DL Workbench container:\e[0m
+
 ./start_workbench.sh -RESTART <container-name>
+
 \e[31mOther arguments (except -DETACHED) are not supported. DL Workbench will have the capabilities that were enabled on the first run.\e[0m
 
 \e[1mNotes:\e[0m
+
 1. '-ENABLE_MYRIAD' and '-ENABLE_HDDL' arguments cannot be set simultaneously.
+
 See documentation for additional info:
 https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Install_from_Docker_Hub.html#cpu-hddl
+
 2. If you want to save login token to a local file, provide 'ASSETS_DIR' argument.
 "
 
 hddl_myriad_help_message="
 '-ENABLE_MYRIAD' and '-ENABLE_HDDL' arguments cannot be set simultaneously.
+
 \e[1mAborting.\e[0m
+
 See documentation for additional info:
 https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Install_from_Docker_Hub.html#cpu-hddl
 "
 
 hddl_help_message="
 hddldaemon is not running in the background.
+
 \e[1mAborting.\e[0m
+
 See documentation for additional info:
 https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Install_from_Docker_Hub.html#cpu-hddl
 "
 
 permissions_help_message="
 Provided assets directory does not have required permissions. Read, write, and execute permissions are required for 'others' group (at least **7 mode).
+
 Create the required configuration directory with the following command:
+
 mkdir -p -m 777 /path/to/dir
+
 Then copy the required assets into it and and mount the directory by assigning it to the '-ASSETS_DIR' argument.
+
 \e[31mNOTE: Execution of the above command creates a directory accessible to ALL users for reading, writing, and executing.
+
 \e[0mSee documentation for additional info:
 https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Troubleshooting.html#container
 "
 
 no_directory_help_message="
 Provided assets directory does not exist.
+
 Create the required configuration directory with the following command:
+
 mkdir -p -m 777 /path/to/dir
+
 Then copy the required assets into it and use the directory as '-ASSETS_DIR' argument.
+
 \e[31mNOTE: Execution of the above command creates a directory accessible to ALL users for reading, writing, and executing.
+
 \e[0mSee documentation for additional info:
 https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Troubleshooting.html#container
 "
 
 restarting_container_help_message="
 Could not recognize the arguments provided to restart the DL Workbench container. To restart the container, provide only the container name.
+
 ./start_workbench.sh -RESTART <container-name>
+
 \e[31mOther arguments (except -DETACHED) are not supported. DL Workbench will have the capabilities that were enabled on the first run.\e[0m
 "
 
 stopping_container_help_message="
 Could not recognize the arguments provided to stop the DL Workbench container. To stop the container, provide only the container name.
+
 ./start_workbench.sh -STOP <container-name>
+
 \e[31mOther arguments are not supported. The DL Workbench will be stopped.\e[0m
 "
 
@@ -280,20 +306,26 @@ if [[ -n ${CONTAINER_TO_RESTART} ]]; then
 fi
 
 # Specify image name
-IMAGE_NAME=${IMAGE_NAME:-"workbench"}
+IMAGE_NAME=${IMAGE_NAME:-"openvino/workbench"}
 
-# Specify tag
-TAG=${TAG:-"2021.1"} # Release
+# Specify tag, current release
+TAG=${TAG:-"2021.2"}
 
 # Verify that image exists
-if [[ -z "$(docker images -a | grep ${IMAGE_NAME})" ]] || [[ -z "$(docker images -a | grep ${TAG})" ]]; then
-    echo "An image with the specified name '${IMAGE_NAME}' and tag '${TAG}' was not found. Try changing IMAGE_NAME and/or TAG arguments."
-    echo ""
-    echo "Alternatively, use 'docker pull openvino/workbench:latest' command to pull the highest available version of the DL Workbench."
-    echo "Then, start the DL Workbench using './start_workbench.sh -IMAGE_NAME openvino/workbench -TAG latest'"
-    echo -e "\e[31mNOTE: All of your current DL Workbench projects will be lost if you use the new version of the DL Workbench.\e[0m"
-    echo -e "\e[1mAborting.\e[0m"
-    exit 1
+docker inspect --type=image ${IMAGE_NAME}:${TAG} > /dev/null 2>&1
+if [[ $? -ne 0 ]]; then
+    echo "An image with the specified name '${IMAGE_NAME}' and tag '${TAG}' was not found locally. Trying to pull it from Docker Hub..."
+
+    docker pull ${IMAGE_NAME}:${TAG}
+
+    if [[ $? -ne 0 ]]; then
+        echo ""
+        echo "Could not pull the image from Docker Hub."
+        echo "Pull and start the highest available version of the DL Workbench with 'openvino/workbench' as IMAGE_NAME and 'latest' as TAG."
+        echo "./start_workbench.sh -IMAGE_NAME openvino/workbench -TAG latest"
+        echo -e "\e[31mNOTE: All your current DL Workbench projects will be lost if you run the new version.\e[0m"
+        exit 1
+    fi
 fi
 
 # Specify IP
