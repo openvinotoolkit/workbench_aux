@@ -37,7 +37,7 @@ help_message="Usage: start_workbench.sh -IMAGE_NAME \${image_name}
     -STOP - Stops a DL Workbench container. Example: '-STOP <container-name>'.
     -IP - Specifies the IP to bind. Default value: '0.0.0.0'.
     -PORT - Maps the Docker container port '5665' to the provided host port to get access to the DL Workbench from a web browser. Default value: '5665'.
-    -TAG - Specifies the tag to use. Default is '2021.2'.
+    -TAG - Specifies the tag to use. Default is '2021.3'.
     -CONTAINER_NAME - Specifies the name of a container. Default value: 'workbench'.
     -HTTP_PROXY - Specifies the HTTP proxy. Format:  'http://<user>:<password>@<proxy-host>:<proxy-port>'.
     -HTTPS_PROXY - Specifies the HTTPS proxy. Format:  'https://<user>:<password>@<proxy-host>:<proxy-port>'.
@@ -47,8 +47,11 @@ help_message="Usage: start_workbench.sh -IMAGE_NAME \${image_name}
     -SSL_VERIFY - Sets the 'SSL_CERT' TLS certificate as trusted ('true'), self-signed ('false'), or untrusted ('false'). Default: 'true'.
     -CLOUD_SERVICE_URL - Specifies the URL to a standalone cloud service that provides Intel(R) hardware capabilities for experiments.
     -CLOUD_SERVICE_SESSION_TTL_MINUTES - Specifies the cloud service session time to live minutes.
+    -BASE_PREFIX - Specifies the base prefix of the DL Workbench web application.
     -NETWORK_NAME - Specifies the name of a Docker network to run the Docker container in. Default name: 'workbench_network'.
     -NETWORK_ALIAS - Specifies the alias of the DL Workbench container in the network. Default alias: 'workbench'.
+    -DISABLE_JUPYTER - Disables the Jupyter server.
+    -ENABLE_AUTH - Enables authentication settings for the DL Workbench.
 
 \e[1mArguments that enable devices (by default, only CPU is enabled):\e[0m
 
@@ -67,7 +70,7 @@ help_message="Usage: start_workbench.sh -IMAGE_NAME \${image_name}
 1. '-ENABLE_MYRIAD' and '-ENABLE_HDDL' arguments cannot be set simultaneously.
 
 See documentation for additional info:
-https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Install_from_Docker_Hub.html#cpu-hddl
+https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Install_from_DockerHub_Linux.html#more-params
 
 2. If you want to save login token to a local file, provide 'ASSETS_DIR' argument.
 "
@@ -78,7 +81,7 @@ hddl_myriad_help_message="
 \e[1mAborting.\e[0m
 
 See documentation for additional info:
-https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Install_from_Docker_Hub.html#cpu-hddl
+https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Install_from_DockerHub_Linux.html#more-params
 "
 
 hddl_help_message="
@@ -87,7 +90,7 @@ hddldaemon is not running in the background.
 \e[1mAborting.\e[0m
 
 See documentation for additional info:
-https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Install_from_Docker_Hub.html#cpu-hddl
+https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Install_from_DockerHub_Linux.html#more-params
 "
 
 permissions_help_message="
@@ -102,7 +105,7 @@ Then copy the required assets into it and and mount the directory by assigning i
 \e[31mNOTE: Execution of the above command creates a directory accessible to ALL users for reading, writing, and executing.
 
 \e[0mSee documentation for additional info:
-https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Troubleshooting.html#container
+https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Troubleshooting.html#container
 "
 
 no_directory_help_message="
@@ -117,7 +120,7 @@ Then copy the required assets into it and use the directory as '-ASSETS_DIR' arg
 \e[31mNOTE: Execution of the above command creates a directory accessible to ALL users for reading, writing, and executing.
 
 \e[0mSee documentation for additional info:
-https://docs.openvinotoolkit.org/latest/_docs_Workbench_DG_Troubleshooting.html#container
+https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Troubleshooting.html#container
 "
 
 restarting_container_help_message="
@@ -134,6 +137,24 @@ Could not recognize the arguments provided to stop the DL Workbench container. T
 ./start_workbench.sh -STOP <container-name>
 
 \e[31mOther arguments are not supported. The DL Workbench will be stopped.\e[0m
+"
+
+no_docker_help_message="
+Could not find Docker.
+
+See installation instructions:
+https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Install_from_DockerHub_Linux.html#prerequisite
+"
+
+could_not_pull_help_message="
+Could not pull the image from Docker Hub.
+
+Pull and start the highest available version of the DL Workbench with 'openvino/workbench' as IMAGE_NAME and 'latest' as TAG:
+  docker pull openvino/workbench:latest
+  ./start_workbench.sh -IMAGE_NAME openvino/workbench -TAG latest
+
+\e[31mNOTE: All your current DL Workbench projects will be lost if you run the new version without providing -ASSETS_DIR argument.
+Use ./start_workbench.sh --help for details.\e[0m
 "
 
 # Verify args if restart is needed
@@ -175,7 +196,6 @@ while test $# -gt 0; do
             ;;
         -ASSETS_DIR)
             ASSETS_DIR=$2
-            SAVE_TOKEN=1
             shift 2
             ;;
         -SSL_CERT)
@@ -254,12 +274,32 @@ while test $# -gt 0; do
             CLOUD_SERVICE_SESSION_TTL_MINUTES=$2
             shift 2
             ;;
+        -BASE_PREFIX)
+            BASE_PREFIX=$2
+            shift 2
+            ;;
+        -DISABLE_JUPYTER)
+            DISABLE_JUPYTER=1
+            shift
+            ;;
+        -ENABLE_AUTH)
+            ENABLE_AUTH=1
+            SAVE_TOKEN=1
+            shift
+            ;;
         *)
             echo -e "$help_message"
             exit 1
             ;;
     esac
 done
+
+# Check for Docker
+docker --version > /dev/null 2>&1
+if [[ $? -ne 0 ]]; then
+  echo "${no_docker_help_message}"
+  exit 1
+fi
 
 # Stop container
 if [[ -n ${CONTAINER_TO_STOP} ]]; then
@@ -309,7 +349,7 @@ fi
 IMAGE_NAME=${IMAGE_NAME:-"openvino/workbench"}
 
 # Specify tag, current release
-TAG=${TAG:-"2021.2"}
+TAG=${TAG:-"2021.3"}
 
 # Verify that image exists
 docker inspect --type=image ${IMAGE_NAME}:${TAG} > /dev/null 2>&1
@@ -319,11 +359,7 @@ if [[ $? -ne 0 ]]; then
     docker pull ${IMAGE_NAME}:${TAG}
 
     if [[ $? -ne 0 ]]; then
-        echo ""
-        echo "Could not pull the image from Docker Hub."
-        echo "Pull and start the highest available version of the DL Workbench with 'openvino/workbench' as IMAGE_NAME and 'latest' as TAG."
-        echo "./start_workbench.sh -IMAGE_NAME openvino/workbench -TAG latest"
-        echo -e "\e[31mNOTE: All your current DL Workbench projects will be lost if you run the new version.\e[0m"
+        echo -e "${could_not_pull_help_message}"
         exit 1
     fi
 fi
@@ -422,7 +458,9 @@ echo "Port: ${PORT}"
 if [[ -n ${ASSETS_DIR} ]]; then
     ASSETS_DIR=${ASSETS_DIR%/}
     echo "Assets Directory: ${ASSETS_DIR}"
-    echo "Token File: ${ASSETS_DIR}/token.txt"
+    if [[ ! -z ${ENABLE_AUTH} ]]; then
+        echo "Token File: ${ASSETS_DIR}/token.txt"
+    fi
 fi
 _print_is_enabled "Detached" ${DETACHED}
 _print_is_enabled "GPU Enabled" ${ENABLE_GPU}
@@ -450,6 +488,9 @@ if [[ ${ENABLE_MYRIAD} -gt 0 ]]; then
             $([ -z ${SSL_VERIFY+x} ] || printf -- '-e %s\n' SSL_VERIFY=$SSL_VERIFY ) \
             $([ -z ${CLOUD_SERVICE_URL+x} ] || printf -- '-e %s\n' CLOUD_SERVICE_URL=${CLOUD_SERVICE_URL} ) \
             $([ -z ${CLOUD_SERVICE_SESSION_TTL_MINUTES+x} ] || printf -- '-e %s\n' CLOUD_SERVICE_SESSION_TTL_MINUTES=${CLOUD_SERVICE_SESSION_TTL_MINUTES} ) \
+            $([ -z ${BASE_PREFIX+x} ] || printf -- '-e %s\n' BASE_PREFIX=${BASE_PREFIX} ) \
+            $([ -z ${DISABLE_JUPYTER+x} ] || printf -- '-e %s\n' DISABLE_JUPYTER=1 ) \
+            $([ -z ${ENABLE_AUTH+x} ] || printf -- '-e %s\n' ENABLE_AUTH=1 ) \
             -e NETWORK_ALIAS=${NETWORK_ALIAS} \
             --network=${NETWORK_NAME} \
             --network-alias=${NETWORK_ALIAS} \
@@ -472,6 +513,9 @@ else
             $([ -z ${SSL_VERIFY+x} ] || printf -- '-e %s\n' SSL_VERIFY=$SSL_VERIFY ) \
             $([ -z ${CLOUD_SERVICE_URL+x} ] || printf -- '-e %s\n' CLOUD_SERVICE_URL=${CLOUD_SERVICE_URL} ) \
             $([ -z ${CLOUD_SERVICE_SESSION_TTL_MINUTES+x} ] || printf -- '-e %s\n' CLOUD_SERVICE_SESSION_TTL_MINUTES=${CLOUD_SERVICE_SESSION_TTL_MINUTES} ) \
+            $([ -z ${BASE_PREFIX+x} ] || printf -- '-e %s\n' BASE_PREFIX=${BASE_PREFIX} ) \
+            $([ -z ${DISABLE_JUPYTER+x} ] || printf -- '-e %s\n' DISABLE_JUPYTER=1 ) \
+            $([ -z ${ENABLE_AUTH+x} ] || printf -- '-e %s\n' ENABLE_AUTH=1 ) \
             -e NETWORK_ALIAS=${NETWORK_ALIAS} \
             --network=${NETWORK_NAME} \
             --network-alias=${NETWORK_ALIAS} \
@@ -488,7 +532,7 @@ if [[ ! $DETACHED =~ ^\ +$ ]]; then
     echo ""
     echo "DL Workbench is available at: ${PREFIX}://127.0.0.1:${PORT}"
 
-    if [[ -f "${ASSETS_DIR}/token.txt" ]]; then
+    if [ ! -z ${ENABLE_AUTH} ] && [[ -f "${ASSETS_DIR}/token.txt" ]]; then
         echo "Login token: $(cat "${ASSETS_DIR}/token.txt")"
     fi
 fi
