@@ -1,0 +1,60 @@
+{
+  "sectionHeaders": {
+    "generalOptions": "General Options",
+    "advancedOptions": "Advanced Options",
+    "results": "Execute / Results"
+  },
+  "fieldLabels": {
+    "dockerInstalled": "I have Docker installed",
+    "os": "My OS",
+    "devices": "Accelerators on my machine",
+    "startWith": "Start DL Workbench with",
+    "httpProxy": "Use HTTP Proxy",
+    "httpsProxy": "Use HTTPS Proxy",
+    "noProxy": "Use No Proxy"
+  },
+  "optionLabels": {
+    "boolean": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "os": {
+      "linux": "Linux",
+      "windows": "Windows",
+      "macOS": "macOS"
+    },
+    "devices": {
+      "CPU": "CPU",
+      "GPU": "GPU",
+      "NCS2": "NCS2",
+      "HDDL": "HDDL",
+      "HDDLTooltip": "Intel® Vision Accelerator Design with Intel® Movidius™ VPUs"
+    },
+    "startWith": {
+      "python": "Python wrapper",
+      "docker": "Docker command"
+    },
+    "proxy": {
+      "inputPlaceholder": "Enter your proxy"
+    }
+  },
+  "warnings": {
+    "incompatibleDevices": "NCS2 and HDDL cannot be used simultaneously"
+  },
+  "resultSteps": {
+    "labels": {
+      "installDocker": "Install Docker",
+      "installWrapper": "Install Python Wrapper",
+      "pullImage": "Pull DL Workbench image",
+      "start": "Start DL Workbench"
+    },
+    "descriptions": {
+      "installDockerInstructions": {
+        "linux": "Follow <a href=\"https://docs.docker.com/engine/install/#server\" target=\"_blank\">instructions</a> on configuring Docker on Linux",
+        "windows": "Follow <a href=\"https://docs.docker.com/docker-for-windows/install/\" target=\"_blank\">instructions</a> on configuring Docker on Windows. After the installation it is recommended to allocate at least 8GB memory in the Docker Desktop settings.",
+        "macOS": "Follow <a href=\"https://docs.docker.com/docker-for-mac/install/\" target=\"_blank\">instructions</a> on configuring Docker on macOS. After the installation it is recommended to allocate at least 8GB memory in the Docker Desktop settings."
+      },
+      "windowsCommandComment": "# Run this command in Windows PowerShell"
+    }
+  }
+}
