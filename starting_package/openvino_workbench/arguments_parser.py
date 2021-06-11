@@ -169,7 +169,7 @@ def parse_arguments() -> argparse.Namespace:
 
     if not args.assets_directory and (args.ssl_key_name or args.ssl_certificate_name):
         parser.error('"--assets-directory" is required for SSL. SSL key and certificate should be placed there.')
-    if (not args.ssl_key_name and args.ssl_certificate_name) or (args.ssl_key_name and not args.ssl_cert_name):
+    if (not args.ssl_key_name and args.ssl_certificate_name) or (args.ssl_key_name and not args.ssl_certificate_name):
         parser.error('Both SSL certificate name and SSL key name are required.')
 
     return args
