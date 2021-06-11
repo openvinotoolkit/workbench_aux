@@ -1,0 +1,19 @@
+<div class="field-label-wrapper">
+  <span class="field-label">{{ field.label }}</span>
+  <span *ngIf="field.helpMessage" class="field-help link">Learn more</span>
+</div>
+<div class="field-control-wrapper">
+  <ng-container [ngSwitch]="field.type">
+    <ng-container *ngSwitchCase="FieldTypes.RADIO">
+      <wb-radio-button-input [options]="field.options" [value]="value"
+                             (changeValue)="handleInputChange($event)"></wb-radio-button-input>
+    </ng-container>
+    <ng-container *ngSwitchCase="FieldTypes.CHECKBOX">
+      <wb-checkbox-button-input [options]="field.options" [value]="value" (changeValue)="handleInputChange($event)"
+                                [disabledOptions]="field.disabledOptions | async"></wb-checkbox-button-input>
+    </ng-container>
+    <ng-container *ngSwitchCase="FieldTypes.OPTIONAL_TEXT">
+      <wb-optional-text-input [value]="value" [placeholder]="field.placeholder" (changeValue)="handleInputChange($event)"></wb-optional-text-input>
+    </ng-container>
+  </ng-container>
+</div>

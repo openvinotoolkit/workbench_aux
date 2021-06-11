@@ -1,0 +1,34 @@
+<form [formGroup]="commandFormGroup">
+  <section class="section section-general">
+    <div class="section-header-wrapper">
+      <span class="section-header">{{ messages.sectionHeaders.generalOptions }}</span>
+    </div>
+
+    <ng-container *ngFor="let field of generalOptionsFields" [formGroup]="commandFormGroup">
+      <wb-field [field]="field" [formControlName]="field.name"></wb-field>
+    </ng-container>
+    <div class="devices-warning-wrapper" *ngIf="incompatibleDevicesSelected">
+      <div class="devices-warning">{{ messages.warnings.incompatibleDevices }}</div>
+    </div>
+  </section>
+
+  <section class="section section-advanced">
+    <div class="section-header-wrapper">
+      <span class="section-header">{{ messages.sectionHeaders.advancedOptions }}</span>
+    </div>
+
+    <ng-container *ngFor="let field of advancedOptionsFields" [formGroup]="commandFormGroup">
+      <wb-field [field]="field" [formControlName]="field.name"></wb-field>
+    </ng-container>
+  </section>
+
+  <section class="section section-results">
+    <div class="section-header-wrapper">
+      <span class="section-header">{{ messages.sectionHeaders.results }}</span>
+    </div>
+
+    <wb-result-section
+      [commandConfig]="(commandFormGroup.valueChanges | async) || commandFormGroup.getRawValue()"
+    ></wb-result-section>
+  </section>
+</form>

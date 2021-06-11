@@ -1,0 +1,23 @@
+//REGULAR
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 400;
+  font-style: normal;
+  src: url('~src/assets/fonts/Roboto/Roboto-Regular.latin.woff2') format('woff2');
+}
+
+//MEDIUM
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 500;
+  font-style: normal;
+  src: url('~src/assets/fonts/Roboto/Roboto-Medium.latin.woff2') format('woff2');
+}
+
+//BOLD
+@font-face {
+  font-family: 'Roboto';
+  font-weight: 700;
+  font-style: normal;
+  src: url('~src/assets/fonts/Roboto/Roboto-Bold.latin.woff2') format('woff2');
+}

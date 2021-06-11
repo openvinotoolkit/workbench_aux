@@ -1,0 +1,39 @@
+@import 'variables';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  counter-reset: result-step-counter;
+
+  .result-step {
+    display: flex;
+    flex-direction: row;
+    border-top: 1px solid $white;
+
+    &-label {
+      flex-basis: $field-label-width;
+      flex-shrink: 0;
+      flex-direction: column;
+      padding: $container-padding;
+      box-sizing: border-box;
+      color: $black-two;
+      background-color: $white-grey;
+      border-left: 5px solid $blue;
+
+
+      @include wb-body-1();
+      line-height: 19px;
+
+      &::before {
+        counter-increment: result-step-counter;
+        content: counter(result-step-counter) '. ';
+      }
+
+    }
+
+    ::ng-deep .install-instructions {
+      white-space: normal;
+    }
+  }
+
+}

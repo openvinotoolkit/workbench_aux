@@ -1,0 +1,40 @@
+@import 'variables';
+
+:host {
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between;
+  background-color: $light-blue;
+  overflow-x: auto;
+
+  .command-text {
+    padding: $container-padding 0 $container-padding $container-padding;
+    white-space: pre;
+    overflow-x: auto;
+
+    @include wb-body-1();
+    line-height: 19px;
+    color: $black-two;
+  }
+
+  .copy-button-wrapper {
+    padding: $container-padding;
+    display: flex;
+    align-items: flex-start;
+
+    mat-icon {
+      cursor: pointer;
+      color: $blue;
+      $icon-size: 18px;
+      font-size: $icon-size;
+      width: $icon-size;
+      height: $icon-size;
+    }
+  }
+}
+
+::ng-deep .copy-snackbar {
+  min-width: fit-content !important;
+  padding-left: $container-padding !important;
+  padding-right: $container-padding !important;
+}

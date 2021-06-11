@@ -1,0 +1,6 @@
+<ng-container *ngFor="let option of options">
+  <mat-checkbox disableRipple [name]="option.value" [checked]="value?.includes(option.value)"
+                [disabled]="disabledOptions?.includes(option.value)" [matTooltip]="option.tooltip" (change)="updateSelectedOptions($event)">
+    {{option.label}}
+  </mat-checkbox>
+</ng-container>

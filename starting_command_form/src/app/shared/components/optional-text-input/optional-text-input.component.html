@@ -1,0 +1,4 @@
+<wb-radio-button-input [options]="booleanOptions" [value]="enabled"
+                       (changeValue)="handleRadioButtonInputChange($event)"></wb-radio-button-input>
+<wb-text-input (changeText)="handleTextInputChange($event)" [value]="value" [placeholder]="placeholder"
+               [disabled]="!enabled"></wb-text-input>

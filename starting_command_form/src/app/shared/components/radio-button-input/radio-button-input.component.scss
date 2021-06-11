@@ -1,0 +1,45 @@
+@import 'variables';
+
+:host {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  background-color: $light-blue;
+
+  mat-radio-group {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+
+    mat-radio-button {
+      display: flex;
+      flex-grow: 1;
+      flex-basis: 50%;
+
+      &:not(:first-child) {
+        border-left: 1px solid $white;
+      }
+
+      ::ng-deep .mat-radio-label {
+        padding: $container-padding;
+
+        .mat-radio-outer-circle {
+          border-color: $black-two;
+        }
+      }
+
+      &.mat-radio-checked {
+        background-color: $blue;
+        color: $white;
+
+        ::ng-deep .mat-radio-outer-circle {
+          border-color: $white;
+        }
+
+        ::ng-deep .mat-radio-inner-circle {
+          background-color: $white;
+        }
+      }
+    }
+  }
+}
