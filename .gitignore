@@ -1,3 +1,23 @@
 # dev tools
 *.idea
 .vscode
+
+# starting command form
+
+# compiled output
+starting_command_form/dist
+starting_command_form/tmp
+starting_command_form/out-tsc
+
+# dependencies
+starting_command_form/node_modules
+
+# misc
+starting_command_form/.sass-cache
+starting_command_form/connect.lock
+starting_command_form/coverage
+starting_command_form/libpeerconnection.log
+starting_command_form/npm-debug.log
+starting_command_form/yarn-error.log
+starting_command_form/testem.log
+starting_command_form/typings
