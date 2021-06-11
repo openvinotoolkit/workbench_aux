@@ -62,7 +62,7 @@ def parse_image_name(image_name: str) -> tuple:
         print(f'The specified image name: "{image_name}" might be incorrect.\n'
               f'Please specify the image name in the following format: repository:tag\n'
               f'Example: openvino/workbench:latest\n'
-              f'Or omit the `--image-name` argument to use the latest version of DL Workbench.\n'
+              f'Or omit the `--image` argument to use the latest version of DL Workbench.\n'
               f'Aborting.')
         sys.exit(1)
     return repository, tag
@@ -111,7 +111,7 @@ def pull_image_and_display_progress(docker_client: DockerClient, image_name: str
               f'Could not found the image in the {repository} repository. Please check if the image name is correct\n'
               f'and is in the following format: repository:tag\n'
               f'Example: openvino/workbench:latest\n'
-              f'Or omit the `--image-name` argument to use the latest version of DL Workbench.\n'
+              f'Or omit the `--image` argument to use the latest version of DL Workbench.\n'
               f'Aborting.')
         sys.exit(1)
 
