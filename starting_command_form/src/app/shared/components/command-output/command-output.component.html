@@ -1,0 +1,11 @@
+<div class="command-text">
+  <div class="command-text-comment">
+    <ng-content select="comment"></ng-content>
+  </div>
+  <div class="command-text-output" #commandText>
+    <ng-content select="output"></ng-content>
+  </div>
+</div>
+<div *ngIf="copy" class="copy-button-wrapper">
+  <mat-icon svgIcon="copy" (click)="copyCommand(commandText)" aria-hidden="false" aria-label="Copy"></mat-icon>
+</div>

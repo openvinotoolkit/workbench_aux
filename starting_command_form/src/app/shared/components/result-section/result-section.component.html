@@ -1,0 +1,31 @@
+<div *ngIf="!commandConfig?.dockerInstalled" class="result-step">
+  <div class="result-step-label">{{ resultStepsMessages.labels.installDocker }}</div>
+  <wb-command-output>
+    <span class="install-instructions" ngProjectAs="output" [innerHTML]="installDockerInstructionsContent"></span>
+  </wb-command-output>
+</div>
+
+<div *ngIf="commandConfig?.startWith == StartTypes.PYTHON" class="result-step">
+  <div class="result-step-label">{{ resultStepsMessages.labels.installWrapper }}</div>
+  <wb-command-output [copy]="true">
+    <span ngProjectAs="output">{{ commands.installPythonWrapper }}</span>
+  </wb-command-output>
+</div>
+
+<div *ngIf="commandConfig?.startWith == StartTypes.DOCKER" class="result-step">
+  <div class="result-step-label">{{ resultStepsMessages.labels.pullImage }}</div>
+  <wb-command-output [copy]="true">
+    <span ngProjectAs="output">{{ commands.pullImage }}</span>
+  </wb-command-output>
+</div>
+
+<div class="result-step">
+  <div class="result-step-label">{{ resultStepsMessages.labels.start }}</div>
+  <wb-command-output [copy]="true">
+    <ng-container *ngIf="commandConfig.os === OperatingSystems.WINDOWS" ngProjectAs="comment">
+      <span>{{ resultStepsMessages.descriptions.windowsCommandComment }}</span>
+      <br/>
+    </ng-container>
+    <span ngProjectAs="output">{{ commandConfig | command }}</span>
+  </wb-command-output>
+</div>

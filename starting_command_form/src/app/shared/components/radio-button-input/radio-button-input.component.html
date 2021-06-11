@@ -1,0 +1,9 @@
+<mat-radio-group (change)="changeValue.emit($event.value)" [value]="value">
+  <mat-radio-button
+    *ngFor="let option of options"
+    [value]="option.value"
+    disableRipple
+    >
+      {{option.label}}
+  </mat-radio-button>
+</mat-radio-group>

@@ -1,0 +1,76 @@
+@import 'variables';
+
+:host {
+  display: flex;
+  flex-grow: 1;
+  background-color: $light-blue;
+
+  .input-wrapper {
+    padding: 0 $container-padding;
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    border: 2px solid transparent;
+
+    input {
+      width: 100%;
+      border: 0;
+      background-color: transparent;
+
+      @include wb-body-1();
+      line-height: 19px;
+      color: $black-two;
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  .input-button-wrapper {
+    padding: $container-padding;
+    display: flex;
+    align-items: center;
+
+    mat-icon {
+      cursor: pointer;
+      color: $blue;
+      $icon-size: 18px;
+      font-size: $icon-size;
+      width: $icon-size;
+      height: $icon-size;
+    }
+  }
+
+
+  &.active {
+    .input-wrapper {
+      border: 2px solid $blue;
+      border-right: 0;
+    }
+
+    .input-button-wrapper {
+      background-color: $blue;
+
+      mat-icon {
+        color: $white;
+      }
+    }
+  }
+
+
+  &.disabled {
+    cursor: not-allowed;
+
+    .input-wrapper,
+    .input-button-wrapper {
+      background-color: $light-grey;
+
+      input,
+      mat-icon {
+        color: $grey;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
