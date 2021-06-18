@@ -118,7 +118,8 @@ def start_container(docker_client: DockerClient,
     print_finish_message(protocol=protocol, port=config['ports']['5665'], tokens=tokens)
 
     # Check for DL WB Docker network and create one if it does not exist
-    connect_container_to_network(docker_client, config['name'], network, network_alias)
+    if 'CLOUD_SERVICE_URL' not in config['environment']:
+        connect_container_to_network(docker_client, config['name'], network, network_alias)
 
     if not detached:
         finishing_message = '\nPress Ctrl+C to stop the container.'

@@ -224,6 +224,7 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
     # DevCloud
     if passed_arguments.cloud_service_address:
         config['environment']['CLOUD_SERVICE_URL'] = passed_arguments.cloud_service_address
+        config['network'] = passed_arguments.network_name
     if passed_arguments.cloud_service_session_ttl:
         config['environment']['CLOUD_SERVICE_SESSION_TTL_MINUTES'] = passed_arguments.cloud_service_session_ttl
 
