@@ -9,7 +9,6 @@
 
   .command-text {
     padding: $container-padding 0 $container-padding $container-padding;
-    white-space: pre;
     overflow-x: auto;
 
     @include wb-body-1();
