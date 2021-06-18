@@ -51,7 +51,7 @@ export class PythonCommandParametersBuilder implements ICommandParametersBuilder
 
   constructor() {
     this._parameters = [
-      new CommandParameter('--image-name', commandDefaults.dockerImageWithTag),
+      new CommandParameter('--image', commandDefaults.dockerImageWithTag),
     ];
   }
 
