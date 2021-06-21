@@ -46,7 +46,7 @@ Available RAM space| 8 GB\** | 8 GB\** | 8 GB\**
 Available storage space| 10 GB + space for imported artifacts| 10 GB + space for imported artifacts| 10 GB + space for imported artifacts
 Docker\*| Docker CE 18.06.1 | Docker Desktop 2.3.0.3|Docker CE 18.06.1
 
-Windows*, Linux* and MacOS* support CPU targets. GPU, Intel® Neural Compute Stick 2 and Intel® Vision Accelerator Design with Intel® Movidius™ VPUs are supported only for Linux*.
+Windows\*, Linux\* and MacOS\* support CPU targets. GPU, Intel® Neural Compute Stick 2 and Intel® Vision Accelerator Design with Intel® Movidius™ VPUs are supported only for Linux\*.
 
 ## <a id="install">Install DL Workbench</a>
 
