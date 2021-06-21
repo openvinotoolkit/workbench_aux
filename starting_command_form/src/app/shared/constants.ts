@@ -95,6 +95,4 @@ export const commandDefaults = {
   hostPort: '5665',
   containerPort: '5665',
   containerName: 'workbench',
-  unixLineContinuationSymbol: '\\',
-  windowsLineContinuationSymbol: '\`',
 };
