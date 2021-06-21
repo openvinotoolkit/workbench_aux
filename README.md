@@ -13,7 +13,7 @@ Copyright © 2018-2021 Intel Corporation
 
 ## <a id="introduction">Introduction</a>
 
-Deep Learning Workbench is a web-based graphical environment with a convenient user-friendly interface, and a wide range of customization options designed to make the development of deep learning models significantly easier. 
+Deep Learning Workbench is an official OpenVINO™ graphical user interface designed to make the production of pre-trained deep learning models significantly easier. 
 
 The DL Workbench is an official UI environment of the OpenVINO™ toolkit that enables you to:
 
