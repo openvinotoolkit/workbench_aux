@@ -23,7 +23,7 @@ import time
 
 import requests
 
-from openvino_workbench.constants import URL_TOKEN_REGEXP, LOGIN_TOKEN_REGEXP, PUBLIC_PORT
+from openvino_workbench.constants import URL_TOKEN_REGEXP, LOGIN_TOKEN_REGEXP, INTERNAL_PORT
 
 import docker
 
@@ -37,7 +37,7 @@ def get_image_size(repository_tags_url: str, proxies: dict) -> int:
 
 
 def print_starting_message(config: dict, enabled_devices: dict):
-    ip, port = config['ports'][PUBLIC_PORT]
+    ip, port = config['ports'][INTERNAL_PORT]
     print('\nStarting the DL Workbench with the following arguments:\n'
           f'Image Name: {config["image"]}\n'
           f'Container Name: {config["name"]}\n'
