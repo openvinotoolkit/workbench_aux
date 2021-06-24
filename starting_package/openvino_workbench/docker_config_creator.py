@@ -216,9 +216,9 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
                 sys.exit(1)
 
             config['environment']['SSL_KEY'] = os.path.join(DL_WB_DOCKER_CONFIG_PATH,
-                                                            passed_arguments.ssl_certificate_name)
+                                                            passed_arguments.ssl_key_name)
             config['environment']['SSL_CERT'] = os.path.join(DL_WB_DOCKER_CONFIG_PATH,
-                                                             passed_arguments.ssl_key_name)
+                                                             passed_arguments.ssl_certificate_name)
 
     # DevCloud
     if passed_arguments.cloud_service_address:
