@@ -115,7 +115,7 @@ def start_container(docker_client: DockerClient,
         tokens = get_tokens_from_logs(docker_client=docker_client, container_name=config['name'])
 
     protocol = 'https' if 'SSL_KEY' in config['environment'] else 'http'
-    print_finish_message(protocol=protocol, port=config['ports']['5665'], tokens=tokens)
+    print_finish_message(protocol=protocol, port=config['ports']['5665'][1], tokens=tokens)
 
     # Check for DL WB Docker network and create one if it does not exist
     if 'CLOUD_SERVICE_URL' not in config['environment']:
