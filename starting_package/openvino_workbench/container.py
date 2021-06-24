@@ -22,7 +22,7 @@ import re
 import sys
 import time
 
-from openvino_workbench.constants import DL_WB_LOGO, PRE_STAGE_MESSAGES, STAGE_COMPLETE_MESSAGES
+from openvino_workbench.constants import DL_WB_LOGO, PRE_STAGE_MESSAGES, STAGE_COMPLETE_MESSAGES, PUBLIC_PORT
 from openvino_workbench.utils import get_tokens_from_logs, get_docker_logs_since
 
 from docker import DockerClient
@@ -115,7 +115,7 @@ def start_container(docker_client: DockerClient,
         tokens = get_tokens_from_logs(docker_client=docker_client, container_name=config['name'])
 
     protocol = 'https' if 'SSL_KEY' in config['environment'] else 'http'
-    print_finish_message(protocol=protocol, port=config['ports']['5665'][1], tokens=tokens)
+    print_finish_message(protocol=protocol, port=config['ports'][PUBLIC_PORT][1], tokens=tokens)
 
     # Check for DL WB Docker network and create one if it does not exist
     if 'CLOUD_SERVICE_URL' not in config['environment']:

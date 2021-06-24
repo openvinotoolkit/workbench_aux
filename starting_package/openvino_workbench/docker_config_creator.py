@@ -25,7 +25,7 @@ import sys
 from argparse import Namespace
 from pathlib import Path
 
-from openvino_workbench.constants import DL_WB_DOCKER_CONFIG_PATH
+from openvino_workbench.constants import DL_WB_DOCKER_CONFIG_PATH, PUBLIC_PORT
 
 
 def does_dir_exist(path_to_dir: str) -> bool:
@@ -147,7 +147,7 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
                               'NETWORK_ALIAS': passed_arguments.network_alias,
                               'PYTHON_WRAPPER': 1},
               'name': passed_arguments.container_name,
-              'ports': {'5665': (passed_arguments.ip, passed_arguments.port)},
+              'ports': {PUBLIC_PORT: (passed_arguments.ip, passed_arguments.port)},
               'stderr': True,
               'stdout': True,
               'detach': True,
