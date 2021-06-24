@@ -23,7 +23,7 @@ import time
 
 import requests
 
-from openvino_workbench.constants import URL_TOKEN_REGEXP, LOGIN_TOKEN_REGEXP
+from openvino_workbench.constants import URL_TOKEN_REGEXP, LOGIN_TOKEN_REGEXP, INTERNAL_PORT
 
 import docker
 
@@ -37,11 +37,12 @@ def get_image_size(repository_tags_url: str, proxies: dict) -> int:
 
 
 def print_starting_message(config: dict, enabled_devices: dict):
+    ip, port = config['ports'][INTERNAL_PORT]
     print('\nStarting the DL Workbench with the following arguments:\n'
           f'Image Name: {config["image"]}\n'
           f'Container Name: {config["name"]}\n'
-          f'IP: {config["hostname"]}\n'
-          f'Port: {config["ports"]["5665"]}\n'
+          f'IP: {ip}\n'
+          f'Port: {port}\n'
           f'GPU Enabled: {"True" if enabled_devices["GPU"] else "False"}\n'
           f'MYRIAD Enabled: {"True" if enabled_devices["MYRIAD"] else "False"}\n'
           f'HDDL Enabled: {"True" if enabled_devices["HDDL"] else "False"}\n')
