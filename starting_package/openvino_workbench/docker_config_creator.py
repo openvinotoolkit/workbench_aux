@@ -108,9 +108,9 @@ def get_group_id(group: str) -> int:
     import grp
     try:
         return grp.getgrnam(group).gr_gid
-    except KeyError:
+    except KeyError as no_group_error:
         raise AssertionError(f'There is no "{group}" group on the machine. '
-                             'GPU might not be available for inference.')
+                             'GPU might not be available for inference.') from no_group_error
 
 
 def check_hddl_daemon_is_running():
