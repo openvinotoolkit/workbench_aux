@@ -6,6 +6,9 @@ ARG no_proxy
 ARG docker_username
 
 ENV USER_NAME ${docker_username}
+ENV http_proxy ${http_proxy}
+ENV https_proxy ${https_proxy}
+ENV no_proxy ${no_proxy}
 ENV PYTHON_VERSION 3.6
 ENV PYTHON python${PYTHON_VERSION}
 
