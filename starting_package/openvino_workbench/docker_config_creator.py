@@ -148,7 +148,7 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
                               'PYTHON_WRAPPER': 1},
               'name': passed_arguments.container_name,
               'ports': {INTERNAL_PORT: (passed_arguments.ip, passed_arguments.port)},
-              'hostname': 'workbench',
+              'hostname': passed_arguments.hostname,
               'stderr': True,
               'stdout': True,
               'detach': True,
