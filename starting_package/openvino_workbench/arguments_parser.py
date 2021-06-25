@@ -58,9 +58,9 @@ def parse_arguments() -> argparse.Namespace:
                         help='Specifies the DL Workbench container name to use.',
                         default='workbench')
 
-    parser.add_argument('--hostname',
+    parser.add_argument('--network-alias',
                         required=False,
-                        help='Host name of the DL Workbench container.',
+                        help='Add network alias for the container',
                         default='workbench')
 
     parser.add_argument('--detached',
