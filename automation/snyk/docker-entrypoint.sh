@@ -2,7 +2,7 @@
 
 OUTPUT_FILE=snyk-result.json
 
-python3 -m pip install importlib setuptools wheel
+python3 -m pip install setuptools wheel
 
 # Install project dependencies
 find ${PROJECT_FOLDER}/ \
