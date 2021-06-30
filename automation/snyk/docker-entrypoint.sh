@@ -5,9 +5,6 @@ PROJECT_PATH=/project
 
 python3 -m pip install setuptools wheel
 
-ls -la
-ls -la /project
-
 pushd ${PROJECT_PATH}
 
 # Install project dependencies
@@ -18,8 +15,6 @@ find ./ \
 find ./ \
   -name 'requirements*.txt' \
   -exec cat {} \; &> requirements_prod.txt
-
-cat requirements_prod.txt
 
 snyk test --json \
           --file=requirements_prod.txt \
