@@ -1,10 +1,14 @@
 #!/bin/bash
 
 OUTPUT_FILE=snyk-result.json
+PROJECT_PATH=/project
 
 python3 -m pip install setuptools wheel
 
 ls -la
+ls -la /project
+
+pushd ${PROJECT_PATH}
 
 # Install project dependencies
 find ./ \
