@@ -18,7 +18,7 @@ RUN apt-get update && \
     apt install -y --no-install-recommends apt-utils \
     python3-setuptools \
     python3-pip \
-    python${PYTHON_VERSION}-dev
+    python3-dev
 
 RUN ${PYTHON} -m pip install pip
 
