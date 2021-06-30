@@ -6,6 +6,10 @@ while (( "$#" )); do
       OUTPUT_FILE=$2
       shift 2
       ;;
+    -p|--path_to_package)
+      PATH_TO_PACKAGE=$2
+      shift 2
+      ;;
     *)
       echo Unsupport argument $1
       exit 1
@@ -15,4 +19,4 @@ done
 
 python -m pip install bandit
 
-bandit -r starting_package -o ${OUTPUT_FILE} -f txt
+bandit -r ${PATH_TO_PACKAGE} -o ${OUTPUT_FILE} -f txt

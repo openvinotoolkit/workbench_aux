@@ -6,6 +6,10 @@ while (( "$#" )); do
       CONFIG=$2
       shift 2
       ;;
+    -p|--path_to_package)
+      PATH_TO_PACKAGE=$2
+      shift 2
+      ;;
     *)
       echo Unsupport argument $1
       exit 1
@@ -15,10 +19,8 @@ done
 
 python -m pip install pylint
 
-pushd /repository
+python -m pip install -r ${PATH_TO_PACKAGE}/requirements.txt
 
-export PYTHONPATH=${PYTHONPATH}:starting_package
+export PYTHONPATH=${PYTHONPATH}:${PATH_TO_PACKAGE}
 
-pylint --rcfile=${CONFIG} starting_package
-
-popd
+pylint --rcfile=${CONFIG} ${PATH_TO_PACKAGE}
