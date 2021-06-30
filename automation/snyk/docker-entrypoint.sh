@@ -2,6 +2,8 @@
 
 OUTPUT_FILE=snyk-result.json
 
+python3 -m pip install importlib setuptools wheel
+
 # Install project dependencies
 find ${PROJECT_FOLDER}/ \
   -name 'requirements*.txt' \
@@ -10,8 +12,6 @@ find ${PROJECT_FOLDER}/ \
 find ${PROJECT_FOLDER}/ \
   -name 'requirements*.txt' \
   -exec cat {} \; &> requirements_prod.txt
-
-python3 -m pip install importlib
 
 snyk test --json \
           --file=requirements_prod.txt \
