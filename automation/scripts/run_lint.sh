@@ -19,7 +19,8 @@ done
 
 python -m pip install pylint
 
-python -m pip install -r ${PATH_TO_PACKAGE}/requirements.txt
+python -m pip install -r ${PATH_TO_PACKAGE}/requirements-core.txt
+python -m pip install -r ${PATH_TO_PACKAGE}/requirements-linux.txt
 
 export PYTHONPATH=${PYTHONPATH}:${PATH_TO_PACKAGE}
 
