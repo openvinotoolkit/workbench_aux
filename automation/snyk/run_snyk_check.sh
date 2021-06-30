@@ -40,9 +40,7 @@ docker run \
   -e "https_proxy=${HTTPS_PROXY}" \
   -e "SNYK_TOKEN=${TOKEN}" \
   -e "SNYK_API=${SNYK_API}" \
-  -e "MONITOR=true" \
   -v "${PROJECT_PATH}:/project" \
-  -v "/var/run/docker.sock:/var/run/docker.sock" \
   ${SNYK_IMAGE}
 
 exit $?
