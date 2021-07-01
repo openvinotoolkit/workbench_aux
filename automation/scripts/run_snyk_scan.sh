@@ -10,6 +10,14 @@ while (( "$#" )); do
       TOKEN=$2
       shift 2
       ;;
+    -o)
+      OUTPUT_FILE=$2
+      shift 2
+      ;;
+    -parser)
+      PARSER_SCRIPT=$2
+      shift 2
+      ;;
     -a)
       SNYK_API=$2
       shift 2
@@ -33,7 +41,7 @@ while (( "$#" )); do
   esac
 done
 
-OUTPUT_FILE=snyk-result.json
+OUTPUT_FILE_RAW=snyk-result.txt
 pushd ${PROJECT_PATH}
 
 # Place requirements in one file
@@ -51,6 +59,7 @@ docker run \
   -v "${PROJECT_PATH}:/app" \
   --env COMMAND="pip install -r requirements_prod.txt" \
   snyk/snyk:python-3.9 \
-  snyk test --json --file=requirements_prod.txt --package-manager=pip > ${OUTPUT_FILE} 2>&1
+  snyk test --json --file=requirements_prod.txt --package-manager=pip > ${OUTPUT_FILE_RAW} 2>&1
 
-exit 0
+# Parse snyk output
+python3 ${PARSER_SCRIPT} --snyk-output-file ${PROJECT_PATH}/${OUTPUT_FILE_RAW} --resulting-file ${PROJECT_PATH}/${OUTPUT_FILE}
