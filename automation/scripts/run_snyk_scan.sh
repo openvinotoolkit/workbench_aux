@@ -77,7 +77,7 @@ docker run \
   -v "${PROJECT_PATH}:/app" \
   --env COMMAND="pip install -r requirements_prod.txt" \
   snyk/snyk:python-3.9 \
-  snyk monitor --json --file=requirements_prod.txt --package-manager=pip --org=${SNYK_ORG} --project-name=Workbench_starter
+  snyk monitor --json --file=requirements_prod.txt --package-manager=pip --org=${SNYK_ORG} --project-name=Workbench_starter > /dev/null 2>&1
 
 
 # Parse snyk output
