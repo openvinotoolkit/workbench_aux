@@ -2,10 +2,6 @@
 
 while (( "$#" )); do
   case "$1" in
-    -i)
-      SNYK_IMAGE=$2
-      shift 2
-      ;;
     -p)
       PROJECT_PATH=$2
       shift 2
@@ -56,9 +52,3 @@ docker run \
   --env COMMAND="pip install -r requirements_prod.txt" \
   snyk/snyk:python-3.9 \
   snyk test --json --file=requirements_prod.txt --package-manager=pip --project-name=Workbench_starter > ${OUTPUT_FILE} 2>&1
-
-ls -la
-
-cat ${OUTPUT_FILE}
-
-exit $?
