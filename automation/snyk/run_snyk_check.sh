@@ -37,6 +37,9 @@ while (( "$#" )); do
   esac
 done
 
+
+OUTPUT_FILE=snyk-result.txt
+
 pushd ${PROJECT_PATH}
 
 # Place requirements in one file
@@ -44,8 +47,6 @@ find ./ \
   -name 'requirements*.txt' \
   ! -name 'requirements_prod.txt' \
   -exec cat {} \; &> requirements_prod.txt
-
-ls -la
 
 set -e
 
@@ -58,6 +59,10 @@ docker run \
   -v "${PROJECT_PATH}:/app" \
   --env COMMAND="pip install -r requirements_prod.txt" \
   snyk/snyk:python-3.9 \
-  snyk test --file=requirements_prod.txt --package-manager=pip
+  snyk test --file=requirements_prod.txt --package-manager=pip > ${OUTPUT_FILE}
+
+ls -la
+
+pwd
 
 exit $?
