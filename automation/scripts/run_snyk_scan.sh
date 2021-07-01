@@ -54,6 +54,19 @@ find ./ \
   ! -name 'requirements_prod.txt' \
   -exec cat {} \; &> requirements_prod.txt
 
+# Check dependencies
+docker run \
+  -e "http_proxy=${HTTP_PROXY}" \
+  -e "https_proxy=${HTTPS_PROXY}" \
+  -e "no_proxy=${NO_PROXY}" \
+  -e "SNYK_TOKEN=${TOKEN}" \
+  -e "SNYK_API=${SNYK_API}" \
+  -v "${PROJECT_PATH}:/app" \
+  --env COMMAND="pip install -r requirements_prod.txt" \
+  snyk/snyk:python-3.9 \
+  snyk test --json --file=requirements_prod.txt --package-manager=pip --org=${SNYK_ORG} --project-name=Workbench_starter > ${OUTPUT_FILE_RAW} 2>&1
+
+# Display them in org
 docker run \
   -e "http_proxy=${HTTP_PROXY}" \
   -e "https_proxy=${HTTPS_PROXY}" \
@@ -64,9 +77,8 @@ docker run \
   -v "${PROJECT_PATH}:/app" \
   --env COMMAND="pip install -r requirements_prod.txt" \
   snyk/snyk:python-3.9 \
-  snyk test --json --file=requirements_prod.txt --package-manager=pip --org=${SNYK_ORG} --project-name=Workbench_starter > ${OUTPUT_FILE_RAW} 2>&1
+  snyk monitor --json --file=requirements_prod.txt --package-manager=pip --org=${SNYK_ORG} --project-name=Workbench_starter
 
-cat ${OUTPUT_FILE_RAW}
 
 # Parse snyk output
 python3 ${PARSER_SCRIPT} --snyk-output-file ${PROJECT_PATH}/${OUTPUT_FILE_RAW} --resulting-file ${PROJECT_PATH}/${OUTPUT_FILE}
