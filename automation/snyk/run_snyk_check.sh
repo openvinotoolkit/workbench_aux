@@ -38,11 +38,10 @@ pushd ${PROJECT_PATH}
 # Place requirements in one file
 find ./ \
   -name 'requirements*.txt' \
+  ! -name 'requirements_prod.txt' \
   -exec cat {} \; &> requirements_prod.txt
 
 ls -la
-
-cat requirements_prod.txt
 
 set -e
 
