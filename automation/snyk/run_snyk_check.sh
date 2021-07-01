@@ -38,8 +38,6 @@ while (( "$#" )); do
 done
 
 
-OUTPUT_FILE=snyk-result.txt
-
 pushd ${PROJECT_PATH}
 
 # Place requirements in one file
@@ -47,8 +45,6 @@ find ./ \
   -name 'requirements*.txt' \
   ! -name 'requirements_prod.txt' \
   -exec cat {} \; &> requirements_prod.txt
-
-set -e
 
 docker run \
   -e "http_proxy=${HTTP_PROXY}" \
@@ -59,10 +55,8 @@ docker run \
   -v "${PROJECT_PATH}:/app" \
   --env COMMAND="pip install -r requirements_prod.txt" \
   snyk/snyk:python-3.9 \
-  snyk test --file=requirements_prod.txt --package-manager=pip > ${OUTPUT_FILE}
+  snyk test --json --file=requirements_prod.txt --package-manager=pip --project-name=Workbench_starter
 
 ls -la
-
-pwd
 
 exit $?
