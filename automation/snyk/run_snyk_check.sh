@@ -33,6 +33,17 @@ while (( "$#" )); do
   esac
 done
 
+pushd ${PROJECT_PATH}
+
+# Place requirements in one file
+find ./ \
+  -name 'requirements*.txt' \
+  -exec cat {} \; &> requirements_prod.txt
+
+ls -la
+
+cat requirements_prod.txt
+
 set -e
 
 docker run \
@@ -40,7 +51,9 @@ docker run \
   -e "https_proxy=${HTTPS_PROXY}" \
   -e "SNYK_TOKEN=${TOKEN}" \
   -e "SNYK_API=${SNYK_API}" \
-  -v "${PROJECT_PATH}:/project" \
-  ${SNYK_IMAGE}
+  -v "${PROJECT_PATH}:/app" \
+  --env COMMAND="pip install -r requirements_prod.txt" \
+  snyk/snyk:python-3.9 \
+  snyk test --file=requirements_prod.txt
 
 exit $?
