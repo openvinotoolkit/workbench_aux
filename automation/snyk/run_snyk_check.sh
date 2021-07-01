@@ -53,6 +53,6 @@ docker run \
   -v "${PROJECT_PATH}:/app" \
   --env COMMAND="pip install -r requirements_prod.txt" \
   snyk/snyk:python-3.9 \
-  snyk test --file=requirements_prod.txt
+  snyk test --file=requirements_prod.txt --package-manager=pip
 
 exit $?
