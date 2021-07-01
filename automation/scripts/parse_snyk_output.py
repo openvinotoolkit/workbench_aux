@@ -26,6 +26,11 @@ def parse_output(path_to_raw_output: str, path_to_result_file: str) -> int:
         json_end = data.rfind('}') + 1
         parsed = json.loads(data[json_start:json_end])
 
+    print(parsed.get('ok'))
+    print(type(parsed.get('ok')))
+    if parsed.get('ok', 0):
+        return 1
+
     with open(path_to_result_file, 'w', encoding='utf-8') as result_file:
         json.dump(parsed, result_file)
 
