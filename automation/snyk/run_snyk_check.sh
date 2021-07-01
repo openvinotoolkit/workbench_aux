@@ -26,6 +26,10 @@ while (( "$#" )); do
       HTTPS_PROXY=$2
       shift 2
       ;;
+    -no_proxy)
+      NO_PROXY=$2
+      shift 2
+      ;;
     *)
       echo Unsupport argument $1
       exit 1
@@ -48,6 +52,7 @@ set -e
 docker run \
   -e "http_proxy=${HTTP_PROXY}" \
   -e "https_proxy=${HTTPS_PROXY}" \
+  -e "no_proxy=${NO_PROXY}" \
   -e "SNYK_TOKEN=${TOKEN}" \
   -e "SNYK_API=${SNYK_API}" \
   -v "${PROJECT_PATH}:/app" \
