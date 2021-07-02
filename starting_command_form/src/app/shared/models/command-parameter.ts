@@ -57,13 +57,13 @@ export class PythonCommandParametersBuilder implements ICommandParametersBuilder
 
   addDevicesParameters(devices: Devices[]): void {
     if (devices.includes(Devices.GPU)) {
-      this._parameters.push(new CommandParameter('--gpu'));
+      this._parameters.push(new CommandParameter('--enable-gpu'));
     }
     if (devices.includes(Devices.NCS2)) {
-      this._parameters.push(new CommandParameter('--myriad'));
+      this._parameters.push(new CommandParameter('--enable-myriad'));
     }
     if (devices.includes(Devices.HDDL)) {
-      this._parameters.push(new CommandParameter('--hddl'));
+      this._parameters.push(new CommandParameter('--enable-hddl'));
     }
   }
 

@@ -25,7 +25,7 @@ import sys
 from argparse import Namespace
 from pathlib import Path
 
-from openvino_workbench.constants import DL_WB_DOCKER_CONFIG_PATH
+from openvino_workbench.constants import DL_WB_DOCKER_CONFIG_PATH, INTERNAL_PORT
 
 
 def does_dir_exist(path_to_dir: str) -> bool:
@@ -147,8 +147,8 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
                               'NETWORK_ALIAS': passed_arguments.network_alias,
                               'PYTHON_WRAPPER': 1},
               'name': passed_arguments.container_name,
-              'hostname': passed_arguments.ip,
-              'ports': {'5665': passed_arguments.port},
+              'ports': {INTERNAL_PORT: (passed_arguments.ip, passed_arguments.port)},
+              'hostname': passed_arguments.network_alias,
               'stderr': True,
               'stdout': True,
               'detach': True,
@@ -217,13 +217,14 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
                 sys.exit(1)
 
             config['environment']['SSL_KEY'] = os.path.join(DL_WB_DOCKER_CONFIG_PATH,
-                                                            passed_arguments.ssl_certificate_name)
+                                                            passed_arguments.ssl_key_name)
             config['environment']['SSL_CERT'] = os.path.join(DL_WB_DOCKER_CONFIG_PATH,
-                                                             passed_arguments.ssl_key_name)
+                                                             passed_arguments.ssl_certificate_name)
 
     # DevCloud
     if passed_arguments.cloud_service_address:
         config['environment']['CLOUD_SERVICE_URL'] = passed_arguments.cloud_service_address
+        config['network'] = passed_arguments.network_name
     if passed_arguments.cloud_service_session_ttl:
         config['environment']['CLOUD_SERVICE_SESSION_TTL_MINUTES'] = passed_arguments.cloud_service_session_ttl
 
