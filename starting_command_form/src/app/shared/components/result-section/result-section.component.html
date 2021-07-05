@@ -19,6 +19,9 @@
   </wb-command-output>
 </div>
 
+<ng-container *ngIf="commandConfig?.devices.includes(Devices.HDDL)"
+              [ngTemplateOutlet]="configureHDDLStepsTemplate"></ng-container>
+
 <div class="result-step">
   <div class="result-step-label">{{ resultStepsMessages.labels.start }}</div>
   <wb-command-output [copy]="true">
@@ -29,3 +32,20 @@
     <span ngProjectAs="output">{{ commandConfig | command }}</span>
   </wb-command-output>
 </div>
+
+
+<ng-template #configureHDDLStepsTemplate>
+  <div class="result-step">
+    <div class="result-step-label">{{ resultStepsMessages.labels.configureHDDL }}</div>
+    <wb-command-output>
+      <span ngProjectAs="output" [innerHTML]="resultStepsMessages.descriptions.configureHDDLInstructions"></span>
+    </wb-command-output>
+  </div>
+
+  <div class="result-step">
+    <div class="result-step-label">{{ resultStepsMessages.labels.runHDDLDaemon }}</div>
+    <wb-command-output [copy]="true">
+      <span ngProjectAs="output">{{ resultStepsMessages.descriptions.runHDDLDaemon }}</span>
+    </wb-command-output>
+  </div>
+</ng-template>
