@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { ICommandConfig, OperatingSystems, StartTypes } from '../../models/command-constructor-form';
+import { Devices, ICommandConfig, OperatingSystems, StartTypes } from '../../models/command-constructor-form';
 import { commandDefaults } from '../../constants';
 import { MessagesService } from '../../services/messages.service';
 
@@ -14,6 +14,7 @@ export class ResultSectionComponent {
   public commandConfig: ICommandConfig;
 
   public StartTypes = StartTypes;
+  public Devices = Devices;
   public OperatingSystems = OperatingSystems;
 
   public readonly commands = {
