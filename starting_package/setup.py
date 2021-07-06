@@ -41,6 +41,7 @@ REQUIRED_PACKAGES = []
 REQUIRED_PACKAGES = extend_requirements(REQUIRED_PACKAGES, 'requirements-core.txt')
 
 if platform.system() == 'Windows':
+    # Required for support of multi-line progress bar on Win: https://github.com/tqdm/tqdm#faq-and-known-issues
     REQUIRED_PACKAGES = extend_requirements(REQUIRED_PACKAGES, 'requirements-win.txt')
 
 if platform.system() == 'Linux':
@@ -57,7 +58,7 @@ setup(
     license='OSI Approved :: Apache Software License',
     description='DL Workbench is an official UI environment of the OpenVINO™ toolkit.',
     url='https://github.com/openvinotoolkit/workbench_aux',
-    version='2021.4.0.4',
+    version='2021.4.0.5',
     packages=['openvino_workbench'],
     install_requires=REQUIRED_PACKAGES,
     long_description=LONG_DESCRIPTION,
