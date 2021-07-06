@@ -46,6 +46,8 @@
       "installDocker": "Install Docker",
       "installWrapper": "Install Python Wrapper",
       "pullImage": "Pull DL Workbench image",
+      "configureHDDL": "Configure Intel® Vision Accelerator\u200B Design with Intel® Movidius™",
+      "runHDDLDaemon": "Run Intel® Vision Accelerator\u200B Design with Intel® Movidius™ daemon",
       "start": "Start DL Workbench"
     },
     "descriptions": {
@@ -54,7 +56,9 @@
         "windows": "Follow <a href=\"https://docs.docker.com/docker-for-windows/install/\" target=\"_blank\">instructions</a> on configuring Docker on Windows. After the installation it is recommended to allocate at least 8GB memory in the Docker Desktop settings.",
         "macOS": "Follow <a href=\"https://docs.docker.com/docker-for-mac/install/\" target=\"_blank\">instructions</a> on configuring Docker on macOS. After the installation it is recommended to allocate at least 8GB memory in the Docker Desktop settings."
       },
-      "windowsCommandComment": "# Run this command in Windows PowerShell"
+      "windowsCommandComment": "# Run this command in Windows PowerShell",
+      "configureHDDLInstructions": "Use the <a href=\"https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_linux_ivad_vpu.html\" target=\"_blank\">Configuration Guide</a> to set up the dependencies on the host system",
+      "runHDDLDaemon": "${HDDL_INSTALL_DIR}/bin/hddldaemon"
     }
   }
 }
