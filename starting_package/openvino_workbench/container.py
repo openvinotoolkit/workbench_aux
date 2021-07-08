@@ -92,12 +92,16 @@ def connect_container_to_network(docker_client: DockerClient,
     net.connect(container=container_name, aliases=[network_alias])
 
 
+def is_container_present(docker_client: DockerClient, container_name_to_search: str) -> bool:
+    return any([container_name_to_search == container.name for container in docker_client.containers.list(all=True)])
+
+
 def start_container(docker_client: DockerClient,
                     config: dict,
                     network: str,
                     network_alias: str,
                     detached: bool = False):
-    if docker_client.containers.list(filters={'name': config['name']}, all=True):
+    if is_container_present(docker_client, config["name"]):
         print(f'Container with specified name "{config["name"]}" is present on the machine.'
               '\nUse different name by specifying `--container-name` argument.'
               '\nAborting.')
