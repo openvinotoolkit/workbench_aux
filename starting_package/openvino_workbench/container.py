@@ -101,7 +101,7 @@ def start_container(docker_client: DockerClient,
                     network: str,
                     network_alias: str,
                     detached: bool = False):
-    if is_container_present(docker_client, config["name"]):
+    if is_container_present(docker_client, config['name']):
         print(f'Container with specified name "{config["name"]}" is present on the machine.'
               '\nUse different name by specifying `--container-name` argument.'
               '\nAborting.')
