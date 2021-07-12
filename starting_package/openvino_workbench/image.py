@@ -91,7 +91,7 @@ def is_image_present_in_registry(docker_client: DockerClient, image_name: str) -
 
 
 def pull_image_without_progress(docker_client: DockerClient, repository: str, tag: str):
-    print('Pulling image...')
+    print('Pulling the image...')
     docker_client.api.pull(repository=repository, tag=tag)
     print('Pull is complete.')
 
@@ -101,7 +101,7 @@ def pull_image_and_display_progress(docker_client: DockerClient, image_name: str
     repository, tag = parse_image_name(image_name)
 
     if is_image_present(docker_client, repository, tag) and not force_pull:
-        print(f'Specified image: {repository}:{tag} is present on the machine. Continuing with it...')
+        print(f'The specified image: {repository}:{tag} is present on the machine. Continuing with it...')
         print('NOTE: If you want to force-update your image, add `--force-pull` argument.\n')
         return
 

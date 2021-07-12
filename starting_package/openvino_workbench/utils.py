@@ -38,7 +38,7 @@ def get_image_size(repository_tags_url: str, proxies: dict) -> int:
 
 def print_starting_message(config: dict, enabled_devices: dict):
     ip, port = config['ports'][INTERNAL_PORT]
-    print('\nStarting the DL Workbench with the following arguments:\n'
+    print('\nStarting DL Workbench with the following arguments:\n'
           f'Image Name: {config["image"]}\n'
           f'Container Name: {config["name"]}\n'
           f'IP: {ip}\n'
@@ -52,11 +52,11 @@ def initialize_docker_client() -> docker.DockerClient:
     try:
         client = docker.from_env()
     except docker.errors.DockerException:
-        print('Could not initialize Docker client from environment.')
+        print('Could not initialize the Docker client from environment.')
         if platform.system() in ('Windows', 'Darwin'):
             print('Please check if Docker Desktop is running.')
         else:
-            print('Please check if Docker daemon is running.')
+            print('Please check if the Docker daemon is running.')
         sys.exit(1)
     return client
 
