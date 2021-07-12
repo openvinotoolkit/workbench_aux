@@ -93,7 +93,7 @@ def connect_container_to_network(docker_client: DockerClient,
 
 
 def is_container_present(docker_client: DockerClient, container_name_to_search: str) -> bool:
-    return any([container_name_to_search == container.name for container in docker_client.containers.list(all=True)])
+    return any(container_name_to_search == container.name for container in docker_client.containers.list(all=True))
 
 
 def start_container(docker_client: DockerClient,
