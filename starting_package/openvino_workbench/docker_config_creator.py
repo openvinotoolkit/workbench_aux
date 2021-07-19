@@ -211,7 +211,7 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
             if not are_ssl_files_present_in_assets_dir(passed_arguments.ssl_certificate_name,
                                                        passed_arguments.ssl_key_name,
                                                        passed_arguments.assets_directory):
-                print(f'SSL Key or/and SSL Certificate files are not present in the provided directory: '
+                print(f'SSL key or/and SSL certificate files are not present in the provided directory: '
                       f'{passed_arguments.assets_directory}.')
                 print('Aborting.')
                 sys.exit(1)

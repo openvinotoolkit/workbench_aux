@@ -52,11 +52,11 @@ def initialize_docker_client() -> docker.DockerClient:
     try:
         client = docker.from_env()
     except docker.errors.DockerException:
-        print('Could not initialize Docker client from environment.')
+        print('Could not initialize the Docker client from environment.')
         if platform.system() in ('Windows', 'Darwin'):
             print('Please check if Docker Desktop is running.')
         else:
-            print('Please check if Docker daemon is running.')
+            print('Please check if the Docker daemon is running.')
         sys.exit(1)
     return client
 
