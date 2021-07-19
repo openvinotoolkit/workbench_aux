@@ -19,6 +19,7 @@
 
 import argparse
 import os
+import sys
 from typing import Optional
 
 
@@ -64,6 +65,13 @@ def parse_arguments() -> argparse.Namespace:
                         help='Enables the detached mode of the Docker container.'
                              'Container logs will not be visible in the terminal.',
                         default=False)
+
+    parser.add_argument('--restart',
+                        required=False,
+                        help='Restarts a previously stopped DL Workbench container. '
+                             'Provide the container name to restart. '
+                             'Other arguments are not supported. DL Workbench will have the capabilities '
+                             'that were enabled on the first run.')
 
     # Devices
     parser.add_argument('--enable-gpu',
@@ -167,6 +175,11 @@ def parse_arguments() -> argparse.Namespace:
 
     args = parser.parse_args()
 
+    # Check if restart is needed
+    if args.restart and len(sys.argv) != 3:
+        parser.error('To restart the container, provide only the container name following the "--restart" argument.')
+
+    # Check for SSL-related files
     if not args.assets_directory and (args.ssl_key_name or args.ssl_certificate_name):
         parser.error('"--assets-directory" is required for SSL. SSL key and certificate should be placed there.')
     if (not args.ssl_key_name and args.ssl_certificate_name) or (args.ssl_key_name and not args.ssl_certificate_name):
