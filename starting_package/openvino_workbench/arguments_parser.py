@@ -176,6 +176,8 @@ def parse_arguments() -> argparse.Namespace:
     args = parser.parse_args()
 
     # Check if restart is needed
+    # There should be exactly 3 args:
+    # 1: path to the script, 2: '--restart', 3: container name to restart
     if args.restart and len(sys.argv) != 3:
         parser.error('To restart the container, provide only the container name following the "--restart" argument.')
 

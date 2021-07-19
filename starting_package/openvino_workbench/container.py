@@ -143,3 +143,7 @@ def stop_container(docker_client: DockerClient, container_name: str):
         sys.exit(1)
     docker_client.api.stop(container_name)
     print('Container was stopped.')
+
+
+def restart_container(docker_client: DockerClient, container_name: str):
+    print(f'\nRestarting container with name {container_name}...')

@@ -35,6 +35,8 @@ def main():
     # Initialize Docker client
     docker_client: DockerClient = initialize_docker_client()
 
+    # Restart container if needed
+
     # Create config for Docker container
     config = create_config_for_container(args)
 
