@@ -21,10 +21,10 @@ import sys
 
 from tqdm import tqdm
 
+from docker import DockerClient
+
 from openvino_workbench.constants import DOCKER_HUB_TAGS_URL
 from openvino_workbench.utils import get_image_size
-
-from docker import DockerClient
 
 
 def extract_progress_info(line: dict) -> dict:
