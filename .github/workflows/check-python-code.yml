@@ -1,6 +1,12 @@
-name: "Check DL WB Python wrapper with Pylint and Bandit"
+name: "Inspect DL WB Python starter with Pylint and Bandit"
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
 
