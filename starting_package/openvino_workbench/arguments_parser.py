@@ -27,6 +27,25 @@ def get_proxy_from_env(proxy: str) -> Optional[str]:
     return os.getenv(proxy) or os.getenv(proxy.upper())
 
 
+def validate_args_for_restart(args: argparse.Namespace, parser: argparse.ArgumentParser):
+    # If detached restart is needed then there should be exactly 4 arguments
+    # and '--detached' should be one of them
+    if args.detached and len(sys.argv) != 4:
+        parser.error(
+            'Unrecognized arguments for restart. '
+            'To restart the container in the detached mode, '
+            'provide the "--detached" argument and the container name following the "--restart" argument. '
+            'The only other argument available with "--restart" is "--detached".\n'
+            'Example: openvino-workbench --restart workbench --detached')
+    # If regular restart is needed then there should be exactly 3 arguments
+    elif not args.detached and len(sys.argv) != 3:
+        parser.error(
+            'Unrecognized arguments for restart. '
+            'To restart the container, provide the container name following the "--restart" argument. '
+            'The only other argument available with "--restart" is "--detached".\n'
+            'Example: openvino-workbench --restart workbench')
+
+
 def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='DL Workbench is an official UI environment of the OpenVINO™ toolkit.')
 
@@ -179,22 +198,7 @@ def parse_arguments() -> argparse.Namespace:
     # There should be exactly 3 OR 4 args:
     # 1: path to the script, 2: '--restart', 3: container name to restart, OPTIONAL 4: '--detached'
     if args.restart:
-        # If detached restart is needed then there should be exactly 4 arguments
-        # and '--detached' should be one of them
-        if args.detached and len(sys.argv) != 4:
-            parser.error(
-                'Unrecognized arguments for restart. '
-                'To restart the container in the detached mode, '
-                'provide the "--detached" argument and the container name following the "--restart" argument. '
-                'With restart only other argument available is "--detached".\n'
-                'Example: openvino-workbench --restart workbench --detached')
-        # If regular restart is needed then there should be exactly 3 arguments
-        elif not args.detached and len(sys.argv) != 3:
-            parser.error(
-                'Unrecognized arguments for restart. '
-                'To restart the container, provide the container name following the "--restart" argument. '
-                'With restart only other argument available is "--detached".\n'
-                'Example: openvino-workbench --restart workbench')
+        validate_args_for_restart(args, parser)
 
     # Check for SSL-related files
     if not args.assets_directory and (args.ssl_key_name or args.ssl_certificate_name):
