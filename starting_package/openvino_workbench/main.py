@@ -19,13 +19,13 @@
 
 import sys
 
+from docker import DockerClient
+
 from openvino_workbench.arguments_parser import parse_arguments
-from openvino_workbench.container import start_container, stop_container
+from openvino_workbench.container import start_container, stop_container, restart_container
 from openvino_workbench.docker_config_creator import create_config_for_container
 from openvino_workbench.image import pull_image_and_display_progress
 from openvino_workbench.utils import print_starting_message, initialize_docker_client
-
-from docker import DockerClient
 
 
 def main():
@@ -34,6 +34,15 @@ def main():
 
     # Initialize Docker client
     docker_client: DockerClient = initialize_docker_client()
+
+    # Restart container if needed
+    if args.restart:
+        # Safe-restart a container, stop it on CMD/Ctrl+C as usual Docker container
+        try:
+            restart_container(docker_client, args.restart, args.detached)
+        except KeyboardInterrupt:
+            stop_container(docker_client, args.restart)
+            sys.exit(0)
 
     # Create config for Docker container
     config = create_config_for_container(args)
