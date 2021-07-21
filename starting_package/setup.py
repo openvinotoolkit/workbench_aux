@@ -41,7 +41,6 @@ REQUIRED_PACKAGES = []
 REQUIRED_PACKAGES = extend_requirements(REQUIRED_PACKAGES, 'requirements-core.txt')
 
 if platform.system() == 'Windows':
-    # Required for support of multi-line progress bar on Win: https://github.com/tqdm/tqdm#faq-and-known-issues
     REQUIRED_PACKAGES = extend_requirements(REQUIRED_PACKAGES, 'requirements-win.txt')
 
 if platform.system() == 'Linux':
