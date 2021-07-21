@@ -35,11 +35,11 @@ def get_image_size(repository_tags_url: str, proxies: dict) -> int:
 
 
 def print_starting_message(config: dict, enabled_devices: dict):
-    ip, port = config['ports'][INTERNAL_PORT]
-    print('\nStarting DL Workbench with the following arguments:\n'
+    bound_ip, port = config['ports'][INTERNAL_PORT]
+    print('\nStarting the DL Workbench with the following arguments:\n'
           f'Image Name: {config["image"]}\n'
           f'Container Name: {config["name"]}\n'
-          f'IP: {ip}\n'
+          f'IP: {bound_ip}\n'
           f'Port: {port}\n'
           f'GPU Enabled: {"True" if enabled_devices["GPU"] else "False"}\n'
           f'MYRIAD Enabled: {"True" if enabled_devices["MYRIAD"] else "False"}\n'
