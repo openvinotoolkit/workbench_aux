@@ -94,7 +94,7 @@ You will see the help message for the starting package if installation finished 
 To start the latest available version of the DL Workbench, execute the following command:
 
 ```
-openvino-workbench --image openvino/workbench:2021.4
+openvino-workbench --image openvino/workbench:latest --force-pull
 ```
 
 You can see the list of available arguments with the following command:
