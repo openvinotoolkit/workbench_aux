@@ -28,15 +28,16 @@ from pathlib import Path
 from openvino_workbench.constants import DL_WB_DOCKER_CONFIG_PATH, INTERNAL_PORT
 
 
-def does_dir_exist(path_to_dir: str) -> bool:
-    return os.path.isdir(path_to_dir)
-
-
-def check_for_assets_dir(path_to_dir: str):
-    if not does_dir_exist(path_to_dir):
+def check_assets_dir(path_to_dir: str):
+    if not os.path.isdir(path_to_dir):
         print(f'Provided assets directory: "{path_to_dir}" does not exist.\n'
               'Aborting.')
         sys.exit(1)
+
+    if not os.path.isabs(path_to_dir):
+        print(f'WARNING: Provided assets directory path: "{path_to_dir}" is not absolute.\n'
+              'Please make sure that it is relative to the folder from which you use the starter.'
+              'If the folder is not mounted or the container does not start, try using the absolute path.\n')
 
 
 def is_dir_writable_linux(path_to_dir: str) -> bool:
@@ -192,7 +193,7 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
     # Mount assets directory
     if passed_arguments.assets_directory:
 
-        check_for_assets_dir(passed_arguments.assets_directory)
+        check_assets_dir(passed_arguments.assets_directory)
 
         if not is_dir_writable(passed_arguments.assets_directory, user_os):
             print_not_writable_dir_message(user_os, passed_arguments.assets_directory)
