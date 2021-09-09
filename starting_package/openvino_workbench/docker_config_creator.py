@@ -36,7 +36,7 @@ def check_assets_dir(path_to_dir: str):
 
     if not os.path.isabs(path_to_dir):
         print(f'WARNING: Provided assets directory path: "{path_to_dir}" is not absolute.\n'
-              'Please make sure that it is relative to the folder from which you use the starter.'
+              'Make sure that it is relative to the folder from which you use the starter.'
               'If the folder is not mounted or the container does not start, try using the absolute path.\n')
 
 
