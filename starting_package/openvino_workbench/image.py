@@ -35,7 +35,8 @@ def extract_progress_info(line: dict) -> dict:
     status = line.get('status', '')
     progress_detail = line.get('progressDetail', {})
 
-    if progress_detail:
+    # Need to check for 'current' and 'total' as first progress details might be empty yet present
+    if progress_detail and 'current' in progress_detail and 'total' in progress_detail:
         current = line['progressDetail']['current']
         total_weight = line['progressDetail']['total']
 
