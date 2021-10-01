@@ -31,7 +31,7 @@
       "HDDLTooltip": "Intel® Vision Accelerator Design with Intel® Movidius™ VPUs"
     },
     "startWith": {
-      "python": "Python wrapper",
+      "python": "Python starter",
       "docker": "Docker command"
     },
     "proxy": {
@@ -44,7 +44,7 @@
   "resultSteps": {
     "labels": {
       "installDocker": "Install Docker",
-      "installWrapper": "Install Python Wrapper",
+      "installStarter": "Install Python Starter",
       "pullImage": "Pull DL Workbench image",
       "configureHDDL": "Configure Intel® Vision Accelerator\u200B Design with Intel® Movidius™",
       "runHDDLDaemon": "Run Intel® Vision Accelerator\u200B Design with Intel® Movidius™ daemon",
