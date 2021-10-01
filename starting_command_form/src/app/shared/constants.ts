@@ -90,7 +90,7 @@ export const commandConstructorFormFieldsMap: { [key: string]: ICommandConstruct
 export const commandDefaults = {
   pythonWrapperName: 'openvino-workbench',
   dockerRunCommand: 'docker run',
-  dockerImageWithTag: 'openvino/workbench:2021.4',
+  dockerImageWithTag: 'openvino/workbench:2021.4.1',
   bindIP: '0.0.0.0',
   hostPort: '5665',
   containerPort: '5665',
