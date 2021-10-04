@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RadioButtonInputComponent } from './radio-button-input.component';
+import {SharedModule} from '../../shared.module';
 
 describe('RadioButtonInputComponent', () => {
   let component: RadioButtonInputComponent;
@@ -8,7 +9,7 @@ describe('RadioButtonInputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RadioButtonInputComponent ]
+      imports: [SharedModule],
     })
     .compileComponents();
   });

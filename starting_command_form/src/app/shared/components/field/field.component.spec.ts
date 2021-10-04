@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FieldComponent } from './field.component';
 import { ICommandConstructorField } from '../../models/command-constructor-form';
+import {SharedModule} from '../../shared.module';
 
 describe('FieldComponent', () => {
   let component: FieldComponent;
@@ -9,7 +10,7 @@ describe('FieldComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FieldComponent ]
+      imports: [SharedModule],
     }).compileComponents();
   });
 

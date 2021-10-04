@@ -10,7 +10,6 @@ describe('ResultSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ResultSectionComponent ],
       imports: [ SharedModule ],
     }).compileComponents();
   });
