@@ -28,15 +28,30 @@ from pathlib import Path
 from openvino_workbench.constants import DL_WB_DOCKER_CONFIG_PATH, INTERNAL_PORT
 
 
-def does_dir_exist(path_to_dir: str) -> bool:
-    return os.path.isdir(path_to_dir)
+def transform_relative_assets_dir_path(path_to_dir: str) -> str:
+    work_dir = os.path.abspath(os.getcwd())
+    return os.path.join(work_dir, path_to_dir)
 
 
-def check_for_assets_dir(path_to_dir: str):
-    if not does_dir_exist(path_to_dir):
+def check_and_transform_assets_dir(path_to_dir: str, user_os: str) -> str:
+
+    if not os.path.isabs(path_to_dir):
+        print(f'WARNING: Provided assets directory path: "{path_to_dir}" is not absolute.\n'
+              'Make sure that it is relative to the folder from which you use the starter. '
+              'If the folder is not mounted or the container does not start, try using the absolute path.\n')
+        path_to_dir = transform_relative_assets_dir_path(path_to_dir)
+
+    if not os.path.isdir(path_to_dir):
         print(f'Provided assets directory: "{path_to_dir}" does not exist.\n'
               'Aborting.')
         sys.exit(1)
+
+    if not is_dir_writable(path_to_dir, user_os):
+        print_not_writable_dir_message(user_os, path_to_dir)
+        print('Aborting.')
+        sys.exit(1)
+
+    return path_to_dir
 
 
 def is_dir_writable_linux(path_to_dir: str) -> bool:
@@ -108,9 +123,9 @@ def get_group_id(group: str) -> int:
     import grp
     try:
         return grp.getgrnam(group).gr_gid
-    except KeyError:
+    except KeyError as no_group_error:
         raise AssertionError(f'There is no "{group}" group on the machine. '
-                             'GPU might not be available for inference.')
+                             'GPU might not be available for inference.') from no_group_error
 
 
 def check_hddl_daemon_is_running():
@@ -192,26 +207,21 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
     # Mount assets directory
     if passed_arguments.assets_directory:
 
-        check_for_assets_dir(passed_arguments.assets_directory)
-
-        if not is_dir_writable(passed_arguments.assets_directory, user_os):
-            print_not_writable_dir_message(user_os, passed_arguments.assets_directory)
-            print('Aborting.')
-            sys.exit(1)
+        assets_directory: str = check_and_transform_assets_dir(passed_arguments.assets_directory, user_os)
 
         if 'volumes' in config:
-            config['volumes'][passed_arguments.assets_directory] = {'bind': DL_WB_DOCKER_CONFIG_PATH, 'mode': 'rw'}
+            config['volumes'][assets_directory] = {'bind': DL_WB_DOCKER_CONFIG_PATH, 'mode': 'rw'}
         else:
             config['volumes'] = {
-                passed_arguments.assets_directory: {'bind': DL_WB_DOCKER_CONFIG_PATH, 'mode': 'rw'}
+                assets_directory: {'bind': DL_WB_DOCKER_CONFIG_PATH, 'mode': 'rw'}
             }
 
         # SSL
         if passed_arguments.ssl_certificate_name:
             if not are_ssl_files_present_in_assets_dir(passed_arguments.ssl_certificate_name,
                                                        passed_arguments.ssl_key_name,
-                                                       passed_arguments.assets_directory):
-                print(f'SSL Key or/and SSL Certificate files are not present in the provided directory: '
+                                                       assets_directory):
+                print(f'SSL key or/and SSL certificate files are not present in the provided directory: '
                       f'{passed_arguments.assets_directory}.')
                 print('Aborting.')
                 sys.exit(1)
