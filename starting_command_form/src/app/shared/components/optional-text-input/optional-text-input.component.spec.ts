@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OptionalTextInputComponent } from './optional-text-input.component';
-import {SharedModule} from '../../shared.module';
+import { SharedModule } from '../../shared.module';
 
 describe('OptionalTextInputComponent', () => {
   let component: OptionalTextInputComponent;

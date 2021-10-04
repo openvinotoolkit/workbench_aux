@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FieldComponent } from './field.component';
 import { ICommandConstructorField } from '../../models/command-constructor-form';
-import {SharedModule} from '../../shared.module';
+import { SharedModule } from '../../shared.module';
 
 describe('FieldComponent', () => {
   let component: FieldComponent;

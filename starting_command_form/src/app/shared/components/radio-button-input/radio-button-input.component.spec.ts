@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RadioButtonInputComponent } from './radio-button-input.component';
-import {SharedModule} from '../../shared.module';
+import { SharedModule } from '../../shared.module';
 
 describe('RadioButtonInputComponent', () => {
   let component: RadioButtonInputComponent;
