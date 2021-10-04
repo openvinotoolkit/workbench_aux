@@ -6,7 +6,7 @@
 </div>
 
 <div *ngIf="commandConfig?.startWith == StartTypes.PYTHON" class="result-step">
-  <div class="result-step-label">{{ resultStepsMessages.labels.installStarter }}</div>
+  <div class="result-step-label">{{ resultStepsMessages.labels.installWrapper }}</div>
   <wb-command-output [copy]="true">
     <span ngProjectAs="output">{{ commands.installPythonWrapper }}</span>
   </wb-command-output>

@@ -36,8 +36,12 @@ DL_WB_LOGO = r'''
   / / / / /       | | /| / / __ \/ ___/ //_/ __ \/ _ \/ __ \/ ___/ __ \
  / /_/ / /___     | |/ |/ / /_/ / /  / ,< / /_/ /  __/ / / / /__/ / / /
 /_____/_____/     |__/|__/\____/_/  /_/|_/_.___/\___/_/ /_/\___/_/ /_/ 
+
 '''
 
 DL_WB_DOCKER_CONFIG_PATH = os.path.join('/home', 'workbench', '.workbench')
+
+URL_TOKEN_REGEXP = r'\/\?token=([a-zA-Z\d]+)'  # nosec
+LOGIN_TOKEN_REGEXP = r'Login\s+token:\s+([a-zA-Z\d]+)'  # nosec
 
 INTERNAL_PORT = '5665'
