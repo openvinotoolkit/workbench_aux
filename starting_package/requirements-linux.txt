@@ -1,1 +1,1 @@
-psutil==5.7.0
+psutil==5.8.0 # bumping from 5.7.0 to 5.8.0 as per https://github.com/giampaolo/psutil/issues/1753
