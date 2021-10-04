@@ -18,13 +18,15 @@
 """
 import platform
 import sys
+import re
 import time
 
 import requests
 
+from openvino_workbench.constants import URL_TOKEN_REGEXP, LOGIN_TOKEN_REGEXP, INTERNAL_PORT
+
 import docker
 
-from openvino_workbench.constants import INTERNAL_PORT
 
 def get_image_size(repository_tags_url: str, proxies: dict) -> int:
     try:
@@ -35,11 +37,11 @@ def get_image_size(repository_tags_url: str, proxies: dict) -> int:
 
 
 def print_starting_message(config: dict, enabled_devices: dict):
-    bound_ip, port = config['ports'][INTERNAL_PORT]
+    ip, port = config['ports'][INTERNAL_PORT]
     print('\nStarting the DL Workbench with the following arguments:\n'
           f'Image Name: {config["image"]}\n'
           f'Container Name: {config["name"]}\n'
-          f'IP: {bound_ip}\n'
+          f'IP: {ip}\n'
           f'Port: {port}\n'
           f'GPU Enabled: {"True" if enabled_devices["GPU"] else "False"}\n'
           f'MYRIAD Enabled: {"True" if enabled_devices["MYRIAD"] else "False"}\n'
@@ -50,13 +52,29 @@ def initialize_docker_client() -> docker.DockerClient:
     try:
         client = docker.from_env()
     except docker.errors.DockerException:
-        print('Could not initialize the Docker client from environment.')
+        print('Could not initialize Docker client from environment.')
         if platform.system() in ('Windows', 'Darwin'):
-            print('Please check if the Docker Desktop is running.')
+            print('Please check if Docker Desktop is running.')
         else:
-            print('Please check if the Docker daemon is running.')
+            print('Please check if Docker daemon is running.')
         sys.exit(1)
     return client
+
+
+def get_tokens_from_logs(docker_client: docker.DockerClient, container_name: str) -> dict:
+    logs = get_docker_logs_since(docker_client, container_name, seconds=10)
+
+    tokens = dict()
+
+    login_token_groups = re.search(LOGIN_TOKEN_REGEXP, logs)
+    if login_token_groups:
+        tokens['login_token'] = login_token_groups.group(1)
+
+    url_token_groups = re.search(URL_TOKEN_REGEXP, logs)
+    if url_token_groups:
+        tokens['url_token'] = url_token_groups.group(1)
+
+    return tokens
 
 
 def get_docker_logs_since(docker_client: docker.DockerClient, container_name: str, seconds: int) -> str:
