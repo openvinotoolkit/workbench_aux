@@ -1,14 +1,14 @@
 <form [formGroup]="commandFormGroup">
   <section class="section section-general">
     <div class="section-header-wrapper">
-      <span class="section-header" data-test-id="general-options-header">{{ messages.sectionHeaders.generalOptions }}</span>
+      <span class="section-header">{{ messages.sectionHeaders.generalOptions }}</span>
     </div>
 
     <ng-container *ngFor="let field of generalOptionsFields" [formGroup]="commandFormGroup">
-      <wb-field [field]="field" [formControlName]="field.name"></wb-field>
+      <wb-field [attr.data-test-id]="field.name" [field]="field" [formControlName]="field.name"></wb-field>
     </ng-container>
     <div class="devices-warning-wrapper" *ngIf="incompatibleDevicesSelected">
-      <div class="devices-warning">{{ messages.warnings.incompatibleDevices }}</div>
+      <div class="devices-warning" data-test-id="devices-warning">{{ messages.warnings.incompatibleDevices }}</div>
     </div>
   </section>
 
@@ -18,7 +18,7 @@
     </div>
 
     <ng-container *ngFor="let field of advancedOptionsFields" [formGroup]="commandFormGroup">
-      <wb-field [field]="field" [formControlName]="field.name"></wb-field>
+      <wb-field [attr.data-test-id]="field.name" [field]="field" [formControlName]="field.name"></wb-field>
     </ng-container>
   </section>
 

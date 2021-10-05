@@ -41,3 +41,19 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+declare namespace Cypress {
+  interface Chainable<> {
+    getElementByTestID(testID: string): Chainable;
+    getNestedElementByTestID(parentElementID: string, testID: string): Chainable;
+  }
+}
+
+
+Cypress.Commands.add('getElementByTestID', (testID: string) => {
+  return cy.get(`[data-test-id="${testID}"]`);
+});
+
+Cypress.Commands.add('getNestedElementByTestID', (parentElementID: string, testID: string) => {
+  return cy.getElementByTestID(parentElementID).find(`[data-test-id="${testID}"]`);
+});

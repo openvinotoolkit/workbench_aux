@@ -3,7 +3,8 @@
     *ngFor="let option of options"
     [value]="option.value"
     disableRipple
-    >
+  [attr.data-test-id]="option.value"
+  >
       {{option.label}}
   </mat-radio-button>
 </mat-radio-group>
