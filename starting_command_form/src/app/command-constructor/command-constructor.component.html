@@ -1,7 +1,7 @@
 <form [formGroup]="commandFormGroup">
   <section class="section section-general">
     <div class="section-header-wrapper">
-      <span class="section-header">{{ messages.sectionHeaders.generalOptions }}</span>
+      <span class="section-header" data-test-id="general-options-header">{{ messages.sectionHeaders.generalOptions }}</span>
     </div>
 
     <ng-container *ngFor="let field of generalOptionsFields" [formGroup]="commandFormGroup">

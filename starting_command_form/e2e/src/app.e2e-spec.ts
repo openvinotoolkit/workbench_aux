@@ -1,14 +1,14 @@
 import { AppPage } from './app.po';
 
-describe('workspace-project App', () => {
+describe('E2E tests on the command builder', () => {
   let page: AppPage;
 
   beforeEach(() => {
     page = new AppPage();
   });
 
-  it('should display welcome message', () => {
-    page.navigateTo();
-    expect(page.getParagraphText()).toEqual('Welcome to workbench-start-command-constructor!');
+  it('should display options header', async () => {
+    await page.navigateTo();
+    expect(await page.getGeneralOptionsHeader()).toEqual('General Options');
   });
 });
