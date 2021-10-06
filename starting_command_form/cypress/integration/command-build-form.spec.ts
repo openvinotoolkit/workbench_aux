@@ -58,7 +58,7 @@ describe('UI tests on command build form', () => {
     cy.getNestedElementByTestID(FormControlNames.HTTPS_PROXY, 'true').click();
     cy.getNestedElementByTestID(FormControlNames.HTTPS_PROXY, 'edit').click();
     cy.getNestedElementByTestID(FormControlNames.HTTPS_PROXY, 'text-input').type(referenceCommands.proxyExample);
-    cy.getNestedElementByTestID(FormControlNames.HTTPS_PROXY, 'sae').click();
+    cy.getNestedElementByTestID(FormControlNames.HTTPS_PROXY, 'save').click();
     cy.getElementByTestID('resulting-command').should('have.text', referenceCommands.startingCommandGPUMYRIADPROXY);
   });
 
