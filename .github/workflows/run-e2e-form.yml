@@ -11,3 +11,5 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           working-directory: ./starting_command_form
+          build: npm run build
+          start: npm run start
