@@ -12,3 +12,4 @@ jobs:
         with:
           project: ./starting_command_form
           spec: cypress/integration/*.spec.ts
+          working-directory: ./starting_command_form
