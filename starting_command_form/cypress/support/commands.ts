@@ -42,6 +42,8 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+import Chainable = Cypress.Chainable;
+
 declare namespace Cypress {
   interface Chainable<> {
     getElementByTestID(testID: string): Chainable;
@@ -50,10 +52,10 @@ declare namespace Cypress {
 }
 
 
-Cypress.Commands.add('getElementByTestID', (testID: string) => {
+Cypress.Commands.add('getElementByTestID', (testID: string): Chainable => {
   return cy.get(`[data-test-id="${testID}"]`);
 });
 
-Cypress.Commands.add('getNestedElementByTestID', (parentElementID: string, testID: string) => {
+Cypress.Commands.add('getNestedElementByTestID', (parentElementID: string, testID: string): Chainable => {
   return cy.getElementByTestID(parentElementID).find(`[data-test-id="${testID}"]`);
 });

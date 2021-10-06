@@ -1,10 +1,10 @@
 <div class="input-wrapper">
   <input #textInput [placeholder]="placeholder" [value]="value" [readOnly]="!active"
-         (keydown.enter)="handleSave(textInput.value)"/>
+         (keydown.enter)="handleSave(textInput.value)" data-test-id="text-input"/>
 </div>
 <div class="input-button-wrapper">
   <mat-icon svgIcon="create" *ngIf="!active" (click)="handleEdit(textInput)" aria-hidden="false"
-            aria-label="Edit"></mat-icon>
+            aria-label="Edit" data-test-id="edit"></mat-icon>
   <mat-icon svgIcon="check" *ngIf="active" (click)="handleSave(textInput.value)"
-            aria-hidden="false" aria-label="Save"></mat-icon>
+            aria-hidden="false" aria-label="Save" data-test-id="save"></mat-icon>
 </div>

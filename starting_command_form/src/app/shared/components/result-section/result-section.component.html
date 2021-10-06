@@ -45,7 +45,7 @@
   <div class="result-step">
     <div class="result-step-label">{{ resultStepsMessages.labels.runHDDLDaemon }}</div>
     <wb-command-output [copy]="true">
-      <span ngProjectAs="output">{{ resultStepsMessages.descriptions.runHDDLDaemon }}</span>
+      <span ngProjectAs="output" data-test-id="hddl-daemon-command">{{ resultStepsMessages.descriptions.runHDDLDaemon }}</span>
     </wb-command-output>
   </div>
 </ng-template>

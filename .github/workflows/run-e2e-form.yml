@@ -2,12 +2,12 @@ name: Starting command builder E2E tests
 on: [push]
 jobs:
   cypress-run:
-    name: Cypress run
+    name: Run E2E tests
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cypress run
+      - name: Run E2E tests
         uses: cypress-io/github-action@v2
         with:
           working-directory: ./starting_command_form
