@@ -26,5 +26,5 @@ jobs:
         if: always()
         with:
           name: cypress-videos
-          path: ./starting_command_form/cypress/screenshots
+          path: ./starting_command_form/cypress/videos
 
