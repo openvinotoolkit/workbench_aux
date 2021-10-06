@@ -1,0 +1,14 @@
+name: Starting command builder E2E tests
+on: [push]
+jobs:
+  cypress-run:
+    name: Cypress run
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          project: ./starting_command_form
+          spec: cypress/integration/*.spec.ts
