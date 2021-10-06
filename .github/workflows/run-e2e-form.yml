@@ -14,3 +14,17 @@ jobs:
           start: npm run start
           wait-on: 'http://localhost:4200'
           browser: chrome
+      - name: Upload screenshots on failure
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: ./starting_command_form/cypress/screenshots
+
+      - name: Upload videos
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: cypress-videos
+          path: ./starting_command_form/cypress/screenshots
+
