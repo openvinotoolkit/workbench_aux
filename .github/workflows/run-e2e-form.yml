@@ -10,6 +10,4 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          project: ./starting_command_form
-          spec: cypress/integration/*.spec.ts
           working-directory: ./starting_command_form
