@@ -1,4 +1,4 @@
-<ng-container *ngFor="let option of options" data-test-id="devices-selector">
+<ng-container *ngFor="let option of options">
   <mat-checkbox [attr.data-test-id]="option.value" disableRipple [name]="option.value" [checked]="value?.includes(option.value)"
                 [disabled]="disabledOptions?.includes(option.value)" [matTooltip]="option.tooltip" (change)="updateSelectedOptions($event)">
     {{option.label}}
