@@ -20,7 +20,6 @@ jobs:
         with:
           name: cypress-screenshots
           path: ./starting_command_form/cypress/screenshots
-
       - name: Upload videos
         uses: actions/upload-artifact@v1
         if: failure()
