@@ -1,7 +1,7 @@
 import * as data from '../../src/assets/data/messages.json';
 import * as referenceCommands from '../fixtures/reference-commands.json';
 
-import { FormControlNames, Devices, StartTypes } from '../../src/app/shared/models/command-constructor-form';
+import { FormControlNames, Devices, StartTypes, OperatingSystems } from '../../src/app/shared/models/command-constructor-form';
 
 
 describe('UI tests on command build form', () => {
@@ -19,8 +19,8 @@ describe('UI tests on command build form', () => {
     cy.getNestedElementByTestID(FormControlNames.DOCKER_INSTALLED, 'true').should('have.class', 'mat-radio-checked');
     cy.getNestedElementByTestID(FormControlNames.DOCKER_INSTALLED, 'false').should('not.have.class', 'mat-radio-checked');
     // Check OS
-    cy.getElementByTestID('linux').should('have.class', 'mat-radio-checked');
-    cy.getElementByTestID('windows').should('not.have.class', 'mat-radio-checked');
+    cy.getElementByTestID(OperatingSystems.LINUX).should('have.class', 'mat-radio-checked');
+    cy.getElementByTestID(OperatingSystems.WINDOWS).should('not.have.class', 'mat-radio-checked');
 
     // Check way of starting
     cy.getElementByTestID(StartTypes.PYTHON).should('have.class', 'mat-radio-checked');
@@ -65,19 +65,19 @@ describe('UI tests on command build form', () => {
   it('should select Windows, check that other than CPU devices are not selectable, check the same for MacOS', () => {
     cy.visit('/');
 
-    cy.getElementByTestID('windows').click().should('have.class', 'mat-radio-checked');
+    cy.getElementByTestID(OperatingSystems.WINDOWS).click().should('have.class', 'mat-radio-checked');
     // Check that checkboxes are unavailable
     cy.getElementByTestID(Devices.GPU).should('have.class', 'mat-checkbox-disabled');
     cy.getElementByTestID(Devices.NCS2).should('have.class', 'mat-checkbox-disabled');
     cy.getElementByTestID(Devices.HDDL).should('have.class', 'mat-checkbox-disabled');
 
-    cy.getElementByTestID('macos').click().should('have.class', 'mat-radio-checked');
+    cy.getElementByTestID(OperatingSystems.MAC_OS).click().should('have.class', 'mat-radio-checked');
     // Check that checkboxes are still unavailable
     cy.getElementByTestID(Devices.GPU).should('have.class', 'mat-checkbox-disabled');
     cy.getElementByTestID(Devices.NCS2).should('have.class', 'mat-checkbox-disabled');
     cy.getElementByTestID(Devices.HDDL).should('have.class', 'mat-checkbox-disabled');
 
-    cy.getElementByTestID('windows').should('not.have.class', 'mat-radio-checked');
+    cy.getElementByTestID(OperatingSystems.WINDOWS).should('not.have.class', 'mat-radio-checked');
   });
 
   it('should select Docker as start option, check that command is modified', () => {
@@ -104,7 +104,7 @@ describe('UI tests on command build form', () => {
     cy.getElementByTestID('hddl-daemon-command').should('exist').and('have.text', referenceCommands.hddlDaemonStartCommand);
 
     // Select Windows and check that the command is default - no other than CPU devices
-    cy.getElementByTestID('windows').click();
+    cy.getElementByTestID(OperatingSystems.WINDOWS).click();
     cy.getElementByTestID('resulting-command').should('have.text', referenceCommands.startingCommandDocker);
 
     // Add proxy to the command
