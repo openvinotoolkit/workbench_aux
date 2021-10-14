@@ -1,0 +1,29 @@
+name: Starting command builder E2E tests
+on: [push]
+jobs:
+  cypress-run:
+    name: Run E2E tests
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run E2E tests
+        uses: cypress-io/github-action@v2
+        with:
+          working-directory: ./starting_command_form
+          start: npm run start
+          wait-on: 'http://localhost:4200'
+          browser: chrome
+      - name: Upload screenshots on failure
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: ./starting_command_form/cypress/screenshots
+      - name: Upload videos
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-videos
+          path: ./starting_command_form/cypress/videos
+
