@@ -5,10 +5,31 @@
   </wb-command-output>
 </div>
 
+<div *ngIf="commandConfig?.os !== OperatingSystems.LINUX" class="result-step">
+  <div class="result-step-label">{{ resultStepsMessages.labels.allocateMemoryForDocker }}</div>
+  <wb-command-output>
+    <span class="install-instructions" ngProjectAs="output" [innerHTML]="allocateMemoryForDockerCommand"></span>
+  </wb-command-output>
+</div>
+
+<div *ngIf="commandConfig?.os === OperatingSystems.LINUX" class="result-step">
+  <div class="result-step-label">{{ resultStepsMessages.labels.runDockerWithoutSudo }}</div>
+  <wb-command-output>
+    <span ngProjectAs="output" [innerHTML]="resultStepsMessages.descriptions.runDockerWithoutSudo"></span>
+  </wb-command-output>
+</div>
+
+<div *ngIf="commandConfig?.startWith == StartTypes.PYTHON && commandConfig?.os === OperatingSystems.WINDOWS" class="result-step">
+  <div class="result-step-label">{{ resultStepsMessages.labels.installPythonWindows }}</div>
+  <wb-command-output>
+    <span ngProjectAs="output" [innerHTML]="resultStepsMessages.descriptions.installPythonWindows"></span>
+  </wb-command-output>
+</div>
+
 <div *ngIf="commandConfig?.startWith == StartTypes.PYTHON" class="result-step">
   <div class="result-step-label">{{ resultStepsMessages.labels.installStarter }}</div>
   <wb-command-output [copy]="true">
-    <span ngProjectAs="output" data-test-id="install-starter-command">{{ commands.installPythonWrapper }}</span>
+    <span ngProjectAs="output" data-test-id="install-starter-command">{{ installPythonCommand }}</span>
   </wb-command-output>
 </div>
 
@@ -46,6 +67,15 @@
     <div class="result-step-label">{{ resultStepsMessages.labels.runHDDLDaemon }}</div>
     <wb-command-output [copy]="true">
       <span ngProjectAs="output" data-test-id="hddl-daemon-command">{{ resultStepsMessages.descriptions.runHDDLDaemon }}</span>
+    </wb-command-output>
+  </div>
+</ng-template>
+
+<ng-template #configureDockerUbuntuTemplate>
+  <div class="result-step">
+    <div class="result-step-label">{{ resultStepsMessages.labels.runDockerWithoutSudo }}</div>
+    <wb-command-output>
+      <span ngProjectAs="output" [innerHTML]="resultStepsMessages.descriptions.runDockerWithoutSudo"></span>
     </wb-command-output>
   </div>
 </ng-template>
