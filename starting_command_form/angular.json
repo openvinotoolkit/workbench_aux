@@ -37,7 +37,10 @@
               "src/assets/css/fonts-imports.scss"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": ["src", "src/assets/css"]
+              "includePaths": [
+                "src",
+                "src/assets/css"
+              ]
             },
             "scripts": [],
             "aot": false,
@@ -103,7 +106,10 @@
               "src/styles.scss"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": ["src", "src/assets/css"]
+              "includePaths": [
+                "src",
+                "src/assets/css"
+              ]
             },
             "scripts": [],
             "assets": [
@@ -117,24 +123,17 @@
           "options": {
             "tsConfig": [
               "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
+              "src/tsconfig.spec.json",
+              "cypress/tsconfig.json"
             ],
             "exclude": [
               "**/node_modules/**"
             ]
           }
-        }
-      }
-    },
-    "workbench-start-command-constructor-e2e": {
-      "root": "e2e/",
-      "projectType": "application",
-      "prefix": "",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
+        },
+        "cypress-run": {
+          "builder": "@cypress/schematic:cypress",
           "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
             "devServerTarget": "workbench-start-command-constructor:serve"
           },
           "configurations": {
@@ -143,13 +142,24 @@
             }
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+        "cypress-open": {
+          "builder": "@cypress/schematic:cypress",
           "options": {
-            "tsConfig": "e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "watch": true,
+            "headless": false
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "workbench-start-command-constructor:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "workbench-start-command-constructor:serve:production"
+            }
           }
         }
       }
