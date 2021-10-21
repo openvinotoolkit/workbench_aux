@@ -54,4 +54,14 @@ export class ResultSectionComponent implements OnInit {
           this.messagesService.messages.resultSteps.descriptions.allocateMemoryForDocker.windows
           : this.messagesService.messages.resultSteps.descriptions.allocateMemoryForDocker.macOS;
   }
+
+  get installPipCommand() {
+    const { os } = this.commandConfig;
+    const isWindows = os === OperatingSystems.WINDOWS;
+    const pythonBinaryName = `python${isWindows? '': '3'}`;
+    const pipCommand =  `${pythonBinaryName} -m pip --version`
+    return `${this.messagesService.messages.resultSteps.descriptions.installPip}` +
+           ` "${pipCommand}". `+
+           `${this.messagesService.messages.resultSteps.descriptions.checkPipVersion}`;
+  }
 }
