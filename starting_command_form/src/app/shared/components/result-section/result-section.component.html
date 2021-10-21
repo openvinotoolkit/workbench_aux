@@ -28,7 +28,7 @@
 
 <div *ngIf="commandConfig?.startWith == StartTypes.PYTHON" class="result-step">
   <div class="result-step-label">{{ resultStepsMessages.labels.installPip }}</div>
-  <wb-command-output [copy]="true">
+  <wb-command-output>
     <span class="install-instructions" ngProjectAs="output" [innerHTML]="installPipCommand"></span>
   </wb-command-output>
 </div>
