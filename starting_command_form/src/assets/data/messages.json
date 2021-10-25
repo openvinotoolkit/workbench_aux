@@ -64,7 +64,7 @@
       "windowsCommandComment": "# Run this command in Windows PowerShell",
       "configureHDDLInstructions": "Use the <a href=\"https://docs.openvinotoolkit.org/latest/openvino_docs_install_guides_installing_openvino_linux_ivad_vpu.html\" target=\"_blank\">Configuration Guide</a> to set up the dependencies on the host system.",
       "runHDDLDaemon": "${HDDL_INSTALL_DIR}/bin/hddldaemon",
-      "installPythonWindows": "Follow <a href=\"https://docs.python.org/3/using/windows.html#the-full-installer\" target=\"_blank\">instructions</a> on installing Python on Windows. Python starter supports Python version 3.6 - 3.9. Select \"Add Python 3.X to PATH\" option during installation. To verify the installation, type \"python --version\" in the Windows PowerShell. If Python is installed, you will see its version.",
+      "installPythonWindows": "Follow <a href=\"https://docs.python.org/3/using/windows.html#the-full-installer\" target=\"_blank\">instructions</a> on installing Python on Windows. Python Starter works with Python 3.6–3.9. Select \"Add Python 3.X to PATH\" option during installation. To verify the installation, type \"python --version\" in the Windows PowerShell. If Python is installed, you will see its version.",
       "allocateMemoryForDocker": {
         "macOS": "Allocate at least 8GB Memory in the <a href=\"https://docs.docker.com/desktop/mac/#resources\" target=\"_blank\">Docker Desktop settings</a>.",
         "windows": "Allocate at least 8GB Memory in the <a href=\"https://docs.docker.com/desktop/windows/#resources\" target=\"_blank\">Docker Desktop settings</a>. Uncheck \"Use the WSL 2 based engine\" to manually configure the required resources."
