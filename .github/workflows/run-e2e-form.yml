@@ -1,5 +1,5 @@
 name: Starting command builder E2E tests
-on: [push]
+on: [push, pull_request]
 jobs:
   cypress-run:
     name: Run E2E tests
