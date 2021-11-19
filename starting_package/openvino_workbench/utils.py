@@ -36,6 +36,13 @@ def get_image_size(repository_tags_url: str, proxies: dict) -> int:
 
 def print_starting_message(config: dict, enabled_devices: dict):
     bound_ip, port = config['ports'][INTERNAL_PORT]
+    docker_environment = config.get('environment', {})
+    authentication_enabled = docker_environment.get('ENABLE_AUTH') == 1
+    disable_token_saving = docker_environment.get('SAVE_TOKEN_TO_FILE') == 0
+    token_saving_message = f'Token Saving To File Enabled: {"True" if not disable_token_saving else "False"}\n'
+    is_custom_token_provided = bool(docker_environment.get('CUSTOM_TOKEN'))
+    custom_token_message = f'Custom Token Provided: {"True" if is_custom_token_provided else "False"}\n'
+    is_jupyter_disabled = docker_environment.get('DISABLE_JUPYTER') == 1
     print('\nStarting the DL Workbench with the following arguments:\n'
           f'Image Name: {config["image"]}\n'
           f'Container Name: {config["name"]}\n'
@@ -43,7 +50,11 @@ def print_starting_message(config: dict, enabled_devices: dict):
           f'Port: {port}\n'
           f'GPU Enabled: {"True" if enabled_devices["GPU"] else "False"}\n'
           f'MYRIAD Enabled: {"True" if enabled_devices["MYRIAD"] else "False"}\n'
-          f'HDDL Enabled: {"True" if enabled_devices["HDDL"] else "False"}\n')
+          f'HDDL Enabled: {"True" if enabled_devices["HDDL"] else "False"}\n'
+          f'Authentication Enabled: {"True" if authentication_enabled else "False"}\n'
+          f'{custom_token_message if authentication_enabled else ""}'
+          f'{token_saving_message if authentication_enabled else ""}'
+          f'Jupyter Enabled: {"True" if not is_jupyter_disabled else "False"}\n')
 
 
 def initialize_docker_client() -> docker.DockerClient:
