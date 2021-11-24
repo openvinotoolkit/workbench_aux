@@ -52,7 +52,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument('--image',
                         required=False,
                         help='Specifies the DL Workbench Docker image name.',
-                        default='openvino/workbench:2021.4.1.2')
+                        default='openvino/workbench:2021.4.2')
 
     parser.add_argument('--force-pull',
                         action='store_true',
