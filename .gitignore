@@ -22,6 +22,10 @@ starting_command_form/yarn-error.log
 starting_command_form/testem.log
 starting_command_form/typings
 
+# Screenshots and videos from the E2E tests
+starting_command_form/cypress/screenshots
+starting_command_form/cypress/videos
+
 # Python starter
 starting_package/build
 starting_package/dist

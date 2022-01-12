@@ -9,7 +9,6 @@ describe('CommandOutputComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CommandOutputComponent ],
       imports: [ SharedModule ],
     }).compileComponents();
   });
