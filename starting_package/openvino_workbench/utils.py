@@ -19,12 +19,14 @@
 import platform
 import sys
 import time
+import traceback
+import tempfile
 
 import requests
 
 import docker
 
-from openvino_workbench.constants import INTERNAL_PORT
+from openvino_workbench.constants import INTERNAL_PORT, COMMUNITY_LINK
 
 
 def get_image_size(repository_tags_url: str, proxies: dict) -> int:
@@ -63,3 +65,29 @@ def initialize_docker_client() -> docker.DockerClient:
 def get_docker_logs_since(docker_client: docker.DockerClient, container_name: str, seconds: int) -> str:
     return docker_client.api.logs(container=container_name,
                                   since=int(time.time()) - seconds).decode('utf-8')
+
+
+def save_logs_on_failure(fnc):
+    def decorated_func(*args, **kwargs):
+        try:
+            return fnc(*args, **kwargs)
+        # Do nothing for sys.exit(1) as they have error messages and save their logs
+        except SystemExit:
+            pass
+        except Exception as error:
+            error_message = str(error)
+            error_type = type(error)
+            error_traceback = traceback.format_exc()
+            log_fd, log_path = tempfile.mkstemp(text=True, prefix='openvino_workbench_', suffix='.log')
+
+            with open(log_fd, mode='w', encoding='utf-8') as log_file:
+                log = f'''OpenVINO Workbench Python Starter Log: 
+                \nError Message: {error_message if error_message else None}
+                Error Type: {error_type}
+                \nComplete Traceback: {error_traceback}
+                \nPlease report this logfile to the: {COMMUNITY_LINK}'''
+                log_file.write(log)
+            print(f'An error occurred. The complete log is saved at {log_path}.')
+            sys.exit(1)
+
+    return decorated_func

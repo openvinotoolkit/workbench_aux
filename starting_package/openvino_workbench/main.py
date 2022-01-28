@@ -25,9 +25,10 @@ from openvino_workbench.arguments_parser import parse_arguments
 from openvino_workbench.container import start_container, stop_container, restart_container
 from openvino_workbench.docker_config_creator import create_config_for_container
 from openvino_workbench.image import pull_image_and_display_progress
-from openvino_workbench.utils import print_starting_message, initialize_docker_client
+from openvino_workbench.utils import print_starting_message, initialize_docker_client, save_logs_on_failure
 
 
+@save_logs_on_failure
 def main():
     # Parse args
     args = parse_arguments()
@@ -66,7 +67,6 @@ def main():
 
     # Safe-pull an image, if interrupted stop pulling with understandable message
     try:
-
         pull_image_and_display_progress(docker_client, args.image, proxies, args.force_pull)
     except KeyboardInterrupt:
         print('Image pulling was interrupted.')

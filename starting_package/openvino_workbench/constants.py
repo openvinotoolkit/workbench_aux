@@ -41,3 +41,5 @@ DL_WB_LOGO = r'''
 DL_WB_DOCKER_CONFIG_PATH = os.path.join('/home', 'workbench', '.workbench')
 
 INTERNAL_PORT = '5665'
+
+COMMUNITY_LINK = 'https://community.intel.com/t5/Intel-Distribution-of-OpenVINO/bd-p/distribution-openvino-toolkit'
