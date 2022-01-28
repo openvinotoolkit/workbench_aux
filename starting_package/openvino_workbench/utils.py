@@ -71,7 +71,7 @@ def save_logs_on_failure(fnc):
     def decorated_func(*args, **kwargs):
         try:
             return fnc(*args, **kwargs)
-        # Do nothing for sys.exit(1) as they have error messages and save their logs
+        # Do nothing for sys.exit(1) as they have their own error messages
         except SystemExit:
             pass
         except Exception as error:
@@ -87,7 +87,7 @@ def save_logs_on_failure(fnc):
                 \nComplete Traceback: {error_traceback}
                 \nPlease report this logfile to the: {COMMUNITY_LINK}'''
                 log_file.write(log)
-            print(f'An error occurred. The complete log is saved at {log_path}.')
+            print(f'An error of type {error_type} occurred. The complete log is saved at {log_path}.')
             sys.exit(1)
 
     return decorated_func

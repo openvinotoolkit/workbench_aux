@@ -107,8 +107,8 @@ def start_container(docker_client: DockerClient,
     if is_container_present(docker_client, config['name']):
         print(f'Container with the specified name "{config["name"]}" is present on the machine.'
               '\nUse a different name by specifying the `--container-name` argument. Example command: '
-              'openvino-workbench --container-name NEW_NAME'
-              'Substitute the "NEW_NAME" placeholder with an actual name of your choice.'
+              '\nopenvino-workbench --container-name NEW_NAME'
+              '\nSubstitute the "NEW_NAME" placeholder with an actual name of your choice.'
               '\nAborting.')
         sys.exit(1)
 
