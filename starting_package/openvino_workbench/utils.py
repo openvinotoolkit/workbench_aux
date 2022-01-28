@@ -26,6 +26,7 @@ import docker
 
 from openvino_workbench.constants import INTERNAL_PORT
 
+
 def get_image_size(repository_tags_url: str, proxies: dict) -> int:
     try:
         images_info = requests.get(repository_tags_url, proxies=proxies).json()

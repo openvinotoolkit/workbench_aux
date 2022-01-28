@@ -57,14 +57,14 @@ setup(
     license='OSI Approved :: Apache Software License',
     description='DL Workbench is an official UI environment of the OpenVINO™ toolkit.',
     url='https://github.com/openvinotoolkit/workbench_aux',
-    version='2021.4.2',
+    version='2021.4.2.1',
     packages=['openvino_workbench'],
     install_requires=REQUIRED_PACKAGES,
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
     project_urls={
         'Documentation':
-            'https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Introduction.html',
+            'https://docs.openvino.ai/latest/workbench_docs_Workbench_DG_Introduction.html',
         'Feedback':
             'https://community.intel.com/t5/Intel-Distribution-of-OpenVINO/bd-p/distribution-openvino-toolkit',
         'Troubleshooting':
