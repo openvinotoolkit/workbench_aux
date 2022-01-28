@@ -72,8 +72,8 @@ def save_logs_on_failure(fnc):
         try:
             return fnc(*args, **kwargs)
         # Do nothing for sys.exit(1) as they have their own error messages
-        except SystemExit:
-            pass
+        except SystemExit as sys_exit:
+            raise SystemExit from sys_exit
         except Exception as error:
             error_message = str(error)
             error_type = type(error)
@@ -81,7 +81,7 @@ def save_logs_on_failure(fnc):
             log_fd, log_path = tempfile.mkstemp(text=True, prefix='openvino_workbench_', suffix='.log')
 
             with open(log_fd, mode='w', encoding='utf-8') as log_file:
-                log = f'''OpenVINO Workbench Python Starter Log: 
+                log = f'''OpenVINO Workbench Python Starter Log:
                 \nError Message: {error_message if error_message else None}
                 Error Type: {error_type}
                 \nComplete Traceback: {error_traceback}
