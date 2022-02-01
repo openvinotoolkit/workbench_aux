@@ -150,6 +150,17 @@ def parse_arguments() -> argparse.Namespace:
                         help='Turns on authentication for the DL Workbench.',
                         default=False)
 
+    parser.add_argument('--custom-token',
+                        required=False,
+                        help='Configures custom token for the DL Workbench authentication.',
+                        default=None)
+
+    parser.add_argument('--disable-token-saving',
+                        action='store_true',
+                        required=False,
+                        help='Turns off saving of login token to the file.',
+                        default=None)
+
     # SSL
     parser.add_argument('--ssl-certificate-name',
                         required=False,

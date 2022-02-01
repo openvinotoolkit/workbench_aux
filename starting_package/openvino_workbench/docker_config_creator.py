@@ -173,6 +173,12 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
     if passed_arguments.enable_authentication:
         config['environment']['ENABLE_AUTH'] = 1
 
+        if passed_arguments.custom_token:
+            config['environment']['CUSTOM_TOKEN'] = passed_arguments.custom_token
+
+        if passed_arguments.disable_token_saving:
+            config['environment']['SAVE_TOKEN_TO_FILE'] = 0
+
     # Jupyter
     if passed_arguments.no_jupyter:
         config['environment']['DISABLE_JUPYTER'] = 1
