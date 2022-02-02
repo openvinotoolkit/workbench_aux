@@ -16,8 +16,9 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 """
-
+import logging
 import sys
+import tempfile
 
 from docker import DockerClient
 
@@ -32,12 +33,21 @@ def main():
     # Parse args
     args = parse_arguments()
 
+    # Initialize logger
+    _, log_file_path = tempfile.mkstemp(text=True, prefix='openvino_workbench_', suffix='.log')
+    logging.basicConfig(filename=log_file_path,
+                        filemode='a',
+                        format='[%(levelname)s] %(message)s (%(filename)s, %(funcName)s(), line %(lineno)d)',
+                        level=logging.DEBUG)
+    logger = logging.getLogger('Python Starter')
+    logger.info('OpenVINO Python Starter Log:')
+
     # Initialize Docker client
     docker_client: DockerClient = initialize_docker_client()
 
     # Restart container if needed
     if args.restart:
-        container = Container(docker_client=docker_client, logger=LOGGER, config={'name': args.restart})
+        container = Container(docker_client=docker_client, logger=logger, config={'name': args.restart})
         # Safe-restart a container, stop it on CMD/Ctrl+C as usual Docker container
         try:
             container.restart(args.detached)
@@ -67,14 +77,14 @@ def main():
 
     # Safe-pull an image, if interrupted stop pulling with understandable message
     try:
-        image = Image(docker_client=docker_client, image_name=args.image, logger=LOGGER, proxies=proxies)
+        image = Image(docker_client=docker_client, image_name=args.image, logger=logger, proxies=proxies)
         image.pull(args.force_pull)
     except KeyboardInterrupt:
         print('Image pulling was interrupted.')
         sys.exit(1)
 
     # Safe-start a container, stop it on CMD/Ctrl+C as usual Docker container
-    container = Container(docker_client=docker_client, logger=LOGGER, config=config)
+    container = Container(docker_client=docker_client, logger=logger, config=config)
     try:
         container.start(args.network_name, args.network_alias, args.detached)
     except KeyboardInterrupt:
