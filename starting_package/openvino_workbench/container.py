@@ -17,16 +17,16 @@
  limitations under the License.
 """
 
+import logging
 import platform
 import re
-import logging
 import sys
 import time
 from typing import Optional
 
 from docker import DockerClient
 from openvino_workbench.constants import DL_WB_LOGO, PRE_STAGE_MESSAGES, STAGE_COMPLETE_MESSAGES, \
-    WORKBENCH_READY_MESSAGE
+    WORKBENCH_READY_MESSAGE, LOG_FILE
 
 
 class Container:
@@ -39,23 +39,20 @@ class Container:
         self._is_running = self._is_container_running()
 
     def start(self, detached: bool, network_name: str, network_alias: str):
+        self.logger.info('Starting container.')
+
         if self._is_present:
-            print(f'''
-Container with the specified name "{self.container_name}" is present on the machine.
+            print(f'''Container with the specified name "{self.container_name}" is present on the machine.
 Use a different name by specifying the `--container-name` argument.
 ''')
 
             new_name = self._generate_container_name()
             if new_name:
-                print(f'''
-Copy and run the following command:
+                print(f'''Copy and run the following command:
 
-    openvino-workbench --container-name {new_name}
-
-''')
+    openvino-workbench --container-name {new_name}''')
             else:
-                print(f'''
-Example command:
+                print(f'''Example command:
 
     openvino-workbench --container-name NEW_NAME
 
@@ -83,21 +80,28 @@ Substitute the "NEW_NAME" placeholder with an actual name of your choice.''')
             # Display container logs
             self._attach_to_container_and_display_logs()
 
+        self.logger.info('Started container in the detached mode.')
+
     def stop(self):
+        self.logger.info('Stopping the container...')
         print('\nStopping the container...')
         if not self.client.containers.list(filters={'name': self.container_name}):
             print('The specified container does not exist.')
             sys.exit(1)
         self.client.api.stop(self.container_name)
-        print('The container was stopped.')
+        print(f'The container was stopped. Full log of this run can be found in: {LOG_FILE}')
+        self.logger.info('The container was stopped.')
 
     def restart(self, is_detached: bool):
+        self.logger.info('Restarting a container.')
         print(f'Restarting a previously stopped container with the name "{self.container_name}" ... \n')
         if not self._is_present:
+            self.logger.info('RESTART. Container with specified name was not found.')
             print(f'A container with the name "{self.container_name}" does not exist.')
             print('Aborting.')
             sys.exit(1)
         elif self._is_running:
+            self.logger.info('RESTART. Container with specified name is already running.')
             print(f'A container with the name "{self.container_name}" is running - there is no need to restart it.')
             print('Aborting.')
             sys.exit(1)
@@ -144,9 +148,14 @@ Substitute the "NEW_NAME" placeholder with an actual name of your choice.''')
             if stage_complete_pattern.search(current_log):
                 break
         else:
-            print(self.client.api.logs(container=self.container_name).decode('utf-8'))
-            print('\nCould not start the container. The complete log is shown above.')
+            self.logger.info('Could not start the container.')
+            logs = self.client.api.logs(container=self.container_name).decode('utf-8')
+            print(f'\nCould not start the container. '
+                  f'The complete log is stored in {LOG_FILE}.')
+            self.logger.info(f'CONTAINER LOGS\n: {logs}.')
             sys.exit(1)
+
+        self.logger.info(f'Container starting stage with message {stage_complete_pattern.pattern} is complete.')
 
         print('Done.')
 
@@ -170,6 +179,8 @@ Substitute the "NEW_NAME" placeholder with an actual name of your choice.''')
                 stop_message = stop_message.replace('Ctrl', 'CMD')
             print(stop_message)
 
+        self.logger.info('Finish message was printed.')
+
     def _is_network_present(self, network: str) -> bool:
         return bool(self.client.api.networks(names=[network]))
 
@@ -189,6 +200,7 @@ Substitute the "NEW_NAME" placeholder with an actual name of your choice.''')
                                     since=int(time.time()) - seconds).decode('utf-8')
 
     def _attach_to_container_and_display_logs(self):
+        self.logger.info('Attaching to container to display logs.')
         for log in self.client.api.attach(container=self.container_name, stream=True):
             print(log.decode('utf-8'), sep='', end='')
 

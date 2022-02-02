@@ -16,47 +16,38 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 """
-import logging
 import sys
-import tempfile
 
 from docker import DockerClient
-
 from openvino_workbench.arguments_parser import parse_arguments
+from openvino_workbench.constants import LOGGER, LOG_FILE
 from openvino_workbench.container import Container
 from openvino_workbench.docker_config_creator import create_config_for_container
 from openvino_workbench.image import Image
-from openvino_workbench.utils import print_starting_message, initialize_docker_client
+from openvino_workbench.utils import print_starting_message, initialize_docker_client, save_logs_on_failure
 
 
+@save_logs_on_failure
 def main():
     # Parse args
     args = parse_arguments()
 
-    # Initialize logger
-    _, log_file_path = tempfile.mkstemp(text=True, prefix='openvino_workbench_', suffix='.log')
-    logging.basicConfig(filename=log_file_path,
-                        filemode='a',
-                        format='[%(levelname)s] %(message)s (%(filename)s, %(funcName)s(), line %(lineno)d)',
-                        level=logging.DEBUG)
-    logger = logging.getLogger('Python Starter')
-    logger.info('OpenVINO Python Starter Log:')
-
     # Initialize Docker client
-    docker_client: DockerClient = initialize_docker_client()
+    docker_client: DockerClient = initialize_docker_client(LOGGER)
 
     # Restart container if needed
     if args.restart:
-        container = Container(docker_client=docker_client, logger=logger, config={'name': args.restart})
+        container = Container(docker_client=docker_client, logger=LOGGER, config={'name': args.restart})
         # Safe-restart a container, stop it on CMD/Ctrl+C as usual Docker container
         try:
             container.restart(args.detached)
         except KeyboardInterrupt:
+            LOGGER.info('Stopping the previously restarted container.')
             container.stop()
             sys.exit(0)
 
     # Create config for Docker container
-    config = create_config_for_container(args)
+    config = create_config_for_container(args, LOGGER)
 
     # Print starting message
     enabled_devices = {
@@ -64,7 +55,7 @@ def main():
         'MYRIAD': args.enable_myriad,
         'HDDL': args.enable_hddl
     }
-    print_starting_message(config, enabled_devices)
+    print_starting_message(config, enabled_devices, LOG_FILE)
 
     # Provide proxies for image pulling
     proxies = {}
@@ -77,16 +68,17 @@ def main():
 
     # Safe-pull an image, if interrupted stop pulling with understandable message
     try:
-        image = Image(docker_client=docker_client, image_name=args.image, logger=logger, proxies=proxies)
+        image = Image(docker_client=docker_client, image_name=args.image, logger=LOGGER, proxies=proxies)
         image.pull(args.force_pull)
     except KeyboardInterrupt:
+        LOGGER.info('Image pulling was interrupted.')
         print('Image pulling was interrupted.')
         sys.exit(1)
 
     # Safe-start a container, stop it on CMD/Ctrl+C as usual Docker container
-    container = Container(docker_client=docker_client, logger=logger, config=config)
+    container = Container(docker_client=docker_client, logger=LOGGER, config=config)
     try:
-        container.start(args.network_name, args.network_alias, args.detached)
+        container.start(args.detached, args.network_name, args.network_alias)
     except KeyboardInterrupt:
         container.stop()
         sys.exit(0)

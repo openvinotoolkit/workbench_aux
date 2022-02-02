@@ -17,15 +17,13 @@
  limitations under the License.
 """
 
-import sys
-import requests
 import logging
+import sys
 
-from tqdm import tqdm
-
+import requests
 from docker import DockerClient
-
 from openvino_workbench.constants import DOCKER_HUB_TAGS_URL
+from tqdm import tqdm
 
 
 class Image:
@@ -41,8 +39,10 @@ class Image:
         self._is_present_in_registry = self._is_image_present_in_registry()
 
     def pull(self, force_pull: bool = False):
+        self.logger.info(f'Pulling image with the name: {self.image_name}')
 
         if self._is_present and not force_pull:
+            self.logger.info('Image is present on the machine.')
             print(f'The specified image: {self.repository}:{self.tag} is present on the machine. Continuing with it...')
             print('NOTE: If you want to force-update your image, add `--force-pull` argument.\n')
             return
@@ -100,6 +100,7 @@ Aborting.''')
                     total_extracted += statuses['extracting']
 
                 progress_total = self._calculate_total_progress(total_downloaded, total_extracted, total_image_size)
+                self.logger.info(f'Image pulling progress: {progress_total}')
 
                 # Update progress bar
                 if progress_total != progress_bar.last_print_n < 100:
@@ -108,18 +109,21 @@ Aborting.''')
             # Last update if < 100
             self._update_progress_bar(progress_bar.total, progress_bar)
 
+        self.logger.info('Image was pulled.')
         print('\nPull is complete.')
 
     def _pull_image_without_progress(self):
+        self.logger.info('Pulling the image without progress bar.')
         print('Pulling the image...')
         self.client.api.pull(repository=self.repository, tag=self.tag)
         print('Pull is complete.')
+        self.logger.info('Image was pulled without progress.')
 
-    @staticmethod
-    def _parse_image_name(image_name: str) -> tuple:
+    def _parse_image_name(self, image_name: str) -> tuple:
         try:
             repository, tag = image_name.split(':')
         except ValueError:
+            self.logger.error('Could not parse the image name.', exc_info=True)
             print(f'''The specified image name: "{image_name}" might be incorrect.          
 Please specify the image name in the following format: repository:tag
 
@@ -149,6 +153,7 @@ Aborting.''')
             return bool(self.client.images.get_registry_data(self.image_name))
         # Raises error otherwise
         except Exception:
+            self.logger.error(f'Image with the name "{self.image_name}" was not found in registry.', exc_info=True)
             return False
 
     def _get_image_size(self, repository_tags_url: str) -> int:
@@ -156,6 +161,7 @@ Aborting.''')
             images_info = requests.get(repository_tags_url, proxies=self.proxies).json()
             return images_info['results'][0]['full_size']
         except Exception:
+            self.logger.error('Could not get image size from the Hub.', exc_info=True)
             return 0
 
     @staticmethod

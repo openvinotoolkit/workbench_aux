@@ -17,6 +17,7 @@
  limitations under the License.
 """
 
+import logging
 import os
 import platform
 import random
@@ -34,7 +35,6 @@ def transform_relative_assets_dir_path(path_to_dir: str) -> str:
 
 
 def check_and_transform_assets_dir(path_to_dir: str, user_os: str) -> str:
-
     if not os.path.isabs(path_to_dir):
         print(f'WARNING: Provided assets directory path: "{path_to_dir}" is not absolute.\n'
               'Make sure that it is relative to the folder from which you use the starter. '
@@ -151,9 +151,10 @@ Then copy the required assets into it and and mount the directory by assigning i
               'Check that directory has writing permissions.')
 
 
-def create_config_for_container(passed_arguments: Namespace) -> dict:
+def create_config_for_container(passed_arguments: Namespace, logger: logging.Logger) -> dict:
     # Get OS
     user_os = platform.system()
+    logger.info(f'OS: {user_os}.')
 
     config = {'image': f'{passed_arguments.image}',
               'environment': {'PUBLIC_PORT': passed_arguments.port,
@@ -187,6 +188,7 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
 
     # Devices
     if not are_args_valid_for_windows(passed_arguments):
+        logger.info('Invalid arguments for Windows.')
         print('DL Workbench does not support non-CPU (GPU, VPU, HDDL) devices on Windows.\n'
               'Please remove the non-CPU related arguments (--enable-gpu/--enable-myriad/--enable-hddl).\n'
               'Aborting.')
@@ -221,6 +223,7 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
             if not are_ssl_files_present_in_assets_dir(passed_arguments.ssl_certificate_name,
                                                        passed_arguments.ssl_key_name,
                                                        assets_directory):
+                logger.info('SSL key or/and SSL certificate files are not present in the provided directory.')
                 print(f'SSL key or/and SSL certificate files are not present in the provided directory: '
                       f'{passed_arguments.assets_directory}.')
                 print('Aborting.')
@@ -237,5 +240,7 @@ def create_config_for_container(passed_arguments: Namespace) -> dict:
         config['network'] = passed_arguments.network_name
     if passed_arguments.cloud_service_session_ttl:
         config['environment']['CLOUD_SERVICE_SESSION_TTL_MINUTES'] = passed_arguments.cloud_service_session_ttl
+
+    logger.info(f'Created config: {config}.')
 
     return config

@@ -17,8 +17,9 @@
  limitations under the License.
 """
 
+import logging
 import os
-import pathlib
+import tempfile
 
 DOCKER_HUB_TAGS_URL = 'https://hub.docker.com/v2/repositories/openvino/workbench/tags'
 
@@ -44,3 +45,12 @@ DL_WB_DOCKER_CONFIG_PATH = os.path.join('/home', 'workbench', '.workbench')
 INTERNAL_PORT = '5665'
 
 COMMUNITY_LINK = 'https://community.intel.com/t5/Intel-Distribution-of-OpenVINO/bd-p/distribution-openvino-toolkit'
+
+# Initialize logger
+_, LOG_FILE = tempfile.mkstemp(text=True, prefix='openvino_workbench_', suffix='.log')
+logging.basicConfig(filename=LOG_FILE,
+                    filemode='a',
+                    format='[%(levelname)s] %(message)s (%(filename)s, %(funcName)s(), line %(lineno)d)',
+                    level=logging.DEBUG)
+LOGGER = logging.getLogger('Python Starter')
+LOGGER.info('OpenVINO Python Starter Log:')
