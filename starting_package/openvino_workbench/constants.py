@@ -18,6 +18,7 @@
 """
 
 import os
+import pathlib
 
 DOCKER_HUB_TAGS_URL = 'https://hub.docker.com/v2/repositories/openvino/workbench/tags'
 

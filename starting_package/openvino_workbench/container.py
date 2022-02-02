@@ -1,5 +1,5 @@
 """
- OpenVINO Profiler
+ OpenVINO DL Workbench Python Starter
  Docker container-related logic
 
  Copyright (c) 2021 Intel Corporation
@@ -19,153 +19,182 @@
 
 import platform
 import re
+import logging
 import sys
 import time
+from typing import Optional
 
 from docker import DockerClient
-
 from openvino_workbench.constants import DL_WB_LOGO, PRE_STAGE_MESSAGES, STAGE_COMPLETE_MESSAGES, \
     WORKBENCH_READY_MESSAGE
-from openvino_workbench.utils import get_docker_logs_since
 
 
-def wait_for_stage_to_complete(pre_message: str,
-                               stage_complete_pattern,
-                               docker_client: DockerClient,
-                               container_name: str):
-    max_retries = 20
+class Container:
+    def __init__(self, docker_client: DockerClient, logger: logging.Logger, config: dict):
+        self.client = docker_client
+        self.logger = logger
+        self.config = config
+        self.container_name = self.config['name']
+        self._is_present = self._is_container_present()
+        self._is_running = self._is_container_running()
 
-    print(pre_message, end=' ', flush=True)
+    def start(self, detached: bool, network_name: str, network_alias: str):
+        if self._is_present:
+            print(f'''
+Container with the specified name "{self.container_name}" is present on the machine.
+Use a different name by specifying the `--container-name` argument.
+''')
 
-    for _ in range(max_retries):
-        time.sleep(7)
-        current_log = get_docker_logs_since(docker_client=docker_client,
-                                            container_name=container_name,
-                                            seconds=20)
+            new_name = self._generate_container_name()
+            if new_name:
+                print(f'''
+Copy and run the following command:
 
-        if stage_complete_pattern.search(current_log):
-            break
-    else:
-        print(docker_client.api.logs(container=container_name).decode('utf-8'))
-        print('\nCould not start the container. The complete log is shown above.')
-        sys.exit(1)
+    openvino-workbench --container-name {new_name}
 
-    print('Done.')
+''')
+            else:
+                print(f'''
+Example command:
 
+    openvino-workbench --container-name NEW_NAME
 
-def print_finishing_message(docker_client: DockerClient, container_name: str, is_detached: bool):
-    print(DL_WB_LOGO)
+Substitute the "NEW_NAME" placeholder with an actual name of your choice.''')
 
-    # Show finishing message from the container logs
-    container = docker_client.containers.get(container_name)
-    all_logs = container.logs().decode('utf-8').rstrip()
-    finishing_message_start = all_logs.rfind(WORKBENCH_READY_MESSAGE)
-    print(f'\n{all_logs[finishing_message_start:]}')
-    del all_logs
+            print('\nAborting.')
+            sys.exit(1)
 
-    if is_detached:
-        print(f'''\nDL Workbench is started in the detached mode.
-        If you want to stop the container, run the following command:
-                docker stop {container_name}''')
-    else:
-        stop_message = '\nPress Ctrl+C to stop the container.'
-        if platform.system() == 'Darwin':
-            stop_message = stop_message.replace('Ctrl', 'CMD')
-        print(stop_message)
+        print('Starting the DL Workbench container...\n')
 
+        self.client.containers.run(**self.config)
 
-def is_network_present(docker_client: DockerClient, network: str) -> bool:
-    return bool(docker_client.api.networks(names=[network]))
+        for pre_message, complete_message in zip(PRE_STAGE_MESSAGES, STAGE_COMPLETE_MESSAGES):
+            self._wait_for_stage_to_complete(pre_message, re.compile(complete_message))
 
+        self._print_finishing_message(detached)
 
-def connect_container_to_network(docker_client: DockerClient,
-                                 container_name: str,
-                                 network_name: str,
-                                 network_alias: str):
-    if not is_network_present(docker_client, network_name):
-        net = docker_client.networks.create(name=network_name, driver='bridge')
-    else:
-        net_id = docker_client.api.networks(names=[network_name])[0]['Id']
-        net = docker_client.networks.get(network_id=net_id)
+        # Check for DL WB Docker network and create one if it does not exist
+        if 'CLOUD_SERVICE_URL' not in self.config['environment']:
+            self._connect_container_to_network(network_name, network_alias)
 
-    net.connect(container=container_name, aliases=[network_alias])
+        self._set_running()
 
+        if not detached:
+            # Display container logs
+            self._attach_to_container_and_display_logs()
 
-def is_container_present(docker_client: DockerClient, container_name_to_search: str) -> bool:
-    return any(container_name_to_search == container.name for container in docker_client.containers.list(all=True))
+    def stop(self):
+        print('\nStopping the container...')
+        if not self.client.containers.list(filters={'name': self.container_name}):
+            print('The specified container does not exist.')
+            sys.exit(1)
+        self.client.api.stop(self.container_name)
+        print('The container was stopped.')
 
+    def restart(self, is_detached: bool):
+        print(f'Restarting a previously stopped container with the name "{self.container_name}" ... \n')
+        if not self._is_present:
+            print(f'A container with the name "{self.container_name}" does not exist.')
+            print('Aborting.')
+            sys.exit(1)
+        elif self._is_running:
+            print(f'A container with the name "{self.container_name}" is running - there is no need to restart it.')
+            print('Aborting.')
+            sys.exit(1)
 
-def is_container_running(docker_client: DockerClient, container_name_to_search: str) -> bool:
-    return any(container_name_to_search == container.name for container in docker_client.containers.list())
+        # Get and restart the container
+        container = self.client.containers.get(self.container_name)
+        container.start()
 
+        # Wait for it to be ready
+        for pre_message, complete_message in zip(PRE_STAGE_MESSAGES, STAGE_COMPLETE_MESSAGES):
+            self._wait_for_stage_to_complete(pre_message, re.compile(complete_message))
 
-def start_container(docker_client: DockerClient,
-                    config: dict,
-                    network: str,
-                    network_alias: str,
-                    detached: bool = False):
-    if is_container_present(docker_client, config['name']):
-        print(f'Container with the specified name "{config["name"]}" is present on the machine.'
-              '\nUse a different name by specifying the `--container-name` argument. Example command: '
-              '\nopenvino-workbench --container-name NEW_NAME'
-              '\nSubstitute the "NEW_NAME" placeholder with an actual name of your choice.'
-              '\nAborting.')
-        sys.exit(1)
+        self._print_finishing_message(is_detached)
 
-    print('Starting the DL Workbench container...\n')
+        if is_detached:
+            sys.exit(0)
 
-    docker_client.containers.run(**config)
+        self._set_running()
+        self._attach_to_container_and_display_logs()
 
-    for pre_message, complete_message in zip(PRE_STAGE_MESSAGES, STAGE_COMPLETE_MESSAGES):
-        wait_for_stage_to_complete(pre_message, re.compile(complete_message), docker_client, config['name'])
+    def _generate_container_name(self) -> Optional[str]:
+        all_taken_names = [container.name for container in self.client.containers.list(all=True)]
+        for idx in range(20):
+            new_name = f'{self.container_name}_{idx}'
+            if new_name not in all_taken_names:
+                return new_name
 
-    print_finishing_message(docker_client, config['name'], detached)
+    def _is_container_present(self) -> bool:
+        return any(self.container_name == container.name for container in self.client.containers.list(all=True))
 
-    # Check for DL WB Docker network and create one if it does not exist
-    if 'CLOUD_SERVICE_URL' not in config['environment']:
-        connect_container_to_network(docker_client, config['name'], network, network_alias)
+    def _is_container_running(self) -> bool:
+        return any(self.container_name == container.name for container in self.client.containers.list())
 
-    if not detached:
-        # Display container logs
-        attach_to_container_and_display_logs(docker_client, config['name'])
+    def _wait_for_stage_to_complete(self, pre_message: str,
+                                    stage_complete_pattern):
+        max_retries = 20
 
+        print(pre_message, end=' ', flush=True)
 
-def stop_container(docker_client: DockerClient, container_name: str):
-    print('\nStopping the container...')
-    if not docker_client.containers.list(filters={'name': container_name}):
-        print('The specified container does not exist.')
-        sys.exit(1)
-    docker_client.api.stop(container_name)
-    print('The container was stopped.')
+        for _ in range(max_retries):
+            time.sleep(7)
+            current_log = self._get_docker_logs_since(seconds=20)
 
+            if stage_complete_pattern.search(current_log):
+                break
+        else:
+            print(self.client.api.logs(container=self.container_name).decode('utf-8'))
+            print('\nCould not start the container. The complete log is shown above.')
+            sys.exit(1)
 
-def restart_container(docker_client: DockerClient, container_name: str, is_detached: bool):
-    print(f'Restarting a previously stopped container with the name "{container_name}" ... \n')
-    if not is_container_present(docker_client, container_name):
-        print(f'A container with the name "{container_name}" does not exist.')
-        print('Aborting.')
-        sys.exit(1)
-    elif is_container_running(docker_client, container_name):
-        print(f'A container with the name "{container_name}" is running - there is no need to restart it.')
-        print('Aborting.')
-        sys.exit(1)
+        print('Done.')
 
-    # Get and restart the container
-    container = docker_client.containers.get(container_name)
-    container.start()
+    def _print_finishing_message(self, detached: bool):
+        print(DL_WB_LOGO)
 
-    # Wait for it to be ready
-    for pre_message, complete_message in zip(PRE_STAGE_MESSAGES, STAGE_COMPLETE_MESSAGES):
-        wait_for_stage_to_complete(pre_message, re.compile(complete_message), docker_client, container_name)
+        # Show finishing message from the container logs
+        container = self.client.containers.get(self.container_name)
+        all_logs = container.logs().decode('utf-8').rstrip()
+        finishing_message_start = all_logs.rfind(WORKBENCH_READY_MESSAGE)
+        print(f'\n{all_logs[finishing_message_start:]}')
+        del all_logs
 
-    print_finishing_message(docker_client, container_name, is_detached)
+        if detached:
+            print(f'''\nDL Workbench is started in the detached mode.
+            If you want to stop the container, run the following command:
+                    docker stop {self.container_name}''')
+        else:
+            stop_message = '\nPress Ctrl+C to stop the container.'
+            if platform.system() == 'Darwin':
+                stop_message = stop_message.replace('Ctrl', 'CMD')
+            print(stop_message)
 
-    if is_detached:
-        sys.exit(0)
+    def _is_network_present(self, network: str) -> bool:
+        return bool(self.client.api.networks(names=[network]))
 
-    attach_to_container_and_display_logs(docker_client, container_name)
+    def _connect_container_to_network(self,
+                                      network_name: str,
+                                      network_alias: str):
+        if not self._is_network_present(network_name):
+            net = self.client.networks.create(name=network_name, driver='bridge')
+        else:
+            net_id = self.client.api.networks(names=[network_name])[0]['Id']
+            net = self.client.networks.get(network_id=net_id)
 
+        net.connect(container=self.container_name, aliases=[network_alias])
 
-def attach_to_container_and_display_logs(docker_client: DockerClient, container_name: str):
-    for log in docker_client.api.attach(container=container_name, stream=True):
-        print(log.decode('utf-8'), sep='', end='')
+    def _get_docker_logs_since(self, seconds: int) -> str:
+        return self.client.api.logs(container=self.container_name,
+                                    since=int(time.time()) - seconds).decode('utf-8')
+
+    def _attach_to_container_and_display_logs(self):
+        for log in self.client.api.attach(container=self.container_name, stream=True):
+            print(log.decode('utf-8'), sep='', end='')
+
+    def _set_present(self):
+        self._is_present = True
+
+    def _set_running(self):
+        self._is_present = True
+        self._is_running = True

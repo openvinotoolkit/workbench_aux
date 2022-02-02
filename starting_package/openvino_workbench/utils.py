@@ -16,25 +16,19 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 """
+import pathlib
 import platform
 import sys
 import time
 import traceback
 import tempfile
+from typing import Dict, Union
 
 import requests
 
 import docker
 
 from openvino_workbench.constants import INTERNAL_PORT, COMMUNITY_LINK
-
-
-def get_image_size(repository_tags_url: str, proxies: dict) -> int:
-    try:
-        images_info = requests.get(repository_tags_url, proxies=proxies).json()
-        return images_info['results'][0]['full_size']
-    except Exception:
-        return 0
 
 
 def print_starting_message(config: dict, enabled_devices: dict):
@@ -62,32 +56,49 @@ def initialize_docker_client() -> docker.DockerClient:
     return client
 
 
-def get_docker_logs_since(docker_client: docker.DockerClient, container_name: str, seconds: int) -> str:
-    return docker_client.api.logs(container=container_name,
-                                  since=int(time.time()) - seconds).decode('utf-8')
+def create_log_file(prefix: str, suffix: str = '.log') -> Dict[str, Union[str, int]]:
+    log_fd, log_path = tempfile.mkstemp(text=True, prefix=prefix, suffix=suffix)
+    return {
+        'log_path': log_path,
+        'log_fd': log_fd
+    }
 
 
-def save_logs_on_failure(fnc):
-    def decorated_func(*args, **kwargs):
-        try:
-            return fnc(*args, **kwargs)
-        # Do nothing for sys.exit(1) as they have their own error messages
-        except SystemExit as sys_exit:
-            raise SystemExit from sys_exit
-        except Exception as error:
-            error_message = str(error)
-            error_type = type(error)
-            error_traceback = traceback.format_exc()
-            log_fd, log_path = tempfile.mkstemp(text=True, prefix='openvino_workbench_', suffix='.log')
+def save_logs_on_failure(docker_client: docker.DockerClient, container_name: str):
+    def decorator(fnc):
+        def decorated_func(*args, **kwargs):
+            try:
+                return fnc(*args, **kwargs)
+            except Exception as error:
 
-            with open(log_fd, mode='w', encoding='utf-8') as log_file:
-                log = f'''OpenVINO Workbench Python Starter Log:
-                \nError Message: {error_message if error_message else None}
-                Error Type: {error_type}
-                \nComplete Traceback: {error_traceback}
-                \nPlease report this logfile to the: {COMMUNITY_LINK}'''
-                log_file.write(log)
-            print(f'An error of type {error_type} occurred. The complete log is saved at {log_path}.')
-            sys.exit(1)
+                # Write Python logs
+                error_message = str(error)
+                error_type = type(error)
+                error_traceback = traceback.format_exc()
+                starter_log_file = create_log_file('openvino_workbench_')
 
-    return decorated_func
+                with open(starter_log_file['log_fd'], mode='w', encoding='utf-8') as log_file:
+                    log = f'''\nOpenVINO Workbench Python Starter Error Log:
+                    * An error occurred!
+                    * Error Message: {error_message if error_message else None}
+                    * Error Type: {error_type}
+                    
+                    * The complete log is saved at {starter_log_file["log_path"]}.'''
+                    print(log)
+                    log += f'\n * Complete traceback: {error_traceback}'
+                    log_file.write(log)
+
+                # Write container logs
+                if is_container_present(docker_client, container_name):
+                    container_log_file = create_log_file('openvino_workbench_container_')
+                    container_logs = docker_client.api.logs(container=container_name)
+                    with open(container_log_file['log_fd'], mode='w', encoding='utf-8') as log_file:
+                        log = f'Container logs: \n{container_logs}'
+                        log_file.write(log)
+                    print(
+                        f'The complete container log is saved at {container_log_file["log_path"]}.')
+                print(f'Please report the logs to the: {COMMUNITY_LINK}.')
+                sys.exit(1)
+
+        return decorated_func
+    return decorator

@@ -22,13 +22,12 @@ import sys
 from docker import DockerClient
 
 from openvino_workbench.arguments_parser import parse_arguments
-from openvino_workbench.container import start_container, stop_container, restart_container
+from openvino_workbench.container import Container
 from openvino_workbench.docker_config_creator import create_config_for_container
-from openvino_workbench.image import pull_image_and_display_progress
-from openvino_workbench.utils import print_starting_message, initialize_docker_client, save_logs_on_failure
+from openvino_workbench.image import Image
+from openvino_workbench.utils import print_starting_message, initialize_docker_client
 
 
-@save_logs_on_failure
 def main():
     # Parse args
     args = parse_arguments()
@@ -38,11 +37,12 @@ def main():
 
     # Restart container if needed
     if args.restart:
+        container = Container(docker_client=docker_client, logger=LOGGER, config={'name': args.restart})
         # Safe-restart a container, stop it on CMD/Ctrl+C as usual Docker container
         try:
-            restart_container(docker_client, args.restart, args.detached)
+            container.restart(args.detached)
         except KeyboardInterrupt:
-            stop_container(docker_client, args.restart)
+            container.stop()
             sys.exit(0)
 
     # Create config for Docker container
@@ -67,16 +67,18 @@ def main():
 
     # Safe-pull an image, if interrupted stop pulling with understandable message
     try:
-        pull_image_and_display_progress(docker_client, args.image, proxies, args.force_pull)
+        image = Image(docker_client=docker_client, image_name=args.image, logger=LOGGER, proxies=proxies)
+        image.pull(args.force_pull)
     except KeyboardInterrupt:
         print('Image pulling was interrupted.')
         sys.exit(1)
 
     # Safe-start a container, stop it on CMD/Ctrl+C as usual Docker container
+    container = Container(docker_client=docker_client, logger=LOGGER, config=config)
     try:
-        start_container(docker_client, config, args.network_name, args.network_alias, args.detached)
+        container.start(args.network_name, args.network_alias, args.detached)
     except KeyboardInterrupt:
-        stop_container(docker_client, config['name'])
+        container.stop()
         sys.exit(0)
 
 
