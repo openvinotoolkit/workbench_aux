@@ -19,7 +19,7 @@
 import sys
 
 from docker import DockerClient
-from openvino_workbench.arguments_parser import parse_arguments
+from openvino_workbench.arguments_parser import StarterArgumentsParser
 from openvino_workbench.constants import LOGGER, LOG_FILE
 from openvino_workbench.container import Container
 from openvino_workbench.docker_config_creator import create_config_for_container
@@ -29,47 +29,47 @@ from openvino_workbench.utils import print_starting_message, initialize_docker_c
 
 @save_logs_on_failure
 def main():
-    # Parse args
-    args = parse_arguments()
+    # Parse arguments
+    arguments = StarterArgumentsParser(LOGGER).arguments
 
     # Initialize Docker client
     docker_client: DockerClient = initialize_docker_client(LOGGER)
 
     # Restart container if needed
-    if args.restart:
-        container = Container(docker_client=docker_client, logger=LOGGER, config={'name': args.restart})
+    if arguments.restart:
+        container = Container(docker_client=docker_client, logger=LOGGER, config={'name': arguments.restart})
         # Safe-restart a container, stop it on CMD/Ctrl+C as usual Docker container
         try:
-            container.restart(args.detached)
+            container.restart(arguments.detached)
         except KeyboardInterrupt:
             LOGGER.info('Stopping the previously restarted container.')
             container.stop()
             sys.exit(0)
 
     # Create config for Docker container
-    config = create_config_for_container(args, LOGGER)
+    config = create_config_for_container(arguments, LOGGER)
 
     # Print starting message
     enabled_devices = {
-        'GPU': args.enable_gpu,
-        'MYRIAD': args.enable_myriad,
-        'HDDL': args.enable_hddl
+        'GPU': arguments.enable_gpu,
+        'MYRIAD': arguments.enable_myriad,
+        'HDDL': arguments.enable_hddl
     }
     print_starting_message(config, enabled_devices, LOG_FILE)
 
     # Provide proxies for image pulling
     proxies = {}
-    if args.http_proxy:
-        proxies['http'] = args.http_proxy
-    if args.https_proxy:
-        proxies['https'] = args.https_proxy
-    if args.no_proxy:
-        proxies['no_proxy'] = args.no_proxy
+    if arguments.http_proxy:
+        proxies['http'] = arguments.http_proxy
+    if arguments.https_proxy:
+        proxies['https'] = arguments.https_proxy
+    if arguments.no_proxy:
+        proxies['no_proxy'] = arguments.no_proxy
 
     # Safe-pull an image, if interrupted stop pulling with understandable message
     try:
-        image = Image(docker_client=docker_client, image_name=args.image, logger=LOGGER, proxies=proxies)
-        image.pull(args.force_pull)
+        image = Image(docker_client=docker_client, image_name=arguments.image, logger=LOGGER, proxies=proxies)
+        image.pull(arguments.force_pull)
     except KeyboardInterrupt:
         LOGGER.info('Image pulling was interrupted.')
         print('Image pulling was interrupted.')
@@ -78,7 +78,7 @@ def main():
     # Safe-start a container, stop it on CMD/Ctrl+C as usual Docker container
     container = Container(docker_client=docker_client, logger=LOGGER, config=config)
     try:
-        container.start(args.detached, args.network_name, args.network_alias)
+        container.start(arguments.detached, arguments.network_name, arguments.network_alias)
     except KeyboardInterrupt:
         container.stop()
         sys.exit(0)

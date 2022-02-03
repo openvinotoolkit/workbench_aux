@@ -19,6 +19,8 @@
 import logging
 import platform
 import sys
+import os
+from typing import Optional
 
 import docker
 from openvino_workbench.constants import INTERNAL_PORT, LOGGER, LOG_FILE, COMMUNITY_LINK
@@ -69,3 +71,7 @@ def save_logs_on_failure(fnc):
             sys.exit(1)
 
     return decorated_func
+
+
+def get_proxy_from_env(proxy: str) -> Optional[str]:
+    return os.getenv(proxy) or os.getenv(proxy.upper())

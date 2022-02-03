@@ -29,29 +29,116 @@ from pathlib import Path
 from openvino_workbench.constants import DL_WB_DOCKER_CONFIG_PATH, INTERNAL_PORT
 
 
-def transform_relative_assets_dir_path(path_to_dir: str) -> str:
-    work_dir = os.path.abspath(os.getcwd())
-    return os.path.join(work_dir, path_to_dir)
+class DockerConfigCreator:
+    def __init__(self, arguments: Namespace, logger: logging.Logger):
+        self._arguments = arguments
+        self._logger = logger
+        self.config = {}
+        self._create_config()
 
+    def _create_config(self) -> dict:
+        # Get OS
+        user_os = platform.system()
+        self._logger.info(f'OS: {user_os}.')
 
-def check_and_transform_assets_dir(path_to_dir: str, user_os: str) -> str:
-    if not os.path.isabs(path_to_dir):
-        print(f'WARNING: Provided assets directory path: "{path_to_dir}" is not absolute.\n'
-              'Make sure that it is relative to the folder from which you use the starter. '
-              'If the folder is not mounted or the container does not start, try using the absolute path.\n')
-        path_to_dir = transform_relative_assets_dir_path(path_to_dir)
+        self.config = {'image': f'{self._arguments.image}',
+                       'environment': {'PUBLIC_PORT': self._arguments.port,
+                                       'SSL_VERIFY': 'on' if self._arguments.verify_ssl else 'off',
+                                       'BASE_PREFIX': self._arguments.base_prefix,
+                                       'NETWORK_ALIAS': self._arguments.network_alias,
+                                       'PYTHON_WRAPPER': 1},
+                       'name': self._arguments.container_name,
+                       'ports': {INTERNAL_PORT: (self._arguments.ip, self._arguments.port)},
+                       'hostname': self._arguments.network_alias,
+                       'stderr': True,
+                       'stdout': True,
+                       'detach': True,
+                       'tty': True}
 
-    if not os.path.isdir(path_to_dir):
-        print(f'Provided assets directory: "{path_to_dir}" does not exist.\n'
-              'Aborting.')
-        sys.exit(1)
+        # Authentication
+        if self._arguments.enable_authentication:
+            self.config['environment']['ENABLE_AUTH'] = 1
 
-    if not is_dir_writable(path_to_dir, user_os):
-        print_not_writable_dir_message(user_os, path_to_dir)
-        print('Aborting.')
-        sys.exit(1)
+        # Jupyter
+        if self._arguments.no_jupyter:
+            self.config['environment']['DISABLE_JUPYTER'] = 1
 
-    return path_to_dir
+        # Proxies
+        if self._arguments.http_proxy:
+            self.config['environment']['http_proxy'] = self._arguments.http_proxy
+        if self._arguments.https_proxy:
+            self.config['environment']['https_proxy'] = self._arguments.https_proxy
+        if self._arguments.no_proxy:
+            self.config['environment']['no_proxy'] = self._arguments.no_proxy
+
+        # MYRIAD & HDDL
+        if self._arguments.enable_myriad:
+            add_device_to_config(self.config, '/dev/bus/usb')
+            self.config['device_cgroup_rules'] = ['c 189:* rmw']
+        elif self._arguments.enable_hddl:
+            check_hddl_daemon_is_running()
+            add_hddl_specific_params(self.config)
+
+        # GPU
+        if self._arguments.enable_gpu:
+            add_gpu_specific_params(self.config)
+
+        # Mount assets directory
+        if self._arguments.assets_directory:
+
+            assets_directory: str = check_and_transform_assets_dir(self._arguments.assets_directory, user_os)
+
+            if 'volumes' in self.config:
+                self.config['volumes'][assets_directory] = {'bind': DL_WB_DOCKER_CONFIG_PATH, 'mode': 'rw'}
+            else:
+                self.config['volumes'] = {
+                    assets_directory: {'bind': DL_WB_DOCKER_CONFIG_PATH, 'mode': 'rw'}
+                }
+
+            # SSL
+            if self._arguments.ssl_certificate_name:
+                if not are_ssl_files_present_in_assets_dir(self._arguments.ssl_certificate_name,
+                                                           self._arguments.ssl_key_name,
+                                                           assets_directory):
+                    self._logger.info('SSL key or/and SSL certificate files are not present in the provided directory.')
+                    print(f'SSL key or/and SSL certificate files are not present in the provided directory: '
+                          f'{self._arguments.assets_directory}.')
+                    print('Aborting.')
+                    sys.exit(1)
+
+                self.config['environment']['SSL_KEY'] = os.path.join(DL_WB_DOCKER_CONFIG_PATH,
+                                                                     self._arguments.ssl_key_name)
+                self.config['environment']['SSL_CERT'] = os.path.join(DL_WB_DOCKER_CONFIG_PATH,
+                                                                      self._arguments.ssl_certificate_name)
+
+        # DevCloud
+        if self._arguments.cloud_service_address:
+            self.config['environment']['CLOUD_SERVICE_URL'] = self._arguments.cloud_service_address
+            self.config['network'] = self._arguments.network_name
+        if self._arguments.cloud_service_session_ttl:
+            self.config['environment']['CLOUD_SERVICE_SESSION_TTL_MINUTES'] = self._arguments.cloud_service_session_ttl
+
+        self._logger.info(f'Created config: {self.config}.')
+
+    def check_and_transform_assets_dir(self, path_to_dir: str, user_os: str) -> str:
+        if not os.path.isabs(path_to_dir):
+            print(f'WARNING: Provided assets directory path: "{path_to_dir}" is not absolute.\n'
+                  'Make sure that it is relative to the folder from which you use the starter. '
+                  'If the folder is not mounted or the container does not start, try using the absolute path.\n')
+            work_dir = os.path.abspath(os.getcwd())
+            path_to_dir = os.path.join(work_dir, path_to_dir)
+
+        if not os.path.isdir(path_to_dir):
+            print(f'Provided assets directory: "{path_to_dir}" does not exist.\n'
+                  'Aborting.')
+            sys.exit(1)
+
+        if not is_dir_writable(path_to_dir, user_os):
+            print_not_writable_dir_message(user_os, path_to_dir)
+            print('Aborting.')
+            sys.exit(1)
+
+        return path_to_dir
 
 
 def is_dir_writable_linux(path_to_dir: str) -> bool:
@@ -80,10 +167,6 @@ def is_dir_writable(path_to_dir: str, os_name: str) -> bool:
 def are_ssl_files_present_in_assets_dir(ssl_cert_name: str, ssl_key_name: str, assets_dir: str) -> bool:
     return os.path.isfile(os.path.join(assets_dir, ssl_cert_name)) and os.path.isfile(
         os.path.join(assets_dir, ssl_key_name))
-
-
-def are_args_valid_for_windows(args: Namespace) -> bool:
-    return not ((args.enable_myriad or args.enable_hddl or args.enable_gpu) and platform.system() == 'Windows')
 
 
 def add_device_to_config(config: dict, device: str, mode: str = 'rmw'):
@@ -149,98 +232,3 @@ Then copy the required assets into it and and mount the directory by assigning i
     else:
         print(f'Cannot write into: {dir_path}.\n'
               'Check that directory has writing permissions.')
-
-
-def create_config_for_container(passed_arguments: Namespace, logger: logging.Logger) -> dict:
-    # Get OS
-    user_os = platform.system()
-    logger.info(f'OS: {user_os}.')
-
-    config = {'image': f'{passed_arguments.image}',
-              'environment': {'PUBLIC_PORT': passed_arguments.port,
-                              'SSL_VERIFY': 'on' if passed_arguments.verify_ssl else 'off',
-                              'BASE_PREFIX': passed_arguments.base_prefix,
-                              'NETWORK_ALIAS': passed_arguments.network_alias,
-                              'PYTHON_WRAPPER': 1},
-              'name': passed_arguments.container_name,
-              'ports': {INTERNAL_PORT: (passed_arguments.ip, passed_arguments.port)},
-              'hostname': passed_arguments.network_alias,
-              'stderr': True,
-              'stdout': True,
-              'detach': True,
-              'tty': True}
-
-    # Authentication
-    if passed_arguments.enable_authentication:
-        config['environment']['ENABLE_AUTH'] = 1
-
-    # Jupyter
-    if passed_arguments.no_jupyter:
-        config['environment']['DISABLE_JUPYTER'] = 1
-
-    # Proxies
-    if passed_arguments.http_proxy:
-        config['environment']['http_proxy'] = passed_arguments.http_proxy
-    if passed_arguments.https_proxy:
-        config['environment']['https_proxy'] = passed_arguments.https_proxy
-    if passed_arguments.no_proxy:
-        config['environment']['no_proxy'] = passed_arguments.no_proxy
-
-    # Devices
-    if not are_args_valid_for_windows(passed_arguments):
-        logger.info('Invalid arguments for Windows.')
-        print('DL Workbench does not support non-CPU (GPU, VPU, HDDL) devices on Windows.\n'
-              'Please remove the non-CPU related arguments (--enable-gpu/--enable-myriad/--enable-hddl).\n'
-              'Aborting.')
-        sys.exit(1)
-
-    # MYRIAD & HDDL
-    if passed_arguments.enable_myriad:
-        add_device_to_config(config, '/dev/bus/usb')
-        config['device_cgroup_rules'] = ['c 189:* rmw']
-    elif passed_arguments.enable_hddl:
-        check_hddl_daemon_is_running()
-        add_hddl_specific_params(config)
-
-    # GPU
-    if passed_arguments.enable_gpu:
-        add_gpu_specific_params(config)
-
-    # Mount assets directory
-    if passed_arguments.assets_directory:
-
-        assets_directory: str = check_and_transform_assets_dir(passed_arguments.assets_directory, user_os)
-
-        if 'volumes' in config:
-            config['volumes'][assets_directory] = {'bind': DL_WB_DOCKER_CONFIG_PATH, 'mode': 'rw'}
-        else:
-            config['volumes'] = {
-                assets_directory: {'bind': DL_WB_DOCKER_CONFIG_PATH, 'mode': 'rw'}
-            }
-
-        # SSL
-        if passed_arguments.ssl_certificate_name:
-            if not are_ssl_files_present_in_assets_dir(passed_arguments.ssl_certificate_name,
-                                                       passed_arguments.ssl_key_name,
-                                                       assets_directory):
-                logger.info('SSL key or/and SSL certificate files are not present in the provided directory.')
-                print(f'SSL key or/and SSL certificate files are not present in the provided directory: '
-                      f'{passed_arguments.assets_directory}.')
-                print('Aborting.')
-                sys.exit(1)
-
-            config['environment']['SSL_KEY'] = os.path.join(DL_WB_DOCKER_CONFIG_PATH,
-                                                            passed_arguments.ssl_key_name)
-            config['environment']['SSL_CERT'] = os.path.join(DL_WB_DOCKER_CONFIG_PATH,
-                                                             passed_arguments.ssl_certificate_name)
-
-    # DevCloud
-    if passed_arguments.cloud_service_address:
-        config['environment']['CLOUD_SERVICE_URL'] = passed_arguments.cloud_service_address
-        config['network'] = passed_arguments.network_name
-    if passed_arguments.cloud_service_session_ttl:
-        config['environment']['CLOUD_SERVICE_SESSION_TTL_MINUTES'] = passed_arguments.cloud_service_session_ttl
-
-    logger.info(f'Created config: {config}.')
-
-    return config

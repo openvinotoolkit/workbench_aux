@@ -45,6 +45,8 @@ Copy and run the following command to start the highest available version of DL 
 
     openvino-workbench --image openvino/workbench:latest --force-pull
 
+Aborting.
+
 '''
 
 DL_WB_DOCKER_CONFIG_PATH = os.path.join('/home', 'workbench', '.workbench')
