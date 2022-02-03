@@ -22,7 +22,7 @@ import sys
 
 import requests
 from docker import DockerClient
-from openvino_workbench.constants import DOCKER_HUB_TAGS_URL
+from openvino_workbench.constants import DOCKER_HUB_TAGS_URL, EXAMPLE_COMMAND
 from tqdm import tqdm
 
 
@@ -51,13 +51,9 @@ class Image:
         if not self._is_present_in_registry:
             print(f'''The specified image name: "{self.image_name}" might be incorrect.
 Could not found the image in the {self.repository} repository. 
-Please check if the image name is correct and is in the following format: repository:tag
-
-Example command: 
-
-    openvino-workbench --image openvino/workbench:latest
-
-Aborting.''')
+Please check if the image name is correct and is in the following format: repository:tag''')
+            print(EXAMPLE_COMMAND)
+            print('Aborting.')
             sys.exit(1)
 
         # Get image size
@@ -125,13 +121,9 @@ Aborting.''')
         except ValueError:
             self.logger.error('Could not parse the image name.', exc_info=True)
             print(f'''The specified image name: "{image_name}" might be incorrect.          
-Please specify the image name in the following format: repository:tag
-
-Example command: 
-
-    openvino-workbench --image openvino/workbench:latest
-
-Aborting.''')
+Please specify the image name in the following format: repository:tag''')
+            print(EXAMPLE_COMMAND)
+            print('Aborting.')
             sys.exit(1)
         return repository, tag
 

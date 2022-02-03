@@ -1,5 +1,5 @@
 """
- OpenVINO Profiler
+ OpenVINO DL Workbench Python Starter
  Utility functions
 
  Copyright (c) 2021 Intel Corporation

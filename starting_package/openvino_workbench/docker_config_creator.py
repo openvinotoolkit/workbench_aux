@@ -1,5 +1,5 @@
 """
- OpenVINO Profiler
+ OpenVINO DL Workbench Python Starter
  Functions for the Docker config creation
 
  Copyright (c) 2021 Intel Corporation

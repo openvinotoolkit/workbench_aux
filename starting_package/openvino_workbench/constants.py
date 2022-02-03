@@ -40,6 +40,13 @@ DL_WB_LOGO = r'''
 /_____/_____/     |__/|__/\____/_/  /_/|_/_.___/\___/_/ /_/\___/_/ /_/ 
 '''
 
+EXAMPLE_COMMAND = f'''
+Copy and run the following command to start the highest available version of DL Workbench:
+
+    openvino-workbench --image openvino/workbench:latest --force-pull
+
+'''
+
 DL_WB_DOCKER_CONFIG_PATH = os.path.join('/home', 'workbench', '.workbench')
 
 INTERNAL_PORT = '5665'

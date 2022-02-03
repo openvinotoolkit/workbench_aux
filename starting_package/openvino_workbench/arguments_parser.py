@@ -1,5 +1,5 @@
 """
- OpenVINO Profiler
+ OpenVINO DL Workbench Python Starter
  Arguments parser for the DL Workbench Python Starter
 
  Copyright (c) 2021 Intel Corporation

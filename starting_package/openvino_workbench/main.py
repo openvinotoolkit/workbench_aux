@@ -1,6 +1,6 @@
 """
- OpenVINO Profiler
- Entrypoint for the DL Workbench Python starter wrapper
+ OpenVINO DL Workbench Python Starter
+ Entrypoint for the DL Workbench Python Starter
 
  Copyright (c) 2021 Intel Corporation
 
