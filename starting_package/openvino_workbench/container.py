@@ -27,7 +27,7 @@ from typing import Optional
 
 from docker import DockerClient
 from openvino_workbench.constants import DL_WB_LOGO, PRE_STAGE_MESSAGES, STAGE_COMPLETE_MESSAGES, \
-    WORKBENCH_READY_MESSAGE, LOG_FILE, EXAMPLE_COMMAND, INTERNAL_PORT
+    WORKBENCH_READY_MESSAGE, LOG_FILE, EXAMPLE_COMMAND, INTERNAL_PORT, ABORTING_EXIT_MESSAGE
 
 
 class Container:

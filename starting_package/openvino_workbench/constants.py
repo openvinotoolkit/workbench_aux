@@ -45,8 +45,6 @@ Copy and run the following command to start the highest available version of DL 
 
     openvino-workbench --image openvino/workbench:latest --force-pull
 
-Aborting.
-
 '''
 
 DL_WB_DOCKER_CONFIG_PATH = os.path.join('/home', 'workbench', '.workbench')
@@ -63,3 +61,7 @@ logging.basicConfig(filename=LOG_FILE,
                     level=logging.DEBUG)
 LOGGER = logging.getLogger('Python Starter')
 LOGGER.info('OpenVINO Python Starter Log:')
+
+ABORTING_EXIT_MESSAGE = (f'\n\nComplete can be found in: {LOG_FILE}'
+                         f'\nPlease report this log to: {COMMUNITY_LINK}'
+                         '\n\nAborting\n.')

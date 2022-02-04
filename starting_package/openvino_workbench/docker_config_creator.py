@@ -26,7 +26,7 @@ import sys
 from argparse import Namespace
 from pathlib import Path
 
-from openvino_workbench.constants import DL_WB_DOCKER_CONFIG_PATH, INTERNAL_PORT
+from openvino_workbench.constants import DL_WB_DOCKER_CONFIG_PATH, INTERNAL_PORT, ABORTING_EXIT_MESSAGE
 
 
 class DockerConfigCreator:
@@ -34,12 +34,12 @@ class DockerConfigCreator:
         self._arguments = arguments
         self._logger = logger
         self.config = {}
+        self._user_os = platform.system()
         self._create_config()
 
     def _create_config(self) -> dict:
         # Get OS
-        user_os = platform.system()
-        self._logger.info(f'OS: {user_os}.')
+        self._logger.info(f'OS: {self._user_os}.')
 
         self.config = {'image': f'{self._arguments.image}',
                        'environment': {'PUBLIC_PORT': self._arguments.port,
@@ -73,20 +73,20 @@ class DockerConfigCreator:
 
         # MYRIAD & HDDL
         if self._arguments.enable_myriad:
-            add_device_to_config(self.config, '/dev/bus/usb')
+            self._add_device_to_config('/dev/bus/usb')
             self.config['device_cgroup_rules'] = ['c 189:* rmw']
         elif self._arguments.enable_hddl:
-            check_hddl_daemon_is_running()
-            add_hddl_specific_params(self.config)
+            self._check_hddl_daemon_is_running()
+            self._add_hddl_specific_params()
 
         # GPU
         if self._arguments.enable_gpu:
-            add_gpu_specific_params(self.config)
+            self._add_gpu_specific_params()
 
         # Mount assets directory
         if self._arguments.assets_directory:
 
-            assets_directory: str = check_and_transform_assets_dir(self._arguments.assets_directory, user_os)
+            assets_directory: str = self._check_and_transform_assets_directory()
 
             if 'volumes' in self.config:
                 self.config['volumes'][assets_directory] = {'bind': DL_WB_DOCKER_CONFIG_PATH, 'mode': 'rw'}
@@ -97,13 +97,11 @@ class DockerConfigCreator:
 
             # SSL
             if self._arguments.ssl_certificate_name:
-                if not are_ssl_files_present_in_assets_dir(self._arguments.ssl_certificate_name,
-                                                           self._arguments.ssl_key_name,
-                                                           assets_directory):
+                if not self._are_ssl_files_present_in_assets_directory():
                     self._logger.info('SSL key or/and SSL certificate files are not present in the provided directory.')
-                    print(f'SSL key or/and SSL certificate files are not present in the provided directory: '
-                          f'{self._arguments.assets_directory}.')
-                    print('Aborting.')
+                    print('ERROR: SSL key or/and SSL certificate files are not present in the provided directory: '
+                          f'{self._arguments.assets_directory}. Place them there and try again.'
+                          f'{ABORTING_EXIT_MESSAGE}')
                     sys.exit(1)
 
                 self.config['environment']['SSL_KEY'] = os.path.join(DL_WB_DOCKER_CONFIG_PATH,
@@ -120,115 +118,107 @@ class DockerConfigCreator:
 
         self._logger.info(f'Created config: {self.config}.')
 
-    def check_and_transform_assets_dir(self, path_to_dir: str, user_os: str) -> str:
-        if not os.path.isabs(path_to_dir):
-            print(f'WARNING: Provided assets directory path: "{path_to_dir}" is not absolute.\n'
+    def _check_and_transform_assets_directory(self) -> str:
+        if not os.path.isabs(self._arguments.assets_directory):
+            self._logger.info('Assets directory is not absolute.')
+            print(f'WARNING: Provided assets directory path: "{self._arguments.assets_directory}" is not absolute.\n'
                   'Make sure that it is relative to the folder from which you use the starter. '
                   'If the folder is not mounted or the container does not start, try using the absolute path.\n')
             work_dir = os.path.abspath(os.getcwd())
-            path_to_dir = os.path.join(work_dir, path_to_dir)
+            self._arguments.assets_directory = os.path.join(work_dir, self._arguments.assets_directory)
 
-        if not os.path.isdir(path_to_dir):
-            print(f'Provided assets directory: "{path_to_dir}" does not exist.\n'
-                  'Aborting.')
+        if not os.path.isdir(self._arguments.assets_directory):
+            self._logger.info('Assets directory does not exist.')
+            print(f'ERROR: Provided assets directory: "{self._arguments.assets_directory}" does not exist. Correct '
+                  f'the path or create a '
+                  'directory and use it with the "--assets-directory" argument.'
+                  f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
 
-        if not is_dir_writable(path_to_dir, user_os):
-            print_not_writable_dir_message(user_os, path_to_dir)
-            print('Aborting.')
+        if not self._is_dir_writable():
+            if self._user_os == 'Linux':
+                print(f'ERROR: Provided assets directory: "{self._arguments.assets_directory}" '
+                      'does not have required permissions. '
+                      'Read, write, and execute permissions are required for the "others" group (at least **7 mode). '
+                      'Create the required configuration directory with the following command: '
+                      '\n\n\tmkdir -p -m 777 /path/to/directory'
+                      '\n\nThen copy the required assets into it and use it: '
+                      '\n\n\topenvino-workbench --assets-directory /path/to/directory'
+                      f'{ABORTING_EXIT_MESSAGE}')
+            else:
+                print(f'ERROR: Provided assets directory: {self._arguments.assets_directory} is not writable.'
+                      '\nCheck that directory has writing permissions and try again.'
+                      f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
 
-        return path_to_dir
+        return self._arguments.assets_directory
 
+    def _is_dir_writable_linux(self) -> bool:
+        permissions = oct(os.stat(self._arguments.assets_directory).st_mode)[-1]
+        return permissions == '7'
 
-def is_dir_writable_linux(path_to_dir: str) -> bool:
-    permissions = oct(os.stat(path_to_dir).st_mode)[-1]
-    return permissions == '7'
-
-
-def is_dir_writable_general(path_to_dir: str) -> bool:
-    test_file_name = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10)) + 'text.txt'
-    try:
-        with open(os.path.join(path_to_dir, test_file_name), 'w') as filehandler:
-            filehandler.write('Sample file.')
-    except IOError:
-        return False
-    os.remove(os.path.join(path_to_dir, test_file_name))
-    return True
-
-
-def is_dir_writable(path_to_dir: str, os_name: str) -> bool:
-    if os_name == 'Linux':
-        return is_dir_writable_linux(path_to_dir)
-
-    return is_dir_writable_general(path_to_dir)
-
-
-def are_ssl_files_present_in_assets_dir(ssl_cert_name: str, ssl_key_name: str, assets_dir: str) -> bool:
-    return os.path.isfile(os.path.join(assets_dir, ssl_cert_name)) and os.path.isfile(
-        os.path.join(assets_dir, ssl_key_name))
-
-
-def add_device_to_config(config: dict, device: str, mode: str = 'rmw'):
-    device_mount_string = f'{device}:{device}:{mode}'
-    if 'devices' not in config:
-        config['devices'] = [device_mount_string]
-    else:
-        config['devices'].append(device_mount_string)
-
-
-def add_hddl_specific_params(config: dict):
-    ion_device = Path('/dev/ion')
-    if ion_device.exists():
-        add_device_to_config(config, '/dev/ion')
-
-    config['volumes'] = {
-        '/var/tmp': {'bind': '/var/tmp', 'mode': 'rw'},  # nosec
-        '/dev/shm': {'bind': '/dev/shm', 'mode': 'rw'}  # nosec
-    }
-
-
-def add_gpu_specific_params(config: dict):
-    if 'group_add' not in config:
-        config['group_add'] = []
-    for group_name in ('video', 'render'):
+    def _is_dir_writable_general(self) -> bool:
+        test_file_name = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10)) + 'text.txt'
         try:
-            group_id = get_group_id(group_name)
-        except AssertionError as error:
-            print(error)
-            continue
+            with open(os.path.join(self._arguments.assets_directory, test_file_name), 'w') as filehandler:
+                filehandler.write('Sample file.')
+        except IOError:
+            return False
+        os.remove(os.path.join(self._arguments.assets_directory, test_file_name))
+        return True
 
-        config['group_add'].append(group_id)
-    add_device_to_config(config, '/dev/dri')
+    def _is_dir_writable(self) -> bool:
+        if self._user_os == 'Linux':
+            return self._is_dir_writable_linux()
 
+        return self._is_dir_writable_general()
 
-def get_group_id(group: str) -> int:
-    import grp
-    try:
-        return grp.getgrnam(group).gr_gid
-    except KeyError as no_group_error:
-        raise AssertionError(f'There is no "{group}" group on the machine. '
-                             'GPU might not be available for inference.') from no_group_error
+    def _are_ssl_files_present_in_assets_directory(self) -> bool:
+        return os.path.isfile(os.path.join(self._arguments.assets_directory, self._arguments.ssl_certificate_name)) and os.path.isfile(
+            os.path.join(self._arguments.assets_directory, self._arguments.ssl_key_name))
 
+    def _add_device_to_config(self, device: str, mode: str = 'rmw'):
+        device_mount_string = f'{device}:{device}:{mode}'
+        if 'devices' not in self.config:
+            self.config['devices'] = [device_mount_string]
+        else:
+            self.config['devices'].append(device_mount_string)
 
-def check_hddl_daemon_is_running():
-    import psutil
-    if 'hddldaemon' not in (process.name() for process in psutil.process_iter()):
-        print('"hddldaemon" was not found running in the background.'
-              'HDDL might not be available.')
+    def _add_hddl_specific_params(self):
+        ion_device = Path('/dev/ion')
+        if ion_device.exists():
+            self._add_device_to_config('/dev/ion')
 
+        self.config['volumes'] = {
+            '/var/tmp': {'bind': '/var/tmp', 'mode': 'rw'},  # nosec
+            '/dev/shm': {'bind': '/dev/shm', 'mode': 'rw'}  # nosec
+        }
 
-def print_not_writable_dir_message(user_os: str, dir_path: str):
-    if user_os == 'Linux':
-        print(f'''Provided assets directory: "{dir_path}"
-does not have required permissions. 
-Read, write, and execute permissions are required for 'others' group (at least **7 mode).
-Create the required configuration directory with the following command: 
+    def _add_gpu_specific_params(self):
+        if 'group_add' not in self.config:
+            self.config['group_add'] = []
+        for group_name in ('video', 'render'):
+            try:
+                group_id = self._get_group_id(group_name)
+            except AssertionError as error:
+                print(error)
+                continue
 
-mkdir -p -m 777 /path/to/dir
+            self.config['group_add'].append(group_id)
+        self._add_device_to_config('/dev/dri')
 
-Then copy the required assets into it and and mount the directory by assigning it to the '--assets-directory' argument.
-''')
-    else:
-        print(f'Cannot write into: {dir_path}.\n'
-              'Check that directory has writing permissions.')
+    @staticmethod
+    def _get_group_id(group: str) -> int:
+        import grp
+        try:
+            return grp.getgrnam(group).gr_gid
+        except KeyError as no_group_error:
+            raise AssertionError(f'WARNING: There is no "{group}" group on the machine. '
+                                 'GPU might not be available for inference.') from no_group_error
+
+    @staticmethod
+    def _check_hddl_daemon_is_running():
+        import psutil
+        if 'hddldaemon' not in (process.name() for process in psutil.process_iter()):
+            print('WARNING: "hddldaemon" was not found running in the background.'
+                  'HDDL might not be available.')

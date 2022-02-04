@@ -21,7 +21,7 @@ import argparse
 import sys
 import logging
 import platform
-from openvino_workbench.constants import EXAMPLE_COMMAND
+from openvino_workbench.constants import EXAMPLE_COMMAND, ABORTING_EXIT_MESSAGE
 from openvino_workbench.utils import get_proxy_from_env
 
 
@@ -199,7 +199,7 @@ class StarterArgumentsParser:
                                '\nExample command:'
                                '\n\n\topenvino-workbench --assets-directory /path/to/assets --ssl-key-name key.pem '
                                '--ssl-certificate-name certificate.pem'
-                               '\n\nAborting.')
+                               f'{ABORTING_EXIT_MESSAGE}')
         if (not self.arguments.ssl_key_name and self.arguments.ssl_certificate_name) or (
                 self.arguments.ssl_key_name and not self.arguments.ssl_certificate_name):
             self._logger.info('Only one of the SSL files was provided.')
@@ -207,7 +207,7 @@ class StarterArgumentsParser:
                                '\nExample command:'
                                '\n\n\t openvino-workbench --assets-directory /path/to/assets --ssl-key-name key.pem '
                                '--ssl-certificate-name certificate.pem'
-                               '\n\nAborting.')
+                               f'{ABORTING_EXIT_MESSAGE}')
 
     def _validate_restart_arguments(self):
         if not self.arguments.restart:
@@ -225,7 +225,7 @@ class StarterArgumentsParser:
                 'The only other argument available with "--restart" is "--detached".'
                 '\nExample command: '
                 f'\n\n\topenvino-workbench --restart {self.arguments.restart} --detached'
-                '\n\nAborting.')
+                f'{ABORTING_EXIT_MESSAGE}')
         # If regular restart is needed then there should be exactly 3 arguments
         elif not self.arguments.detached and len(sys.argv) != 3:
             self._logger.info('Error with restarting in the interactive mode. Incorrect number of arguments. '
@@ -236,7 +236,7 @@ class StarterArgumentsParser:
                 'The only other argument available with "--restart" is "--detached".'
                 '\nExample command: '
                 '\n\n\topenvino-workbench --restart workbench'
-                '\n\nAborting.')
+                f'{ABORTING_EXIT_MESSAGE}')
 
     def _validate_arguments_for_windows(self):
         any_device_enabled = any((self.arguments.enable_myriad, self.arguments.enable_hddl, self.arguments.enable_gpu))
@@ -247,4 +247,5 @@ class StarterArgumentsParser:
                 'ERROR: DL Workbench does not support non-CPU (GPU, VPU, HDDL) devices on Windows.\n'
                 'Please remove the non-CPU related arguments (--enable-gpu/--enable-myriad/--enable-hddl) and try '
                 'again.'
-                f'{EXAMPLE_COMMAND}')
+                f'{EXAMPLE_COMMAND}'
+                f'{ABORTING_EXIT_MESSAGE}')

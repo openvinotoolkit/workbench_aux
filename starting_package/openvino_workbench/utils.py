@@ -23,7 +23,7 @@ import os
 from typing import Optional
 
 import docker
-from openvino_workbench.constants import INTERNAL_PORT, LOGGER, LOG_FILE, COMMUNITY_LINK
+from openvino_workbench.constants import INTERNAL_PORT, LOGGER, LOG_FILE, COMMUNITY_LINK, ABORTING_EXIT_MESSAGE
 
 
 def print_starting_message(config: dict, enabled_devices: dict, log_file: str):
