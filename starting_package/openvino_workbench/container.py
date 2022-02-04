@@ -68,8 +68,8 @@ class Container:
                 print(f'{message}\n')
             else:
                 print('Example command: '
-                      f'\n\n\topenvino-workbench --container-name NEW_NAME '
-                      f'\n\nSubstitute the "NEW_NAME" placeholder with an actual name of your choice.')
+                      '\n\n\topenvino-workbench --container-name NEW_NAME '
+                      '\n\nSubstitute the "NEW_NAME" placeholder with an actual name of your choice.')
 
             print(ABORTING_EXIT_MESSAGE)
             sys.exit(1)
