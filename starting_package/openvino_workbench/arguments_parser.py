@@ -140,6 +140,17 @@ class StarterArgumentsParser:
                                   help='Turns on authentication for the DL Workbench.',
                                   default=False)
 
+        self._parser.add_argument('--custom-token',
+                                  required=False,
+                                  help='Configures custom token for the DL Workbench authentication.',
+                                  default=None)
+
+        self._parser.add_argument('--disable-token-saving',
+                                  action='store_true',
+                                  required=False,
+                                  help='Turns off saving of login token to the file.',
+                                  default=None)
+
         # SSL
         self._parser.add_argument('--ssl-certificate-name',
                                   required=False,

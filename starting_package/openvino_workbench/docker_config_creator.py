@@ -59,6 +59,12 @@ class DockerConfigCreator:
         if self._arguments.enable_authentication:
             self.config['environment']['ENABLE_AUTH'] = 1
 
+            if self._arguments.custom_token:
+                self.config['environment']['CUSTOM_TOKEN'] = self._arguments.custom_token
+
+            if self._arguments.disable_token_saving:
+                self.config['environment']['SAVE_TOKEN_TO_FILE'] = 0
+
         # Jupyter
         if self._arguments.no_jupyter:
             self.config['environment']['DISABLE_JUPYTER'] = 1
