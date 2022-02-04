@@ -50,7 +50,7 @@ INTERNAL_PORT = '5665'
 COMMUNITY_LINK = 'https://community.intel.com/t5/Intel-Distribution-of-OpenVINO/bd-p/distribution-openvino-toolkit'
 
 DOCKER_ERROR_PATTERNS = {'Port is already allocated. Specify a different port using the "--port" argument':
-                         r'port\sis\salready\sallocat'}
+                             r'port\sis\salready\sallocat'}
 
 # Initialize logger
 _, LOG_FILE = tempfile.mkstemp(text=True, prefix='openvino_workbench_', suffix='.log')

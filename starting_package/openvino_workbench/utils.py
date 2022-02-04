@@ -17,14 +17,14 @@
  limitations under the License.
 """
 import logging
-import platform
-import sys
 import os
+import platform
 import re
+import sys
 from typing import Optional
 
 import docker
-from openvino_workbench.constants import INTERNAL_PORT, LOGGER, LOG_FILE, COMMUNITY_LINK, ABORTING_EXIT_MESSAGE, \
+from openvino_workbench.constants import INTERNAL_PORT, LOGGER, ABORTING_EXIT_MESSAGE, \
     EXAMPLE_COMMAND, DOCKER_ERROR_PATTERNS
 
 

@@ -174,7 +174,8 @@ class DockerConfigCreator:
         return self._is_dir_writable_general()
 
     def _are_ssl_files_present_in_assets_directory(self) -> bool:
-        return os.path.isfile(os.path.join(self._arguments.assets_directory, self._arguments.ssl_certificate_name)) and os.path.isfile(
+        return os.path.isfile(
+            os.path.join(self._arguments.assets_directory, self._arguments.ssl_certificate_name)) and os.path.isfile(
             os.path.join(self._arguments.assets_directory, self._arguments.ssl_key_name))
 
     def _add_device_to_config(self, device: str, mode: str = 'rmw'):

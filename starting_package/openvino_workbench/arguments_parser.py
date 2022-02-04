@@ -18,9 +18,10 @@
 """
 
 import argparse
-import sys
 import logging
 import platform
+import sys
+
 from openvino_workbench.constants import EXAMPLE_COMMAND, ABORTING_EXIT_MESSAGE
 from openvino_workbench.utils import get_proxy_from_env
 
