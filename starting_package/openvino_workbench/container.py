@@ -67,7 +67,7 @@ class Container:
                     message += f' --port {new_port}'
                 print(f'{message}\n')
             else:
-                print(f'Example command: '
+                print('Example command: '
                       f'\n\n\topenvino-workbench --container-name NEW_NAME '
                       f'\n\nSubstitute the "NEW_NAME" placeholder with an actual name of your choice.')
 
@@ -143,6 +143,7 @@ class Container:
         bound_ports = self._client.api.port(self.container_name, INTERNAL_PORT)
         if bound_ports:
             return bound_ports[0].get('HostPort')
+        return None
 
     def _generate_container_name(self) -> Optional[str]:
         all_taken_names = [container.name for container in self._client.containers.list(all=True)]
@@ -150,6 +151,7 @@ class Container:
             new_name = f'{self.container_name}_{idx}'
             if new_name not in all_taken_names:
                 return new_name
+        return None
 
     def _generate_container_port(self) -> Optional[int]:
         taken_port = self._get_public_port()
@@ -158,6 +160,7 @@ class Container:
                 new_port = random.randint(5001, 5999)
                 if new_port != int(taken_port):
                     return new_port
+        return None
 
     def _is_container_present(self) -> bool:
         return any(self.container_name == container.name for container in self._client.containers.list(all=True))
