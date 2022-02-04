@@ -43,10 +43,21 @@ class Container:
         self._logger.info('Starting container.')
 
         if self._is_present:
-            print(f'''Container with the specified name "{self.container_name}" is present on the machine.
-Use a different name by specifying the `--container-name` argument.
-''')
+            if self._is_running:
+                self._logger.info('Container with the specified name is already running.')
+                public_port = self._get_public_port()
+                print(
+                    f'A container with the name "{self.container_name}" is running - there is no need to restart '
+                    'it.'
+                    f'\n\nOpen the browser and navigate to the http://127.0.0.1:{public_port}\n'
+                    f'\nPath to the log file: {LOG_FILE}')
+                sys.exit(1)
 
+            print(f'ERROR: A container with the name "{self.container_name}" is present on the machine and '
+                  'is not running.'
+                  '\nYou can restart the container using the following command:'
+                  f'\n\n\topenvino-workbench --restart {self.container_name}'
+                  '\n\nor start a new one.')
             new_name = self._generate_container_name()
             new_port = self._generate_container_port()
             if new_name:
@@ -97,13 +108,15 @@ Use a different name by specifying the `--container-name` argument.
     def restart(self, is_detached: bool):
         self._logger.info('Restarting a container.')
         print(f'Restarting a previously stopped container with the name "{self.container_name}" ... \n')
+        print(f'Path to the log file: {LOG_FILE}')
+
         if not self._is_present:
-            self._logger.info('RESTART. Container with specified name was not found.')
+            self._logger.info('RESTART. Container with the specified name was not found.')
             print(f'ERROR: A container with the name "{self.container_name}" does not exist.')
             print(EXAMPLE_COMMAND)
             sys.exit(1)
         elif self._is_running:
-            self._logger.info('RESTART. Container with specified name is already running.')
+            self._logger.info('RESTART. Container with the specified name is already running.')
             public_port = self._get_public_port()
             print(f'ERROR: A container with the name "{self.container_name}" is running - there is no need to restart '
                   'it.\n'
@@ -139,11 +152,12 @@ Use a different name by specifying the `--container-name` argument.
                 return new_name
 
     def _generate_container_port(self) -> Optional[int]:
-        taken_port = int(self._get_public_port())
-        for _ in range(50):
-            new_port = random.randint(5001, 5999)
-            if new_port != taken_port:
-                return new_port
+        taken_port = self._get_public_port()
+        if taken_port:
+            for _ in range(50):
+                new_port = random.randint(5001, 5999)
+                if new_port != int(taken_port):
+                    return new_port
 
     def _is_container_present(self) -> bool:
         return any(self.container_name == container.name for container in self._client.containers.list(all=True))
@@ -187,9 +201,9 @@ Use a different name by specifying the `--container-name` argument.
         del all_logs
 
         if detached:
-            print(f'''\nDL Workbench is started in the detached mode.
-            If you want to stop the container, run the following command:
-                    docker stop {self.container_name}''')
+            print('\nDL Workbench is started in the detached mode. '
+                  'If you want to stop the container, run the following command: '
+                  f'\n\n\tdocker stop {self.container_name}')
         else:
             stop_message = '\nPress Ctrl+C to stop the container.'
             if platform.system() == 'Darwin':

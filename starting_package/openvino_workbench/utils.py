@@ -62,9 +62,11 @@ def save_logs_on_failure(fnc):
             return fnc(*args, **kwargs)
         except Exception as error:
             error_message = parse_error(str(error))
+            error_type = type(error)
             LOGGER.error(error_message, exc_info=True)
 
             print(f'ERROR: {error_message}.'
+                  f'\nERROR TYPE: {error_type}'
                   f'{EXAMPLE_COMMAND}'
                   f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
@@ -81,4 +83,4 @@ def parse_error(error_message: str) -> str:
         compiled = re.compile(pattern)
         if re.search(compiled, error_message):
             return pretty_message
-    return 'Unexpected Error.'
+    return 'Unexpected Error'
