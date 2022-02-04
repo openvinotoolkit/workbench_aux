@@ -20,9 +20,9 @@ import sys
 
 from docker import DockerClient
 from openvino_workbench.arguments_parser import StarterArgumentsParser
-from openvino_workbench.constants import LOGGER, LOG_FILE
+from openvino_workbench.constants import LOGGER, LOG_FILE, ABORTING_EXIT_MESSAGE
 from openvino_workbench.container import Container
-from openvino_workbench.docker_config_creator import create_config_for_container
+from openvino_workbench.docker_config_creator import DockerConfigCreator
 from openvino_workbench.image import Image
 from openvino_workbench.utils import print_starting_message, initialize_docker_client, save_logs_on_failure
 
@@ -47,7 +47,8 @@ def main():
             sys.exit(0)
 
     # Create config for Docker container
-    config = create_config_for_container(arguments, LOGGER)
+    # config = create_config_for_container(arguments, LOGGER)
+    config = DockerConfigCreator(arguments, LOGGER).config
 
     # Print starting message
     enabled_devices = {
@@ -72,7 +73,8 @@ def main():
         image.pull(arguments.force_pull)
     except KeyboardInterrupt:
         LOGGER.info('Image pulling was interrupted.')
-        print('Image pulling was interrupted.')
+        print('Image pulling was interrupted.'
+              f'{ABORTING_EXIT_MESSAGE}')
         sys.exit(1)
 
     # Safe-start a container, stop it on CMD/Ctrl+C as usual Docker container

@@ -20,10 +20,12 @@ import logging
 import platform
 import sys
 import os
+import re
 from typing import Optional
 
 import docker
-from openvino_workbench.constants import INTERNAL_PORT, LOGGER, LOG_FILE, COMMUNITY_LINK, ABORTING_EXIT_MESSAGE
+from openvino_workbench.constants import INTERNAL_PORT, LOGGER, LOG_FILE, COMMUNITY_LINK, ABORTING_EXIT_MESSAGE, \
+    EXAMPLE_COMMAND, DOCKER_ERROR_PATTERNS
 
 
 def print_starting_message(config: dict, enabled_devices: dict, log_file: str):
@@ -59,15 +61,12 @@ def save_logs_on_failure(fnc):
         try:
             return fnc(*args, **kwargs)
         except Exception as error:
-            LOGGER.error('Unexpected error occurred', exc_info=True)
-            error_message = str(error)
-            error_type = type(error)
-            print(f'''* ERR: Unexpected error occurred!
-* Error message: {error_message if error_type else None}
-* Error type: {error_type}
-* Complete log can be found at: {LOG_FILE}
-* Please report this log to the: {COMMUNITY_LINK}
-''')
+            error_message = parse_error(str(error))
+            LOGGER.error(error_message, exc_info=True)
+
+            print(f'ERROR: {error_message}.'
+                  f'{EXAMPLE_COMMAND}'
+                  f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
 
     return decorated_func
@@ -75,3 +74,11 @@ def save_logs_on_failure(fnc):
 
 def get_proxy_from_env(proxy: str) -> Optional[str]:
     return os.getenv(proxy) or os.getenv(proxy.upper())
+
+
+def parse_error(error_message: str) -> str:
+    for pretty_message, pattern in DOCKER_ERROR_PATTERNS.items():
+        compiled = re.compile(pattern)
+        if re.search(compiled, error_message):
+            return pretty_message
+    return 'Unexpected Error.'

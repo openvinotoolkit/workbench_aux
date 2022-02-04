@@ -22,7 +22,7 @@ import sys
 
 import requests
 from docker import DockerClient
-from openvino_workbench.constants import DOCKER_HUB_TAGS_URL, EXAMPLE_COMMAND
+from openvino_workbench.constants import DOCKER_HUB_TAGS_URL, EXAMPLE_COMMAND, ABORTING_EXIT_MESSAGE
 from tqdm import tqdm
 
 
@@ -49,16 +49,17 @@ class Image:
 
         # Check if image is present in registry
         if not self._is_present_in_registry:
-            print(f'''The specified image name: "{self.image_name}" might be incorrect.
-Could not found the image in the {self.repository} repository. 
-Please check if the image name is correct and is in the following format: repository:tag''')
-            print(EXAMPLE_COMMAND)
+            print(f'ERROR: The specified image name: "{self.image_name}" might be incorrect.'
+                  f'\nCould not found the image in the {self.repository} repository.'
+                  f'\nPlease check if the image name is correct and is in the following format: repository:tag'
+                  f'{EXAMPLE_COMMAND}'
+                  f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
 
         # Get image size
         total_image_size = self._get_image_size(DOCKER_HUB_TAGS_URL)
         if not total_image_size:
-            print('Could not get image size from Docker Hub, pulling without displaying progress.')
+            print('WARNING: Could not get image size from Docker Hub, pulling without displaying progress.')
             self._pull_image_without_progress()
             return
 
@@ -108,7 +109,7 @@ Please check if the image name is correct and is in the following format: reposi
         print('\nPull is complete.')
 
     def _pull_image_without_progress(self):
-        self._logger.info('Pulling the image without progress bar.')
+        self._logger.info(f'Pulling the image: {self.image_name} without progress bar.')
         print('Pulling the image...')
         self.client.api.pull(repository=self.repository, tag=self.tag)
         print('Pull is complete.')
@@ -119,9 +120,10 @@ Please check if the image name is correct and is in the following format: reposi
             repository, tag = image_name.split(':')
         except ValueError:
             self._logger.error('Could not parse the image name.', exc_info=True)
-            print(f'''The specified image name: "{image_name}" might be incorrect.          
-Please specify the image name in the following format: repository:tag''')
-            print(EXAMPLE_COMMAND)
+            print(f'ERROR: The specified image name: "{image_name}" might be incorrect.'
+                  '\nPlease specify the image name in the following format: repository:tag.'
+                  f'{EXAMPLE_COMMAND}'
+                  f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
         return repository, tag
 
@@ -151,7 +153,7 @@ Please specify the image name in the following format: repository:tag''')
             images_info = requests.get(repository_tags_url, proxies=self.proxies).json()
             return images_info['results'][0]['full_size']
         except Exception:
-            self._logger.error('Could not get image size from the Hub.', exc_info=True)
+            self._logger.error(f'Could not get the image size from the Hub. Image {self.image_name}', exc_info=True)
             return 0
 
     @staticmethod

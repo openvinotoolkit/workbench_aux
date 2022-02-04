@@ -40,18 +40,17 @@ DL_WB_LOGO = r'''
 /_____/_____/     |__/|__/\____/_/  /_/|_/_.___/\___/_/ /_/\___/_/ /_/ 
 '''
 
-EXAMPLE_COMMAND = f'''
-Copy and run the following command to start the highest available version of DL Workbench:
-
-    openvino-workbench --image openvino/workbench:latest --force-pull
-
-'''
+EXAMPLE_COMMAND = '\nCopy and run the following command to start the highest available version of DL Workbench: ' \
+                  '\n\n\topenvino-workbench --image openvino/workbench:latest --force-pull\n'
 
 DL_WB_DOCKER_CONFIG_PATH = os.path.join('/home', 'workbench', '.workbench')
 
 INTERNAL_PORT = '5665'
 
 COMMUNITY_LINK = 'https://community.intel.com/t5/Intel-Distribution-of-OpenVINO/bd-p/distribution-openvino-toolkit'
+
+DOCKER_ERROR_PATTERNS = {'Port is already allocated. Specify a different port using the "--port" argument':
+                         r'port\sis\salready\sallocat'}
 
 # Initialize logger
 _, LOG_FILE = tempfile.mkstemp(text=True, prefix='openvino_workbench_', suffix='.log')
@@ -62,6 +61,6 @@ logging.basicConfig(filename=LOG_FILE,
 LOGGER = logging.getLogger('Python Starter')
 LOGGER.info('OpenVINO Python Starter Log:')
 
-ABORTING_EXIT_MESSAGE = (f'\n\nComplete can be found in: {LOG_FILE}'
+ABORTING_EXIT_MESSAGE = (f'\nComplete log can be found in: {LOG_FILE}'
                          f'\nPlease report this log to: {COMMUNITY_LINK}'
-                         '\n\nAborting\n.')
+                         '\n\nAborting.\n')

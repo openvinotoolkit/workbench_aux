@@ -50,20 +50,17 @@ Use a different name by specifying the `--container-name` argument.
             new_name = self._generate_container_name()
             new_port = self._generate_container_port()
             if new_name:
-                message = f'''Copy and run the following command:
-
-    openvino-workbench --container-name {new_name}'''
+                message = (f'Copy and run the following command:'
+                           f'\n\n\topenvino-workbench --container-name {new_name}')
                 if new_port:
                     message += f' --port {new_port}'
-                print(message)
+                print(f'{message}\n')
             else:
-                print(f'''Example command:
+                print(f'Example command: '
+                      f'\n\n\topenvino-workbench --container-name NEW_NAME '
+                      f'\n\nSubstitute the "NEW_NAME" placeholder with an actual name of your choice.')
 
-    openvino-workbench --container-name NEW_NAME
-
-Substitute the "NEW_NAME" placeholder with an actual name of your choice.''')
-
-            print('\nAborting.')
+            print(ABORTING_EXIT_MESSAGE)
             sys.exit(1)
 
         print('Starting the DL Workbench container...\n')
@@ -102,15 +99,15 @@ Substitute the "NEW_NAME" placeholder with an actual name of your choice.''')
         print(f'Restarting a previously stopped container with the name "{self.container_name}" ... \n')
         if not self._is_present:
             self._logger.info('RESTART. Container with specified name was not found.')
-            print(f'A container with the name "{self.container_name}" does not exist.')
+            print(f'ERROR: A container with the name "{self.container_name}" does not exist.')
             print(EXAMPLE_COMMAND)
             sys.exit(1)
         elif self._is_running:
             self._logger.info('RESTART. Container with specified name is already running.')
             public_port = self._get_public_port()
-            print(f'A container with the name "{self.container_name}" is running - there is no need to restart it.')
-            print(f'Open the browser and navigate to the 127.0.0.1:{public_port}')
-            print('Aborting.')
+            print(f'ERROR: A container with the name "{self.container_name}" is running - there is no need to restart '
+                  'it.\n'
+                  f'Open the browser and navigate to the http://127.0.0.1:{public_port}')
             sys.exit(1)
 
         # Get and restart the container
@@ -169,9 +166,9 @@ Substitute the "NEW_NAME" placeholder with an actual name of your choice.''')
         else:
             self._logger.info('Could not start the container.')
             logs = self._client.api.logs(container=self.container_name).decode('utf-8')
-            print(f'\nCould not start the container. '
-                  f'The complete log is stored in {LOG_FILE}.')
-            print(EXAMPLE_COMMAND)
+            print(f'\nERROR: Could not start the container. '
+                  f'{EXAMPLE_COMMAND}'
+                  f'{ABORTING_EXIT_MESSAGE}')
             self._logger.info(f'CONTAINER LOGS\n: {logs}.')
             sys.exit(1)
 
