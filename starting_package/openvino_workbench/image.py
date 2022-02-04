@@ -96,7 +96,6 @@ class Image:
                     total_extracted += statuses['extracting']
 
                 progress_total = self._calculate_total_progress(total_downloaded, total_extracted, total_image_size)
-                self._logger.info(f'Image pulling progress: {progress_total}')
 
                 # Update progress bar
                 if progress_total != progress_bar.last_print_n < 100:
