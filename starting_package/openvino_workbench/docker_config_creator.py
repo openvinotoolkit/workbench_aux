@@ -164,7 +164,7 @@ class DockerConfigCreator:
         return permissions == '7'
 
     def _is_dir_writable_general(self) -> bool:
-        test_file_name = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10)) + 'text.txt'
+        test_file_name = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10)) + 'text.txt'  # nosec
         try:
             with open(os.path.join(self._arguments.assets_directory, test_file_name), 'w') as filehandler:
                 filehandler.write('Sample file.')

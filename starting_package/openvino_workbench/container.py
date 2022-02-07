@@ -156,7 +156,7 @@ class Container:
         taken_port = self._get_public_port()
         if taken_port:
             for _ in range(50):
-                new_port = random.randint(5001, 5999)
+                new_port = random.randint(5001, 5999)  # nosec
                 if new_port != int(taken_port):
                     return new_port
         return None
