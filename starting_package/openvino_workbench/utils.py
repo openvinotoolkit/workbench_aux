@@ -25,7 +25,7 @@ from typing import Optional
 
 import docker
 from openvino_workbench.constants import INTERNAL_PORT, LOGGER, ABORTING_EXIT_MESSAGE, \
-    EXAMPLE_COMMAND, DOCKER_ERROR_PATTERNS
+    DOCKER_ERROR_PATTERNS
 
 
 def print_starting_message(config: dict, enabled_devices: dict, log_file: str):
@@ -73,12 +73,9 @@ def save_logs_on_failure(fnc):
             return fnc(*args, **kwargs)
         except Exception as error:
             error_message = parse_error(str(error))
-            error_type = type(error)
             LOGGER.error(error_message, exc_info=True)
 
             print(f'ERROR: {error_message}.'
-                  f'\nERROR TYPE: {error_type}'
-                  f'{EXAMPLE_COMMAND}'
                   f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
 

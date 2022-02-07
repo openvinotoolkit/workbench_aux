@@ -55,12 +55,11 @@ class Container:
             print(f'ERROR: A container with the name "{self.container_name}" is present on the machine and '
                   'is not running.'
                   '\nYou can restart the container using the following command:'
-                  f'\n\n\topenvino-workbench --restart {self.container_name}'
-                  '\n\nor start a new one.')
+                  f'\n\n\topenvino-workbench --restart {self.container_name}')
             new_name = self._generate_container_name()
             new_port = self._generate_container_port()
             if new_name:
-                message = (f'Copy and run the following command:'
+                message = (f'\n\nOr start a new one using the following command:'
                            f'\n\n\topenvino-workbench --container-name {new_name}')
                 if new_port:
                     message += f' --port {new_port}'
@@ -119,7 +118,7 @@ class Container:
             public_port = self._get_public_port()
             print(f'ERROR: A container with the name "{self.container_name}" is running - there is no need to restart '
                   'it.\n'
-                  f'Open the browser and navigate to the http://127.0.0.1:{public_port}')
+                  f'Open the browser and navigate to the http://127.0.0.1:{public_port}.')
             sys.exit(1)
 
         # Get and restart the container
@@ -190,7 +189,7 @@ class Container:
 
         self._logger.info(f'Container starting stage with message {stage_complete_pattern.pattern} is complete.')
 
-        print('Done.')
+        print('done')
 
     def _print_finishing_message(self, detached: bool):
         print(DL_WB_LOGO)
