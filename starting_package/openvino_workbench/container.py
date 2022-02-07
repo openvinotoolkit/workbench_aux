@@ -47,8 +47,7 @@ class Container:
                 self._logger.info('Container with the specified name is already running.')
                 public_port = self._get_public_port()
                 print(
-                    f'A container with the name "{self.container_name}" is running - there is no need to restart '
-                    'it.'
+                    f'A container with the name "{self.container_name}" is running.'
                     f'\n\nOpen the browser and navigate to the http://127.0.0.1:{public_port}\n'
                     f'\nPath to the log file: {LOG_FILE}')
                 sys.exit(1)
