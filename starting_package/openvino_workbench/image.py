@@ -53,7 +53,8 @@ class DockerImage:
         if not self._is_present_in_registry:
             self._logger.info(f'ERROR: The specified image name: "{self.image_name}" might be incorrect.'
                               f'\nCould not found the image in the {self.repository} repository.'
-                              f'\nPlease check if the image name is correct and is in the following format: repository:tag'
+                              f'\nPlease check if the image name is correct and is in the following format: '
+                              f'repository:tag '
                               f'{EXAMPLE_COMMAND}'
                               f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)

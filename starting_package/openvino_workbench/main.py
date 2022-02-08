@@ -73,8 +73,7 @@ def main():
         image.pull(arguments.force_pull)
     except KeyboardInterrupt:
         LOGGER.debug('Image pulling was interrupted.')
-        LOGGER.info('Image pulling was interrupted.'
-                    f'{ABORTING_EXIT_MESSAGE}')
+        LOGGER.info('Image pulling was interrupted. \n%s', ABORTING_EXIT_MESSAGE)
         sys.exit(1)
 
     # Safe-start a container, stop it on CMD/Ctrl+C as usual Docker container

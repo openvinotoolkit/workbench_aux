@@ -16,7 +16,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 """
-import logging
 import os
 import platform
 import re
@@ -37,19 +36,20 @@ def print_starting_message(config: dict, enabled_devices: dict, log_file: str):
     is_custom_token_provided = bool(docker_environment.get('CUSTOM_TOKEN'))
     custom_token_message = f'Custom Token Provided: {"True" if is_custom_token_provided else "False"}\n'
     is_jupyter_disabled = docker_environment.get('DISABLE_JUPYTER') == 1
-    LOGGER.info('\nStarting the DL Workbench with the following arguments:\n'
-                f'Image Name: {config["image"]}\n'
-                f'Container Name: {config["name"]}\n'
-                f'IP: {bound_ip}\n'
-                f'Port: {port}\n'
-                f'GPU Enabled: {"True" if enabled_devices["GPU"] else "False"}\n'
-                f'MYRIAD Enabled: {"True" if enabled_devices["MYRIAD"] else "False"}\n'
-                f'HDDL Enabled: {"True" if enabled_devices["HDDL"] else "False"}\n'
-                f'Authentication Enabled: {"True" if authentication_enabled else "False"}\n'
-                f'{custom_token_message if authentication_enabled else ""}'
-                f'{token_saving_message if authentication_enabled else ""}'
-                f'Jupyter Enabled: {"True" if not is_jupyter_disabled else "False"}\n'
-                f'Path to the log file: {log_file}\n')
+    starting_message = ('\nStarting the DL Workbench with the following arguments:\n'
+                        f'Image Name: {config["image"]}\n'
+                        f'Container Name: {config["name"]}\n'
+                        f'IP: {bound_ip}\n'
+                        f'Port: {port}\n'
+                        f'GPU Enabled: {"True" if enabled_devices["GPU"] else "False"}\n'
+                        f'MYRIAD Enabled: {"True" if enabled_devices["MYRIAD"] else "False"}\n'
+                        f'HDDL Enabled: {"True" if enabled_devices["HDDL"] else "False"}\n'
+                        f'Authentication Enabled: {"True" if authentication_enabled else "False"}\n'
+                        f'{custom_token_message if authentication_enabled else ""}'
+                        f'{token_saving_message if authentication_enabled else ""}'
+                        f'Jupyter Enabled: {"True" if not is_jupyter_disabled else "False"}\n'
+                        f'Path to the log file: {log_file}\n')
+    LOGGER.info(starting_message)
 
 
 def initialize_docker_client() -> docker.DockerClient:
@@ -75,8 +75,10 @@ def save_logs_on_failure(fnc) -> Callable:
             error_message = parse_error(str(error))
             LOGGER.debug(error_message, exc_info=True)
 
-            LOGGER.info(f'\nERROR: {error_message}.'
-                        f'{ABORTING_EXIT_MESSAGE}')
+            error_message = (f'\nERROR: {error_message}.'
+                             f'{ABORTING_EXIT_MESSAGE}')
+
+            LOGGER.info(error_message)
             sys.exit(1)
 
     return decorated_func

@@ -149,7 +149,8 @@ class DockerConfigCreator:
             if self._user_os == 'Linux':
                 self._logger.info(f'ERROR: Provided assets directory: "{self._arguments.assets_directory}" '
                                   'does not have required permissions. '
-                                  'Read, write, and execute permissions are required for the "others" group (at least **7 mode). '
+                                  'Read, write, and execute permissions are required for the "others" group (at least '
+                                  '**7 mode). '
                                   'Create the required configuration directory with the following command: '
                                   '\n\n\tmkdir -p -m 777 /path/to/directory'
                                   '\n\nThen copy the required assets into it and use it: '
