@@ -56,12 +56,25 @@ DOCKER_ERROR_PATTERNS = {'Port is already allocated. Specify a different port us
 
 # Initialize logger
 _, LOG_FILE = tempfile.mkstemp(text=True, prefix='openvino_workbench_', suffix='.log')
-logging.basicConfig(filename=LOG_FILE,
-                    filemode='a',
-                    format='[%(levelname)s] %(message)s (%(filename)s, %(funcName)s(), line %(lineno)d)',
-                    level=logging.DEBUG)
-LOGGER = logging.getLogger('Python Starter')
-LOGGER.info('OpenVINO Python Starter Log:')
+LOGGER = logging.getLogger('Python Starter Logger')
+
+# Handler for the info visible to a user
+user_info_handler = logging.StreamHandler()
+user_info_formatter = logging.Formatter('%(message)s')
+user_info_handler.setFormatter(user_info_formatter)
+user_info_handler.setLevel(logging.INFO)
+LOGGER.addHandler(user_info_handler)
+
+# Handler for the debug information sent to the LOG_FILE
+debug_handler = logging.FileHandler(filename=LOG_FILE, mode='a')
+debug_handler_formatter = logging.Formatter('[%(levelname)s] %(message)s (%(filename)s, %(funcName)s(), line %('
+                                            'lineno)d)')
+debug_handler.setFormatter(debug_handler_formatter)
+debug_handler.setLevel(logging.DEBUG)
+LOGGER.addHandler(debug_handler)
+
+LOGGER.setLevel(logging.DEBUG)
+LOGGER.debug('OpenVINO Python Starter Log')
 
 ABORTING_EXIT_MESSAGE = (f'\nComplete log can be found in: {LOG_FILE}'
                          f'\nPlease report this log to: {COMMUNITY_LINK}'

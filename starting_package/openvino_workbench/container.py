@@ -40,22 +40,22 @@ class DockerContainer:
         self._is_running = self._is_container_running()
 
     def start(self, detached: bool, network_name: str, network_alias: str):
-        self._logger.info('Starting container.')
+        self._logger.debug('Starting container.')
 
         if self._is_present:
             if self._is_running:
-                self._logger.info('Container with the specified name is already running.')
+                self._logger.debug('Container with the specified name is already running.')
                 public_port = self._get_public_port()
-                print(
+                self._logger.info(
                     f'A container with the name "{self.container_name}" is running.'
                     f'\n\nOpen the browser and navigate to the http://127.0.0.1:{public_port}\n'
                     f'\nPath to the log file: {LOG_FILE}')
                 sys.exit(1)
 
-            print(f'ERROR: A container with the name "{self.container_name}" is present on the machine and '
-                  'is not running.'
-                  '\nYou can restart the container using the following command:'
-                  f'\n\n\t{CLI_COMMAND} --restart {self.container_name}')
+            self._logger.info(f'ERROR: A container with the name "{self.container_name}" is present on the machine and '
+                              'is not running.'
+                              '\nYou can restart the container using the following command:'
+                              f'\n\n\t{CLI_COMMAND} --restart {self.container_name}')
             new_name = self._generate_container_name()
             new_port = self._generate_container_port()
             if new_name:
@@ -63,16 +63,16 @@ class DockerContainer:
                            f'\n\n\t{CLI_COMMAND} --container-name {new_name}')
                 if new_port:
                     message += f' --port {new_port}'
-                print(f'{message}\n')
+                self._logger.info(f'{message}\n')
             else:
-                print('Example command: '
-                      f'\n\n\t{CLI_COMMAND} --container-name NEW_NAME '
-                      '\n\nSubstitute the "NEW_NAME" placeholder with an actual name of your choice.')
+                self._logger.info('Example command: '
+                                  f'\n\n\t{CLI_COMMAND} --container-name NEW_NAME '
+                                  '\n\nSubstitute the "NEW_NAME" placeholder with an actual name of your choice.')
 
-            print(ABORTING_EXIT_MESSAGE)
+            self._logger.info(ABORTING_EXIT_MESSAGE)
             sys.exit(1)
 
-        print('Starting the DL Workbench container...\n')
+        self._logger.info('Starting the DL Workbench container...\n')
 
         self._client.containers.run(**self.config)
 
@@ -91,34 +91,35 @@ class DockerContainer:
             # Display container logs
             self._attach_to_container_and_display_logs()
 
-        self._logger.info('Started container in the detached mode.')
+        self._logger.debug('Started container in the detached mode.')
 
     def stop(self):
-        self._logger.info('Stopping the container...')
-        print('\nStopping the container...')
+        self._logger.debug('Stopping the container...')
+        self._logger.info('\nStopping the container...')
         if not self._client.containers.list(filters={'name': self.container_name}):
-            print('The specified container does not exist.')
+            self._logger.info('The specified container does not exist.')
             sys.exit(1)
         self._client.api.stop(self.container_name)
-        print(f'The container was stopped. Full log of this run can be found in: {LOG_FILE}')
-        self._logger.info('The container was stopped.')
+        self._logger.info(f'The container was stopped. Full log of this run can be found in: {LOG_FILE}')
+        self._logger.debug('The container was stopped.')
 
     def restart(self, is_detached: bool):
-        self._logger.info('Restarting a container.')
-        print(f'Restarting a previously stopped container with the name "{self.container_name}" ... \n')
-        print(f'Path to the log file: {LOG_FILE}')
+        self._logger.debug('Restarting a container.')
+        self._logger.info(f'Restarting a previously stopped container with the name "{self.container_name}" ... \n')
+        self._logger.info(f'Path to the log file: {LOG_FILE}')
 
         if not self._is_present:
-            self._logger.info('RESTART. Container with the specified name was not found.')
-            print(f'ERROR: A container with the name "{self.container_name}" does not exist.')
-            print(EXAMPLE_COMMAND)
+            self._logger.debug('RESTART. Container with the specified name was not found.')
+            self._logger.info(f'ERROR: A container with the name "{self.container_name}" does not exist.')
+            self._logger.info(EXAMPLE_COMMAND)
             sys.exit(1)
         elif self._is_running:
-            self._logger.info('RESTART. Container with the specified name is already running.')
+            self._logger.debug('RESTART. Container with the specified name is already running.')
             public_port = self._get_public_port()
-            print(f'ERROR: A container with the name "{self.container_name}" is running - there is no need to restart '
-                  'it.\n'
-                  f'Open the browser and navigate to the http://127.0.0.1:{public_port}.')
+            self._logger.info(
+                f'ERROR: A container with the name "{self.container_name}" is running - there is no need to restart '
+                'it.\n'
+                f'Open the browser and navigate to the http://127.0.0.1:{public_port}.')
             sys.exit(1)
 
         # Get and restart the container
@@ -179,39 +180,39 @@ class DockerContainer:
             if stage_complete_pattern.search(current_log):
                 break
         else:
-            self._logger.info('Could not start the container.')
+            self._logger.debug('Could not start the container.')
             logs = self._client.api.logs(container=self.container_name).decode('utf-8')
-            print(f'\nERROR: Could not start the container. '
-                  f'{EXAMPLE_COMMAND}'
-                  f'{ABORTING_EXIT_MESSAGE}')
-            self._logger.info(f'CONTAINER LOGS\n: {logs}.')
+            self._logger.info(f'\nERROR: Could not start the container. '
+                              f'{EXAMPLE_COMMAND}'
+                              f'{ABORTING_EXIT_MESSAGE}')
+            self._logger.debug(f'CONTAINER LOGS\n: {logs}.')
             sys.exit(1)
 
-        self._logger.info(f'Container starting stage with message {stage_complete_pattern.pattern} is complete.')
+        self._logger.debug(f'Container starting stage with message {stage_complete_pattern.pattern} is complete.')
 
         print('done')
 
     def _print_finishing_message(self, detached: bool):
-        print(DL_WB_LOGO)
+        self._logger.info(DL_WB_LOGO)
 
         # Show finishing message from the container logs
         container = self._client.containers.get(self.container_name)
         all_logs = container.logs().decode('utf-8').rstrip()
         finishing_message_start = all_logs.rfind(WORKBENCH_READY_MESSAGE)
-        print(f'\n{all_logs[finishing_message_start:]}')
+        self._logger.info(f'\n{all_logs[finishing_message_start:]}')
         del all_logs
 
         if detached:
-            print('\nDL Workbench is started in the detached mode. '
-                  'If you want to stop the container, run the following command: '
-                  f'\n\n\tdocker stop {self.container_name}')
+            self._logger.info('\nDL Workbench is started in the detached mode. '
+                              'If you want to stop the container, run the following command: '
+                              f'\n\n\tdocker stop {self.container_name}')
         else:
             stop_message = '\nPress Ctrl+C to stop the container.'
             if platform.system() == 'Darwin':
                 stop_message = stop_message.replace('Ctrl', 'CMD')
-            print(stop_message)
+            self._logger.info(stop_message)
 
-        self._logger.info('Finish message was printed.')
+        self._logger.debug('Finish message was printed.')
 
     def _is_network_present(self, network: str) -> bool:
         return bool(self._client.api.networks(names=[network]))
@@ -232,7 +233,7 @@ class DockerContainer:
                                      since=int(time.time()) - seconds).decode('utf-8')
 
     def _attach_to_container_and_display_logs(self):
-        self._logger.info('Attaching to the container to display logs.')
+        self._logger.debug('Attaching to the container to display logs.')
         for log in self._client.api.attach(container=self.container_name, stream=True):
             print(log.decode('utf-8'), sep='', end='')
 

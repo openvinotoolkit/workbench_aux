@@ -40,27 +40,28 @@ class DockerImage:
         self._is_present_in_registry = self._is_image_present_in_registry()
 
     def pull(self, force_pull: bool = False):
-        self._logger.info(f'Pulling image with the name: {self.image_name}')
+        self._logger.debug(f'Pulling image with the name: {self.image_name}')
 
         if self._is_present and not force_pull:
-            self._logger.info('Image is present on the machine.')
-            print(f'The specified image: {self.repository}:{self.tag} is present on the machine. Continuing with it...')
-            print('NOTE: If you want to force-update your image, add `--force-pull` argument.\n')
+            self._logger.debug('Image is present on the machine.')
+            self._logger.info(
+                f'The specified image: {self.repository}:{self.tag} is present on the machine. Continuing with it...\n'
+                'NOTE: If you want to force-update your image, add `--force-pull` argument.\n')
             return
 
         # Check if image is present in registry
         if not self._is_present_in_registry:
-            print(f'ERROR: The specified image name: "{self.image_name}" might be incorrect.'
-                  f'\nCould not found the image in the {self.repository} repository.'
-                  f'\nPlease check if the image name is correct and is in the following format: repository:tag'
-                  f'{EXAMPLE_COMMAND}'
-                  f'{ABORTING_EXIT_MESSAGE}')
+            self._logger.info(f'ERROR: The specified image name: "{self.image_name}" might be incorrect.'
+                              f'\nCould not found the image in the {self.repository} repository.'
+                              f'\nPlease check if the image name is correct and is in the following format: repository:tag'
+                              f'{EXAMPLE_COMMAND}'
+                              f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
 
         # Get image size
         total_image_size = self._get_image_size(DOCKER_HUB_TAGS_URL)
         if not total_image_size:
-            print('WARNING: Could not get image size from Docker Hub, pulling without displaying progress.')
+            self._logger.info('WARNING: Could not get image size from Docker Hub, pulling without displaying progress.')
             self._pull_image_without_progress()
             return
 
@@ -105,25 +106,25 @@ class DockerImage:
             # Last update if < 100
             self._update_progress_bar(progress_bar.total, progress_bar)
 
-        self._logger.info('Image was pulled.')
-        print('\nPull is complete.')
+        self._logger.debug('Image was pulled.')
+        self._logger.info('\nPull is complete.')
 
     def _pull_image_without_progress(self):
-        self._logger.info(f'Pulling the image: {self.image_name} without progress bar.')
-        print('Pulling the image...')
+        self._logger.debug(f'Pulling the image: {self.image_name} without progress bar.')
+        self._logger.info('Pulling the image...')
         self.client.api.pull(repository=self.repository, tag=self.tag)
-        print('Pull is complete.')
-        self._logger.info('Image was pulled without progress.')
+        self._logger.info('Pull is complete.')
+        self._logger.debug('Image was pulled without progress.')
 
     def _parse_image_name(self, image_name: str) -> Tuple[str, str]:
         try:
             repository, tag = image_name.split(':')
         except ValueError:
             self._logger.error('Could not parse the image name.', exc_info=True)
-            print(f'ERROR: The specified image name: "{image_name}" might be incorrect.'
-                  '\nPlease specify the image name in the following format: repository:tag.'
-                  f'{EXAMPLE_COMMAND}'
-                  f'{ABORTING_EXIT_MESSAGE}')
+            self._logger.info(f'ERROR: The specified image name: "{image_name}" might be incorrect.'
+                              '\nPlease specify the image name in the following format: repository:tag.'
+                              f'{EXAMPLE_COMMAND}'
+                              f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
         return repository, tag
 

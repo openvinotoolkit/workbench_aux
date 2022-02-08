@@ -33,7 +33,7 @@ def main():
     arguments = StarterArgumentsParser(LOGGER).arguments
 
     # Initialize Docker client
-    docker_client: DockerClient = initialize_docker_client(LOGGER)
+    docker_client: DockerClient = initialize_docker_client()
 
     # Restart container if needed
     if arguments.restart:
@@ -42,7 +42,7 @@ def main():
         try:
             container.restart(arguments.detached)
         except KeyboardInterrupt:
-            LOGGER.info('Stopping the previously restarted container.')
+            LOGGER.debug('Stopping the previously restarted container.')
             container.stop()
             sys.exit(0)
 
@@ -72,9 +72,9 @@ def main():
         image = DockerImage(docker_client=docker_client, image_name=arguments.image, logger=LOGGER, proxies=proxies)
         image.pull(arguments.force_pull)
     except KeyboardInterrupt:
-        LOGGER.info('Image pulling was interrupted.')
-        print('Image pulling was interrupted.'
-              f'{ABORTING_EXIT_MESSAGE}')
+        LOGGER.debug('Image pulling was interrupted.')
+        LOGGER.info('Image pulling was interrupted.'
+                    f'{ABORTING_EXIT_MESSAGE}')
         sys.exit(1)
 
     # Safe-start a container, stop it on CMD/Ctrl+C as usual Docker container

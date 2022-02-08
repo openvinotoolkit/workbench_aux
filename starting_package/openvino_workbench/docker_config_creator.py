@@ -39,7 +39,7 @@ class DockerConfigCreator:
 
     def _create_config(self) -> dict:
         # Get OS
-        self._logger.info(f'OS: {self._user_os}.')
+        self._logger.debug(f'OS: {self._user_os}.')
 
         self.config = {'image': f'{self._arguments.image}',
                        'environment': {'PUBLIC_PORT': self._arguments.port,
@@ -104,10 +104,12 @@ class DockerConfigCreator:
             # SSL
             if self._arguments.ssl_certificate_name:
                 if not self._are_ssl_files_present_in_assets_directory():
-                    self._logger.info('SSL key or/and SSL certificate files are not present in the provided directory.')
-                    print('ERROR: SSL key or/and SSL certificate files are not present in the provided directory: '
-                          f'{self._arguments.assets_directory}. Place them there and try again.'
-                          f'{ABORTING_EXIT_MESSAGE}')
+                    self._logger.debug(
+                        'SSL key or/and SSL certificate files are not present in the provided directory.')
+                    self._logger.info(
+                        'ERROR: SSL key or/and SSL certificate files are not present in the provided directory: '
+                        f'{self._arguments.assets_directory}. Place them there and try again.'
+                        f'{ABORTING_EXIT_MESSAGE}')
                     sys.exit(1)
 
                 self.config['environment']['SSL_KEY'] = os.path.join(DL_WB_DOCKER_CONFIG_PATH,
@@ -122,39 +124,42 @@ class DockerConfigCreator:
         if self._arguments.cloud_service_session_ttl:
             self.config['environment']['CLOUD_SERVICE_SESSION_TTL_MINUTES'] = self._arguments.cloud_service_session_ttl
 
-        self._logger.info(f'Created config: {self.config}.')
+        self._logger.debug(f'Created config: {self.config}.')
 
     def _check_and_transform_assets_directory(self) -> str:
         if not os.path.isabs(self._arguments.assets_directory):
-            self._logger.info('Assets directory is not absolute.')
-            print(f'WARNING: Provided assets directory path: "{self._arguments.assets_directory}" is not absolute.\n'
-                  'Make sure that it is relative to the folder from which you use the starter. '
-                  'If the folder is not mounted or the container does not start, try using the absolute path.\n')
+            self._logger.debug('Assets directory is not absolute.')
+            self._logger.info(
+                f'WARNING: Provided assets directory path: "{self._arguments.assets_directory}" is not absolute.\n'
+                'Make sure that it is relative to the folder from which you use the starter. '
+                'If the folder is not mounted or the container does not start, try using the absolute path.\n')
             work_dir = os.path.abspath(os.getcwd())
             self._arguments.assets_directory = os.path.join(work_dir, self._arguments.assets_directory)
 
         if not os.path.isdir(self._arguments.assets_directory):
-            self._logger.info('Assets directory does not exist.')
-            print(f'ERROR: Provided assets directory: "{self._arguments.assets_directory}" does not exist. Correct '
-                  f'the path or create a '
-                  'directory and use it with the "--assets-directory" argument.'
-                  f'{ABORTING_EXIT_MESSAGE}')
+            self._logger.debug('Assets directory does not exist.')
+            self._logger.info(
+                f'ERROR: Provided assets directory: "{self._arguments.assets_directory}" does not exist. Correct '
+                f'the path or create a '
+                'directory and use it with the "--assets-directory" argument.'
+                f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
 
         if not self._is_dir_writable():
             if self._user_os == 'Linux':
-                print(f'ERROR: Provided assets directory: "{self._arguments.assets_directory}" '
-                      'does not have required permissions. '
-                      'Read, write, and execute permissions are required for the "others" group (at least **7 mode). '
-                      'Create the required configuration directory with the following command: '
-                      '\n\n\tmkdir -p -m 777 /path/to/directory'
-                      '\n\nThen copy the required assets into it and use it: '
-                      f'\n\n\t{CLI_COMMAND} --assets-directory /path/to/directory'
-                      f'{ABORTING_EXIT_MESSAGE}')
+                self._logger.info(f'ERROR: Provided assets directory: "{self._arguments.assets_directory}" '
+                                  'does not have required permissions. '
+                                  'Read, write, and execute permissions are required for the "others" group (at least **7 mode). '
+                                  'Create the required configuration directory with the following command: '
+                                  '\n\n\tmkdir -p -m 777 /path/to/directory'
+                                  '\n\nThen copy the required assets into it and use it: '
+                                  f'\n\n\t{CLI_COMMAND} --assets-directory /path/to/directory'
+                                  f'{ABORTING_EXIT_MESSAGE}')
             else:
-                print(f'ERROR: Provided assets directory: {self._arguments.assets_directory} is not writable.'
-                      '\nCheck that directory has writing permissions and try again.'
-                      f'{ABORTING_EXIT_MESSAGE}')
+                self._logger.info(
+                    f'ERROR: Provided assets directory: {self._arguments.assets_directory} is not writable.'
+                    '\nCheck that directory has writing permissions and try again.'
+                    f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
 
         return self._arguments.assets_directory
@@ -208,7 +213,7 @@ class DockerConfigCreator:
             try:
                 group_id = self._get_group_id(group_name)
             except AssertionError as error:
-                print(error)
+                self._logger.info(error)
                 continue
 
             self.config['group_add'].append(group_id)
@@ -223,9 +228,8 @@ class DockerConfigCreator:
             raise AssertionError(f'WARNING: There is no "{group}" group on the machine. '
                                  'GPU might not be available for inference.') from no_group_error
 
-    @staticmethod
-    def _check_hddl_daemon_is_running():
+    def _check_hddl_daemon_is_running(self):
         import psutil
         if 'hddldaemon' not in (process.name() for process in psutil.process_iter()):
-            print('WARNING: "hddldaemon" was not found running in the background.'
-                  'HDDL might not be available.')
+            self._logger.info('WARNING: "hddldaemon" was not found running in the background.'
+                              'HDDL might not be available.')

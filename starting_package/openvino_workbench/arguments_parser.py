@@ -29,7 +29,7 @@ from openvino_workbench.utils import get_proxy_from_env
 class StarterArgumentsParser:
     def __init__(self, logger: logging.Logger):
         self._logger = logger
-        self._logger.info('Parsing arguments.')
+        self._logger.debug('Parsing arguments.')
 
         self._parser = argparse.ArgumentParser(description='DL Workbench is an official UI environment of the '
                                                            'OpenVINO™ toolkit.')
@@ -202,10 +202,10 @@ class StarterArgumentsParser:
             self._validate_arguments_for_windows()
 
     def _validate_ssl_arguments(self):
-        self._logger.info('Validating arguments for SSL.')
+        self._logger.debug('Validating arguments for SSL.')
         # Check for SSL-related files
         if not self.arguments.assets_directory and (self.arguments.ssl_key_name or self.arguments.ssl_certificate_name):
-            self._logger.info('SSL key and/or certificate were provided without the assets directory.')
+            self._logger.debug('SSL key and/or certificate were provided without the assets directory.')
             self._parser.error('ERROR: "--assets-directory" is required for SSL. SSL key and certificate should be '
                                'placed there.'
                                '\nExample command:'
@@ -214,7 +214,7 @@ class StarterArgumentsParser:
                                f'{ABORTING_EXIT_MESSAGE}')
         if (not self.arguments.ssl_key_name and self.arguments.ssl_certificate_name) or (
                 self.arguments.ssl_key_name and not self.arguments.ssl_certificate_name):
-            self._logger.info('Only one of the SSL files was provided.')
+            self._logger.debug('Only one of the SSL files was provided.')
             self._parser.error('ERROR: Both SSL certificate name and SSL key name are required.'
                                '\nExample command:'
                                f'\n\n\t{CLI_COMMAND} --assets-directory /path/to/assets --ssl-key-name key.pem '
@@ -224,12 +224,12 @@ class StarterArgumentsParser:
     def _validate_restart_arguments(self):
         if not self.arguments.restart:
             return
-        self._logger.info('Validating arguments for restart.')
+        self._logger.debug('Validating arguments for restart.')
         # If detached restart is needed then there should be exactly 4 arguments
         # and '--detached' should be one of them
         if self.arguments.detached and len(sys.argv) != 4:
-            self._logger.info('Error with restarting in the detached mode. Incorrect number of arguments. '
-                              f'{vars(self.arguments)}')
+            self._logger.debug('Error with restarting in the detached mode. Incorrect number of arguments. '
+                               f'{vars(self.arguments)}')
             self._parser.error(
                 'ERROR: Unrecognized arguments for restart. '
                 'To restart the container in the detached mode, '
@@ -240,8 +240,8 @@ class StarterArgumentsParser:
                 f'{ABORTING_EXIT_MESSAGE}')
         # If regular restart is needed then there should be exactly 3 arguments
         elif not self.arguments.detached and len(sys.argv) != 3:
-            self._logger.info('Error with restarting in the interactive mode. Incorrect number of arguments. '
-                              f'{vars(self.arguments)}')
+            self._logger.debug('Error with restarting in the interactive mode. Incorrect number of arguments. '
+                               f'{vars(self.arguments)}')
             self._parser.error(
                 'ERROR: Unrecognized arguments for restart. '
                 'To restart the container, provide the container name following the "--restart" argument. '
@@ -253,8 +253,8 @@ class StarterArgumentsParser:
     def _validate_arguments_for_windows(self):
         any_device_enabled = any((self.arguments.enable_myriad, self.arguments.enable_hddl, self.arguments.enable_gpu))
         if any_device_enabled:
-            self._logger.info('Additional device(s) are enabled for Windows. '
-                              f'{vars(self.arguments)}')
+            self._logger.debug('Additional device(s) are enabled for Windows. '
+                               f'{vars(self.arguments)}')
             self._parser.error(
                 'ERROR: DL Workbench does not support non-CPU (GPU, VPU, HDDL) devices on Windows.\n'
                 'Please remove the non-CPU related arguments (--enable-gpu/--enable-myriad/--enable-hddl) and try '
