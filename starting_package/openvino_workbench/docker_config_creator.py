@@ -26,7 +26,7 @@ import sys
 from argparse import Namespace
 from pathlib import Path
 
-from openvino_workbench.constants import DL_WB_DOCKER_CONFIG_PATH, INTERNAL_PORT, ABORTING_EXIT_MESSAGE
+from openvino_workbench.constants import DL_WB_DOCKER_CONFIG_PATH, INTERNAL_PORT, ABORTING_EXIT_MESSAGE, CLI_COMMAND
 
 
 class DockerConfigCreator:
@@ -149,7 +149,7 @@ class DockerConfigCreator:
                       'Create the required configuration directory with the following command: '
                       '\n\n\tmkdir -p -m 777 /path/to/directory'
                       '\n\nThen copy the required assets into it and use it: '
-                      '\n\n\topenvino-workbench --assets-directory /path/to/directory'
+                      f'\n\n\t{CLI_COMMAND} --assets-directory /path/to/directory'
                       f'{ABORTING_EXIT_MESSAGE}')
             else:
                 print(f'ERROR: Provided assets directory: {self._arguments.assets_directory} is not writable.'

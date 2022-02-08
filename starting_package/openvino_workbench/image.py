@@ -19,6 +19,7 @@
 
 import logging
 import sys
+from typing import Tuple
 
 import requests
 from docker import DockerClient
@@ -26,7 +27,7 @@ from openvino_workbench.constants import DOCKER_HUB_TAGS_URL, EXAMPLE_COMMAND, A
 from tqdm import tqdm
 
 
-class Image:
+class DockerImage:
     def __init__(self, docker_client: DockerClient, image_name: str, logger: logging.Logger, proxies=None):
         if proxies is None:
             proxies = {}
@@ -114,7 +115,7 @@ class Image:
         print('Pull is complete.')
         self._logger.info('Image was pulled without progress.')
 
-    def _parse_image_name(self, image_name: str) -> tuple:
+    def _parse_image_name(self, image_name: str) -> Tuple[str, str]:
         try:
             repository, tag = image_name.split(':')
         except ValueError:

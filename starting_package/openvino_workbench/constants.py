@@ -21,6 +21,8 @@ import logging
 import os
 import tempfile
 
+CLI_COMMAND = 'openvino-workbench'
+
 DOCKER_HUB_TAGS_URL = 'https://hub.docker.com/v2/repositories/openvino/workbench/tags'
 
 STARTED_DB_MESSAGE = 'PostgreSQL ready for start up'
@@ -41,7 +43,7 @@ DL_WB_LOGO = r'''
 '''
 
 EXAMPLE_COMMAND = '\nCopy and run the following command to start the highest available version of DL Workbench: ' \
-                  '\n\n\topenvino-workbench --image openvino/workbench:latest --force-pull\n'
+                  f'\n\n\t{CLI_COMMAND} --image openvino/workbench:latest --force-pull\n'
 
 DL_WB_DOCKER_CONFIG_PATH = os.path.join('/home', 'workbench', '.workbench')
 

@@ -27,10 +27,10 @@ from typing import Optional
 
 from docker import DockerClient
 from openvino_workbench.constants import DL_WB_LOGO, PRE_STAGE_MESSAGES, STAGE_COMPLETE_MESSAGES, \
-    WORKBENCH_READY_MESSAGE, LOG_FILE, EXAMPLE_COMMAND, INTERNAL_PORT, ABORTING_EXIT_MESSAGE
+    WORKBENCH_READY_MESSAGE, LOG_FILE, EXAMPLE_COMMAND, INTERNAL_PORT, ABORTING_EXIT_MESSAGE, CLI_COMMAND
 
 
-class Container:
+class DockerContainer:
     def __init__(self, docker_client: DockerClient, logger: logging.Logger, config: dict):
         self._client = docker_client
         self._logger = logger
@@ -55,18 +55,18 @@ class Container:
             print(f'ERROR: A container with the name "{self.container_name}" is present on the machine and '
                   'is not running.'
                   '\nYou can restart the container using the following command:'
-                  f'\n\n\topenvino-workbench --restart {self.container_name}')
+                  f'\n\n\t{CLI_COMMAND} --restart {self.container_name}')
             new_name = self._generate_container_name()
             new_port = self._generate_container_port()
             if new_name:
                 message = (f'\n\nOr start a new one using the following command:'
-                           f'\n\n\topenvino-workbench --container-name {new_name}')
+                           f'\n\n\t{CLI_COMMAND} --container-name {new_name}')
                 if new_port:
                     message += f' --port {new_port}'
                 print(f'{message}\n')
             else:
                 print('Example command: '
-                      '\n\n\topenvino-workbench --container-name NEW_NAME '
+                      f'\n\n\t{CLI_COMMAND} --container-name NEW_NAME '
                       '\n\nSubstitute the "NEW_NAME" placeholder with an actual name of your choice.')
 
             print(ABORTING_EXIT_MESSAGE)

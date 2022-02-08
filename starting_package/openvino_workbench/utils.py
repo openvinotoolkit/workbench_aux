@@ -21,7 +21,7 @@ import os
 import platform
 import re
 import sys
-from typing import Optional
+from typing import Optional, Callable
 
 import docker
 from openvino_workbench.constants import INTERNAL_PORT, LOGGER, ABORTING_EXIT_MESSAGE, \
@@ -67,7 +67,7 @@ def initialize_docker_client(logger: logging.Logger) -> docker.DockerClient:
     return client
 
 
-def save_logs_on_failure(fnc):
+def save_logs_on_failure(fnc) -> Callable:
     def decorated_func(*args, **kwargs):
         try:
             return fnc(*args, **kwargs)

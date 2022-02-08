@@ -21,9 +21,9 @@ import sys
 from docker import DockerClient
 from openvino_workbench.arguments_parser import StarterArgumentsParser
 from openvino_workbench.constants import LOGGER, LOG_FILE, ABORTING_EXIT_MESSAGE
-from openvino_workbench.container import Container
+from openvino_workbench.container import DockerContainer
 from openvino_workbench.docker_config_creator import DockerConfigCreator
-from openvino_workbench.image import Image
+from openvino_workbench.image import DockerImage
 from openvino_workbench.utils import print_starting_message, initialize_docker_client, save_logs_on_failure
 
 
@@ -37,7 +37,7 @@ def main():
 
     # Restart container if needed
     if arguments.restart:
-        container = Container(docker_client=docker_client, logger=LOGGER, config={'name': arguments.restart})
+        container = DockerContainer(docker_client=docker_client, logger=LOGGER, config={'name': arguments.restart})
         # Safe-restart a container, stop it on CMD/Ctrl+C as usual Docker container
         try:
             container.restart(arguments.detached)
@@ -69,7 +69,7 @@ def main():
 
     # Safe-pull an image, if interrupted stop pulling with understandable message
     try:
-        image = Image(docker_client=docker_client, image_name=arguments.image, logger=LOGGER, proxies=proxies)
+        image = DockerImage(docker_client=docker_client, image_name=arguments.image, logger=LOGGER, proxies=proxies)
         image.pull(arguments.force_pull)
     except KeyboardInterrupt:
         LOGGER.info('Image pulling was interrupted.')
@@ -78,7 +78,7 @@ def main():
         sys.exit(1)
 
     # Safe-start a container, stop it on CMD/Ctrl+C as usual Docker container
-    container = Container(docker_client=docker_client, logger=LOGGER, config=config)
+    container = DockerContainer(docker_client=docker_client, logger=LOGGER, config=config)
     try:
         container.start(arguments.detached, arguments.network_name, arguments.network_alias)
     except KeyboardInterrupt:

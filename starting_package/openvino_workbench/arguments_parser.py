@@ -22,7 +22,7 @@ import logging
 import platform
 import sys
 
-from openvino_workbench.constants import EXAMPLE_COMMAND, ABORTING_EXIT_MESSAGE
+from openvino_workbench.constants import EXAMPLE_COMMAND, ABORTING_EXIT_MESSAGE, CLI_COMMAND
 from openvino_workbench.utils import get_proxy_from_env
 
 
@@ -209,7 +209,7 @@ class StarterArgumentsParser:
             self._parser.error('ERROR: "--assets-directory" is required for SSL. SSL key and certificate should be '
                                'placed there.'
                                '\nExample command:'
-                               '\n\n\topenvino-workbench --assets-directory /path/to/assets --ssl-key-name key.pem '
+                               f'\n\n\t{CLI_COMMAND} --assets-directory /path/to/assets --ssl-key-name key.pem '
                                '--ssl-certificate-name certificate.pem'
                                f'{ABORTING_EXIT_MESSAGE}')
         if (not self.arguments.ssl_key_name and self.arguments.ssl_certificate_name) or (
@@ -217,7 +217,7 @@ class StarterArgumentsParser:
             self._logger.info('Only one of the SSL files was provided.')
             self._parser.error('ERROR: Both SSL certificate name and SSL key name are required.'
                                '\nExample command:'
-                               '\n\n\t openvino-workbench --assets-directory /path/to/assets --ssl-key-name key.pem '
+                               f'\n\n\t{CLI_COMMAND} --assets-directory /path/to/assets --ssl-key-name key.pem '
                                '--ssl-certificate-name certificate.pem'
                                f'{ABORTING_EXIT_MESSAGE}')
 
@@ -236,7 +236,7 @@ class StarterArgumentsParser:
                 'provide the "--detached" argument and the container name following the "--restart" argument. '
                 'The only other argument available with "--restart" is "--detached".'
                 '\nExample command: '
-                f'\n\n\topenvino-workbench --restart {self.arguments.restart} --detached'
+                f'\n\n\t{CLI_COMMAND} --restart {self.arguments.restart} --detached'
                 f'{ABORTING_EXIT_MESSAGE}')
         # If regular restart is needed then there should be exactly 3 arguments
         elif not self.arguments.detached and len(sys.argv) != 3:
@@ -247,7 +247,7 @@ class StarterArgumentsParser:
                 'To restart the container, provide the container name following the "--restart" argument. '
                 'The only other argument available with "--restart" is "--detached".'
                 '\nExample command: '
-                '\n\n\topenvino-workbench --restart workbench'
+                f'\n\n\t{CLI_COMMAND} --restart workbench'
                 f'{ABORTING_EXIT_MESSAGE}')
 
     def _validate_arguments_for_windows(self):
