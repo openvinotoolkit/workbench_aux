@@ -30,14 +30,14 @@ from openvino_workbench.utils import print_starting_message, initialize_docker_c
 @save_logs_on_failure
 def main():
     # Parse arguments
-    arguments = StarterArgumentsParser(LOGGER).arguments
+    arguments = StarterArgumentsParser().arguments
 
     # Initialize Docker client
     docker_client: DockerClient = initialize_docker_client()
 
     # Restart container if needed
     if arguments.restart:
-        container = DockerContainer(docker_client=docker_client, logger=LOGGER, config={'name': arguments.restart})
+        container = DockerContainer(docker_client=docker_client, config={'name': arguments.restart})
         # Safe-restart a container, stop it on CMD/Ctrl+C as usual Docker container
         try:
             container.restart(arguments.detached)
@@ -48,7 +48,7 @@ def main():
 
     # Create config for Docker container
     # config = create_config_for_container(arguments, LOGGER)
-    config = DockerConfigCreator(arguments, LOGGER).config
+    config = DockerConfigCreator(arguments=arguments).config
 
     # Print starting message
     enabled_devices = {
@@ -56,7 +56,7 @@ def main():
         'MYRIAD': arguments.enable_myriad,
         'HDDL': arguments.enable_hddl
     }
-    print_starting_message(config, enabled_devices, LOG_FILE)
+    print_starting_message(config=config, enabled_devices=enabled_devices, log_file=LOG_FILE)
 
     # Provide proxies for image pulling
     proxies = {}
@@ -69,7 +69,7 @@ def main():
 
     # Safe-pull an image, if interrupted stop pulling with understandable message
     try:
-        image = DockerImage(docker_client=docker_client, image_name=arguments.image, logger=LOGGER, proxies=proxies)
+        image = DockerImage(docker_client=docker_client, image_name=arguments.image, proxies=proxies)
         image.pull(arguments.force_pull)
     except KeyboardInterrupt:
         LOGGER.debug('Image pulling was interrupted.')
@@ -77,9 +77,11 @@ def main():
         sys.exit(1)
 
     # Safe-start a container, stop it on CMD/Ctrl+C as usual Docker container
-    container = DockerContainer(docker_client=docker_client, logger=LOGGER, config=config)
+    container = DockerContainer(docker_client=docker_client, config=config)
     try:
-        container.start(arguments.detached, arguments.network_name, arguments.network_alias)
+        container.start(detached=arguments.detached,
+                        network_name=arguments.network_name,
+                        network_alias=arguments.network_alias)
     except KeyboardInterrupt:
         container.stop()
         sys.exit(0)

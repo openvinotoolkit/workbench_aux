@@ -22,13 +22,13 @@ import logging
 import platform
 import sys
 
-from openvino_workbench.constants import EXAMPLE_COMMAND, ABORTING_EXIT_MESSAGE, CLI_COMMAND
+from openvino_workbench.constants import EXAMPLE_COMMAND, ABORTING_EXIT_MESSAGE, CLI_COMMAND, LOGGER_NAME
 from openvino_workbench.utils import get_proxy_from_env
 
 
 class StarterArgumentsParser:
-    def __init__(self, logger: logging.Logger):
-        self._logger = logger
+    def __init__(self):
+        self._logger = logging.getLogger(LOGGER_NAME)
         self._logger.debug('Parsing arguments.')
 
         self._parser = argparse.ArgumentParser(description='DL Workbench is an official UI environment of the '

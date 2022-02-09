@@ -26,14 +26,15 @@ import time
 from typing import Optional
 
 from docker import DockerClient
-from openvino_workbench.constants import DL_WB_LOGO, PRE_STAGE_MESSAGES, STAGE_COMPLETE_MESSAGES, \
-    WORKBENCH_READY_MESSAGE, LOG_FILE, EXAMPLE_COMMAND, INTERNAL_PORT, ABORTING_EXIT_MESSAGE, CLI_COMMAND
+from openvino_workbench.constants import (DL_WB_LOGO, PRE_STAGE_MESSAGES, STAGE_COMPLETE_MESSAGES,
+                                          WORKBENCH_READY_MESSAGE, LOG_FILE, EXAMPLE_COMMAND, INTERNAL_PORT,
+                                          ABORTING_EXIT_MESSAGE, CLI_COMMAND, LOGGER_NAME)
 
 
 class DockerContainer:
-    def __init__(self, docker_client: DockerClient, logger: logging.Logger, config: dict):
+    def __init__(self, docker_client: DockerClient, config: dict):
         self._client = docker_client
-        self._logger = logger
+        self._logger = logging.getLogger(LOGGER_NAME)
         self.config = config
         self.container_name = self.config['name']
         self._is_present = self._is_container_present()
@@ -48,7 +49,7 @@ class DockerContainer:
                 public_port = self._get_public_port()
                 self._logger.info(
                     f'A container with the name "{self.container_name}" is running.'
-                    f'\n\nOpen the browser and navigate to the http://127.0.0.1:{public_port}\n'
+                    f'\n\nOpen the browser and navigate to the http://127.0.0.1:{public_port}.\n'
                     f'\nPath to the log file: {LOG_FILE}')
                 sys.exit(1)
 

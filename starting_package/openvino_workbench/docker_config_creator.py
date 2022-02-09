@@ -26,13 +26,17 @@ import sys
 from argparse import Namespace
 from pathlib import Path
 
-from openvino_workbench.constants import DL_WB_DOCKER_CONFIG_PATH, INTERNAL_PORT, ABORTING_EXIT_MESSAGE, CLI_COMMAND
+from openvino_workbench.constants import (DL_WB_DOCKER_CONFIG_PATH,
+                                          INTERNAL_PORT,
+                                          ABORTING_EXIT_MESSAGE,
+                                          CLI_COMMAND,
+                                          LOGGER_NAME)
 
 
 class DockerConfigCreator:
-    def __init__(self, arguments: Namespace, logger: logging.Logger):
+    def __init__(self, arguments: Namespace):
         self._arguments = arguments
-        self._logger = logger
+        self._logger = logging.getLogger(LOGGER_NAME)
         self.config = {}
         self._user_os = platform.system()
         self._create_config()

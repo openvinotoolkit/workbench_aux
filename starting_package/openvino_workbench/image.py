@@ -23,18 +23,18 @@ from typing import Tuple
 
 import requests
 from docker import DockerClient
-from openvino_workbench.constants import DOCKER_HUB_TAGS_URL, EXAMPLE_COMMAND, ABORTING_EXIT_MESSAGE
+from openvino_workbench.constants import DOCKER_HUB_TAGS_URL, EXAMPLE_COMMAND, ABORTING_EXIT_MESSAGE, LOGGER_NAME
 from tqdm import tqdm
 
 
 class DockerImage:
-    def __init__(self, docker_client: DockerClient, image_name: str, logger: logging.Logger, proxies=None):
+    def __init__(self, docker_client: DockerClient, image_name: str, proxies=None):
         if proxies is None:
             proxies = {}
         self.client = docker_client
         self.image_name = image_name
         self.repository, self.tag = self._parse_image_name(self.image_name)
-        self._logger = logger
+        self._logger = logging.getLogger(LOGGER_NAME)
         self.proxies = proxies
         self._is_present = self._is_image_present()
         self._is_present_in_registry = self._is_image_present_in_registry()

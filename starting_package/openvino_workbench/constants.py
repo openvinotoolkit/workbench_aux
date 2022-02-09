@@ -56,7 +56,8 @@ DOCKER_ERROR_PATTERNS = {'Port is already allocated. Specify a different port us
 
 # Initialize logger
 _, LOG_FILE = tempfile.mkstemp(text=True, prefix='openvino_workbench_', suffix='.log')
-LOGGER = logging.getLogger('Python Starter Logger')
+LOGGER_NAME = 'Python Starter Logger'
+LOGGER = logging.getLogger(LOGGER_NAME)
 
 # Handler for the info visible to a user
 user_info_handler = logging.StreamHandler()
