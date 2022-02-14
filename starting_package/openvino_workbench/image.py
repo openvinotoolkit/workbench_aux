@@ -123,7 +123,7 @@ class DockerImage:
         except ValueError:
             self._logger.error('Could not parse the image name.', exc_info=True)
             self._logger.info(f'ERROR: The specified image name: "{image_name}" might be incorrect.'
-                              '\nPlease specify the image name in the following format: repository:tag.'
+                              '\nSpecify the image name in the following format: repository:tag.'
                               f'{EXAMPLE_COMMAND}'
                               f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
