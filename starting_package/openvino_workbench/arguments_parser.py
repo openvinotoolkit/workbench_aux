@@ -31,8 +31,8 @@ class StarterArgumentsParser:
         self._logger = logging.getLogger(LOGGER_NAME)
         self._logger.debug('Parsing arguments.')
 
-        self._parser = argparse.ArgumentParser(description='DL Workbench is an official UI environment of the '
-                                                           'OpenVINO™ toolkit.')
+        self._parser = argparse.ArgumentParser(description='DL Workbench is the official UI environment of the '
+                                                           'OpenVINO™.')
         self._add_arguments_to_parser()
         self.arguments = self._parser.parse_args()
         self._validate_arguments()
@@ -64,7 +64,7 @@ class StarterArgumentsParser:
 
         self._parser.add_argument('--container-name',
                                   required=False,
-                                  help='Specifies the DL Workbench container name to use.',
+                                  help='Specifies the DL Workbench container name.',
                                   default='workbench')
 
         self._parser.add_argument('--detached',
@@ -78,16 +78,14 @@ class StarterArgumentsParser:
                                   required=False,
                                   help='Restarts a previously stopped DL Workbench container. '
                                        'Provide the container name to restart. '
-                                       'If specified, other arguments are not supported. DL Workbench will have the '
-                                       'capabilities '
-                                       'that were enabled on the first run.')
+                                       'DL Workbench is restarted with the same parameters as on the first run.')
 
         # Devices
         self._parser.add_argument('--enable-gpu',
                                   action='store_true',
                                   required=False,
-                                  help='Enables the DL Workbench container to use GPU devices '
-                                       'by providing Docker container with GPU-related arguments.',
+                                  help='Enables GPU devices in the DL Workbench container '
+                                       'by providing the Docker container with GPU-related arguments.',
                                   default=False)
 
         hddl_vpu = self._parser.add_mutually_exclusive_group()
@@ -114,12 +112,12 @@ class StarterArgumentsParser:
         # Proxies
         self._parser.add_argument('--http-proxy',
                                   required=False,
-                                  help='Specifies the HTTP proxy to use in the DL Workbench container.',
+                                  help='Specifies the HTTP proxy in the DL Workbench container.',
                                   default=get_proxy_from_env('http_proxy'))
 
         self._parser.add_argument('--https-proxy',
                                   required=False,
-                                  help='Specifies the HTTPS proxy to use in the DL Workbench container.',
+                                  help='Specifies the HTTPS proxy in the DL Workbench container.',
                                   default=get_proxy_from_env('https_proxy'))
 
         self._parser.add_argument('--no-proxy',
@@ -182,7 +180,7 @@ class StarterArgumentsParser:
         # Network
         self._parser.add_argument('--network-name',
                                   required=False,
-                                  help='Specifies the name of a Docker network to run the Docker container in.',
+                                  help='Specifies the name of a Docker network in which the Docker container will run.',
                                   default='workbench_network')
         self._parser.add_argument('--network-alias',
                                   required=False,
@@ -228,7 +226,7 @@ class StarterArgumentsParser:
         # If detached restart is needed then there should be exactly 4 arguments
         # and '--detached' should be one of them
         if self.arguments.detached and len(sys.argv) != 4:
-            self._logger.debug('Error with restarting in the detached mode. Incorrect number of arguments. '
+            self._logger.debug('Error while restarting in the detached mode. Incorrect number of arguments. '
                                f'{vars(self.arguments)}')
             self._parser.error(
                 'ERROR: Unrecognized arguments for restart. '
@@ -257,7 +255,7 @@ class StarterArgumentsParser:
                                f'{vars(self.arguments)}')
             self._parser.error(
                 'ERROR: DL Workbench does not support non-CPU (GPU, VPU, HDDL) devices on Windows.\n'
-                'Please remove the non-CPU related arguments (--enable-gpu/--enable-myriad/--enable-hddl) and try '
+                'Remove the non-CPU related arguments (--enable-gpu/--enable-myriad/--enable-hddl) and try '
                 'again.'
                 f'{EXAMPLE_COMMAND}'
                 f'{ABORTING_EXIT_MESSAGE}')
