@@ -52,8 +52,8 @@ class DockerImage:
         # Check if image is present in registry
         if not self._is_present_in_registry:
             self._logger.info(f'ERROR: The specified image name: "{self.image_name}" might be incorrect.'
-                              f'\nCould not found the image in the {self.repository} repository.'
-                              f'\nPlease check if the image name is correct and is in the following format: '
+                              f'\nCould not find the image in the {self.repository} repository.'
+                              f'\nCheck if the image name is correct and has the following format: '
                               f'repository:tag '
                               f'{EXAMPLE_COMMAND}'
                               f'{ABORTING_EXIT_MESSAGE}')
@@ -62,7 +62,7 @@ class DockerImage:
         # Get image size
         total_image_size = self._get_image_size(DOCKER_HUB_TAGS_URL)
         if not total_image_size:
-            self._logger.info('WARNING: Could not get image size from Docker Hub, '
+            self._logger.info('WARNING: Could not get the image size from Docker Hub, '
                               'pulling without displaying progress.')
             self._pull_image_without_progress()
             return
@@ -124,7 +124,7 @@ class DockerImage:
         except ValueError:
             self._logger.error('Could not parse the image name.', exc_info=True)
             self._logger.info(f'ERROR: The specified image name: "{image_name}" might be incorrect.'
-                              '\nPlease specify the image name in the following format: repository:tag.'
+                              '\nSpecify the image name in the following format: repository:tag.'
                               f'{EXAMPLE_COMMAND}'
                               f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
