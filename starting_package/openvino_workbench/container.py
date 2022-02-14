@@ -68,7 +68,7 @@ class DockerContainer:
             else:
                 self._logger.info('Example command: '
                                   f'\n\n\t{CLI_COMMAND} --container-name NEW_NAME '
-                                  '\n\nSubstitute the "NEW_NAME" placeholder with an actual name of your choice.')
+                                  '\n\nSubstitute the "NEW_NAME" placeholder with any name that is not already allocated to another container.')
 
             self._logger.info(ABORTING_EXIT_MESSAGE)
             sys.exit(1)
