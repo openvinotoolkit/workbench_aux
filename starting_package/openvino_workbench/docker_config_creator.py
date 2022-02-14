@@ -163,7 +163,7 @@ class DockerConfigCreator:
             else:
                 self._logger.info(
                     f'ERROR: Provided assets directory: {self._arguments.assets_directory} is not writable.'
-                    '\nCheck that directory has writing permissions and try again.'
+                    '\nCheck that the directory has writing permissions and try again.'
                     f'{ABORTING_EXIT_MESSAGE}')
             sys.exit(1)
 
