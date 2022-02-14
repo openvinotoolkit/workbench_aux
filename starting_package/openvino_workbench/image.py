@@ -62,7 +62,7 @@ class DockerImage:
         # Get image size
         total_image_size = self._get_image_size(DOCKER_HUB_TAGS_URL)
         if not total_image_size:
-            self._logger.info('WARNING: Could not get image size from Docker Hub, pulling without displaying progress.')
+            self._logger.info('WARNING: Could not get the image size from Docker Hub, pulling without displaying progress.')
             self._pull_image_without_progress()
             return
 
