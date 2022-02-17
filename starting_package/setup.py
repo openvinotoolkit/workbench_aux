@@ -1,6 +1,6 @@
 """
- OpenVINO Profiler
- Setup for the DL Workbench Python starter wrapper
+ OpenVINO DL Workbench Python Starter
+ Setup for the DL Workbench Python Starter
 
  Copyright (c) 2021 Intel Corporation
 
@@ -55,7 +55,7 @@ setup(
     author='Intel® Corporation',
     author_email='openvino_pushbot@intel.com',
     license='OSI Approved :: Apache Software License',
-    description='DL Workbench is an official UI environment of the OpenVINO™ toolkit.',
+    description='DL Workbench is the official UI environment of the OpenVINO™ toolkit.',
     url='https://github.com/openvinotoolkit/workbench_aux',
     version='2021.4.2.0.dev20220112',
     packages=['openvino_workbench'],
@@ -64,7 +64,7 @@ setup(
     long_description_content_type='text/markdown',
     project_urls={
         'Documentation':
-            'https://docs.openvinotoolkit.org/latest/workbench_docs_Workbench_DG_Introduction.html',
+            'https://docs.openvino.ai/latest/workbench_docs_Workbench_DG_Introduction.html',
         'Feedback':
             'https://community.intel.com/t5/Intel-Distribution-of-OpenVINO/bd-p/distribution-openvino-toolkit',
         'Troubleshooting':
