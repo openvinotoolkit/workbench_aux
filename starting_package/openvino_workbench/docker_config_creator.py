@@ -83,7 +83,9 @@ class DockerConfigCreator:
 
         # MYRIAD & HDDL
         if self._arguments.enable_myriad:
-            self._add_device_to_config('/dev/bus/usb')
+            if 'volumes' not in self.config:
+                self.config['volumes'] = {}
+            self.config['volumes']['/dev/bus/usb'] = {'bind': '/dev/bus/usb', 'mode': 'rw'}
             self.config['device_cgroup_rules'] = ['c 189:* rmw']
         elif self._arguments.enable_hddl:
             self._check_hddl_daemon_is_running()
