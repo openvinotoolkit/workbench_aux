@@ -17,7 +17,7 @@ export class CommandOutputComponent {
     const copyCommandPromise = navigator?.clipboard ? navigator?.clipboard?.writeText(innerText) : this.copyCommandFallback(innerText);
     copyCommandPromise.then(() => {
       this._snackBar.open('Copied', null, {
-        duration: 100000,
+        duration: 1000,
         panelClass: 'copy-snackbar'
       });
     });
