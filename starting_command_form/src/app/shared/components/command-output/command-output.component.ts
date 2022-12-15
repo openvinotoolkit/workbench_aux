@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 
 @Component({
   selector: 'wb-command-output',
@@ -17,7 +17,7 @@ export class CommandOutputComponent {
     const copyCommandPromise = navigator?.clipboard ? navigator?.clipboard?.writeText(innerText) : this.copyCommandFallback(innerText);
     copyCommandPromise.then(() => {
       this._snackBar.open('Copied', null, {
-        duration: 1000,
+        duration: 100000,
         panelClass: 'copy-snackbar'
       });
     });

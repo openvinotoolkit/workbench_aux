@@ -33,6 +33,9 @@
 }
 
 ::ng-deep .copy-snackbar {
+  @include wb-body-1();
+  background-color: $black-two;
+  color: $light-grey;
   min-width: fit-content !important;
   padding-left: $container-padding !important;
   padding-right: $container-padding !important;
