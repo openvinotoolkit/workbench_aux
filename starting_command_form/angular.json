@@ -150,6 +150,5 @@
         }
       }
     }
-  },
-  "defaultProject": "workbench-start-command-constructor"
+  }
 }
