@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 
 import { commandConstructorFormFieldsMap } from '../shared/constants';
 import { Devices, FormControlNames, ICommandConstructorField, OperatingSystems } from '../shared/models/command-constructor-form';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MessagesService } from '../shared/services/messages.service';
@@ -30,7 +30,7 @@ export class CommandConstructorComponent implements OnDestroy {
     commandConstructorFormFieldsMap[FormControlNames.NO_PROXY],
   ];
 
-  public commandFormGroup: FormGroup = null;
+  public commandFormGroup: UntypedFormGroup = null;
 
   public incompatibleDevicesSelected = false;
 
@@ -38,7 +38,7 @@ export class CommandConstructorComponent implements OnDestroy {
 
   private unsubscribe$ = new Subject();
 
-  constructor(private fb: FormBuilder, private messagesService: MessagesService) {
+  constructor(private fb: UntypedFormBuilder, private messagesService: MessagesService) {
     this.commandFormGroup = this._buildFormGroup([
       ...this.generalOptionsFields,
       ...this.advancedOptionsFields,
@@ -71,9 +71,9 @@ export class CommandConstructorComponent implements OnDestroy {
     this.commandFormGroup.get(FormControlNames.OS).setValue(OSDetector.os);
   }
 
-  private _buildFormGroup(fields: ICommandConstructorField[]): FormGroup {
+  private _buildFormGroup(fields: ICommandConstructorField[]): UntypedFormGroup {
     const controlsConfig = fields.reduce((acc, field) => {
-      acc[field.name] = new FormControl(field.value);
+      acc[field.name] = new UntypedFormControl(field.value);
       return acc;
     }, {});
     return this.fb.group(controlsConfig);

@@ -13,6 +13,7 @@ starting_command_form/out-tsc
 starting_command_form/node_modules
 
 # misc
+starting_command_form/.angular
 starting_command_form/.sass-cache
 starting_command_form/connect.lock
 starting_command_form/coverage
