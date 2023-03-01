@@ -41,7 +41,7 @@ class StarterArgumentsParser:
         self._parser.add_argument('--image',
                                   required=False,
                                   help='Specifies the DL Workbench Docker image name.',
-                                  default='openvino/workbench:2022.3.1')
+                                  default='openvino/workbench:2022.3.0')
 
         self._parser.add_argument('--force-pull',
                                   action='store_true',
