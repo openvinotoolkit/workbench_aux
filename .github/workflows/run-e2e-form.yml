@@ -13,7 +13,7 @@ jobs:
           working-directory: ./starting_command_form
           build: npm run build
           start: npm run start
-          wait-on: 'http://localhost:4200'
+          wait-on: 'http://127.0.0.1:4200'
           browser: chrome
       - name: Upload screenshots on failure
         uses: actions/upload-artifact@v1
