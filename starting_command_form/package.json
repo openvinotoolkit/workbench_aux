@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --host 0.0.0.0",
     "build": "ng build",
     "build:github-pages": "ng build --configuration=production --output-path ../docs --base-href /workbench_aux/",
     "test": "ng test",
