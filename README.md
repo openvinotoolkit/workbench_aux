@@ -9,7 +9,7 @@
     - [Using plain Docker command](#docker)
 - [Useful Links](#links)
 
-Copyright © 2018-2021 Intel Corporation
+Copyright © 2018-2023 Intel Corporation
 
 ## <a id="introduction">Introduction</a>
 

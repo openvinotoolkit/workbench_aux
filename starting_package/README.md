@@ -1,6 +1,6 @@
 # OpenVINO™ Deep Learning Workbench Python Starter
 
-Copyright © 2018-2021 Intel Corporation
+Copyright © 2018-2023 Intel Corporation
 
 > LEGAL NOTICE: Your use of this software and any required dependent software (the “Software Package”) is subject to the terms and conditions of the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0.html).
 
