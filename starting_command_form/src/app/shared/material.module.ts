@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 
-import { MatButtonModule } from '@angular/material/button';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
+import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio';
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
+import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
 
 const materialModules = [
   MatButtonModule,
