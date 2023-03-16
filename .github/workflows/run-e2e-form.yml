@@ -8,9 +8,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Run E2E tests
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v5
         with:
           working-directory: ./starting_command_form
+          build: npm run build
           start: npm run start
           wait-on: 'http://localhost:4200'
           browser: chrome
